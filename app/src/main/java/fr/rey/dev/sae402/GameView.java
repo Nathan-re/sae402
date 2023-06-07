@@ -22,10 +22,20 @@ import java.util.concurrent.TimeUnit;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private SurfaceHolder monSurfaceHolder;
+    private int nbJoueurs;
     private Rondelle maRondelle;
+    private Poussoir poussoir1;
+    private Poussoir poussoir2;
+    private Poussoir poussoir3;
+    private Poussoir poussoir4;
+
+    private Joueur joueur1;
+    private Joueur joueur2;
+    private Joueur joueur3;
+    private Joueur joueur4;
 
 
-    public GameView(Context context, Rondelle maRondelle) {
+    public GameView(Context context, int nbJoueurs) {
         super(context);
 
         this.setFocusable(true);
@@ -37,8 +47,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
         this.setMonSurfaceHolder(monSurfaceHolder);
 
-        this.maRondelle = maRondelle;
+        this.nbJoueurs = nbJoueurs;
 
+        switch (nbJoueurs){
+            case 1:
+                this.poussoir1 = new Poussoir(100,100, Color.RED);
+                break;
+
+            case 2:
+                this.poussoir1 = new Poussoir(100,100, Color.RED);
+                this.poussoir2 = new Poussoir(200,200, Color.GREEN);
+                break;
+
+            case 4:
+                this.joueur1 = new Joueur("Jules", Color.YELLOW);
+                this.poussoir1 = new Poussoir(100,100, joueur1.getPlayerColor());
+
+                this.joueur2 = new Joueur("Pierre", Color.BLUE);
+                this.poussoir2 = new Poussoir(200,200, joueur2.getPlayerColor());
+
+                this.joueur3 = new Joueur("Antoine", Color.GREEN);
+                this.poussoir3 = new Poussoir(300,300, joueur3.getPlayerColor());
+
+                this.joueur4 = new Joueur("Nathan", Color.RED);
+                this.poussoir4 = new Poussoir(400,400, joueur4.getPlayerColor());
+
+                break;
+        }
     }
 
     public GameView(Context context, AttributeSet attrs) {
@@ -49,38 +84,38 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         super(context, attrs, defStyle);
     }
 
-    public void dessin(float[][] coords){
+    public void dessin(){
 
         Paint paintBlack = new Paint();
         paintBlack.setStyle(Paint.Style.FILL);
-        paintBlack.setColor(Color.WHITE);
+        paintBlack.setColor(Color.BLACK);
 
-        Paint paintBarres = new Paint();
-        paintBarres.setStyle(Paint.Style.FILL);
-        paintBarres.setColor(Color.RED);
+        Paint paintPoussoir = new Paint();
+        paintPoussoir.setStyle(Paint.Style.FILL);
 
-        Paint paintRond = new Paint();
-        paintRond.setStyle(Paint.Style.FILL);
-        paintRond.setColor(Color.WHITE);
+        Poussoir[] poussoirs = getPoussoirs();
 
-        Canvas canvas = getMonSurfaceHolder().lockCanvas();
+        Canvas canvas = getHolder().lockCanvas();
         canvas.drawRect(0,0,getWidth(), getHeight(), paintBlack);
 
-        for (float[] pointer: coords) {
-            if((pointer[0] != 0) && (pointer[1] != 0)){
+        for (Poussoir poussoir:poussoirs) {
 
-                canvas.drawRect((int)(pointer[0] - 150),(int) (pointer[1] -100),(int)(pointer[0] + 150),(int)(pointer[1] + 100), paintBarres);
-
-            }
+            paintPoussoir.setColor(poussoir.getCouleur());
+            canvas.drawCircle(poussoir.getX(), poussoir.getY(), 40, paintPoussoir);
         }
-
         getMonSurfaceHolder().unlockCanvasAndPost(canvas);
 
     }
 
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
 
-
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                dessin();
+            }
+        }, 0, 20, TimeUnit.MILLISECONDS);
 
     }
 
@@ -105,5 +140,66 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
     public void setMaRondelle(Rondelle maRondelle) {
         this.maRondelle = maRondelle;
+    }
+
+    public Poussoir[] getPoussoirs() {
+        Poussoir[] poussoirs = new Poussoir[this.nbJoueurs];
+        if(getPoussoir1() != null){
+            poussoirs[0] = poussoir1;
+        }
+
+        if(getPoussoir2() != null){
+            poussoirs[1] = poussoir2;
+        }
+
+        if(getPoussoir3() != null){
+            poussoirs[2] = poussoir3;
+        }
+
+        if(getPoussoir4() != null){
+            poussoirs[3] = poussoir4;
+        }
+
+        return poussoirs;
+    }
+
+    public int getNbJoueurs() {
+        return nbJoueurs;
+    }
+
+    public void setNbJoueurs(int nbJoueurs) {
+        this.nbJoueurs = nbJoueurs;
+    }
+
+    public Poussoir getPoussoir1() {
+        return poussoir1;
+    }
+
+    public void setPoussoir1(Poussoir poussoir1) {
+        this.poussoir1 = poussoir1;
+    }
+
+    public Poussoir getPoussoir2() {
+        return poussoir2;
+    }
+
+    public void setPoussoir2(Poussoir poussoir2) {
+        this.poussoir2 = poussoir2;
+    }
+
+    public Poussoir getPoussoir3() {
+        return poussoir3;
+    }
+
+    public void setPoussoir3(Poussoir poussoir3) {
+        this.poussoir3 = poussoir3;
+    }
+
+    public Poussoir getPoussoir4() {
+        return poussoir4;
+    }
+
+    public void setPoussoir4(Poussoir poussoir4) {
+        this.poussoir4 = poussoir4;
     }
 }

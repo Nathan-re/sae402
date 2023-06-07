@@ -11,12 +11,14 @@ public class Joueur {
     @PrimaryKey(autoGenerate = true) @NonNull // Création de la clé primaire de la table (id) avec @Entity
     private int _id;
     private String playerPseudo;
-    private String playerColor;
+    private int playerColor;
     private int playerNbDefaite;
     private int playerNbVictoire;
 
+    private Poussoir poussoirLinked;
+
     // CONSTRUCTEUR
-    public Joueur (String playerPseudo, String playerColor) {
+    public Joueur (String playerPseudo, int playerColor) {
         this.playerPseudo = playerPseudo;
         this.playerColor = playerColor;
         // On initialise le nombre de victoires et défaites à 0
@@ -31,7 +33,7 @@ public class Joueur {
     public String getPlayerPseudo() {
         return playerPseudo;
     }
-    public String getPlayerColor() {
+    public int getPlayerColor() {
         return playerColor;
     }
     public int getPlayerNbDefaite() {
@@ -45,7 +47,7 @@ public class Joueur {
     public void setPlayerPseudo(String playerPseudo) {
         this.playerPseudo = playerPseudo;
     }
-    public void setPlayerColor(String playerColor) {
+    public void setPlayerColor(int playerColor) {
         this.playerColor = playerColor;
     }
     public void setPlayerNbDefaite(int playerNbDefaite) {
@@ -53,6 +55,14 @@ public class Joueur {
     }
     public void setPlayerNbVictoire(int playerNbVictoire) {
         this.playerNbVictoire = playerNbVictoire;
+    }
+
+    public Poussoir getPoussoirLinked() {
+        return poussoirLinked;
+    }
+
+    public void setPoussoirLinked(Poussoir poussoirLinked) {
+        this.poussoirLinked = poussoirLinked;
     }
 }
 
