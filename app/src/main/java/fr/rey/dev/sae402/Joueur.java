@@ -14,6 +14,7 @@ public class Joueur {
     private String playerColor;
     private int playerNbDefaite;
     private int playerNbVictoire;
+    private int playerNbPtsTotal;
 
     // CONSTRUCTEUR
     public Joueur (String playerPseudo, String playerColor) {
@@ -22,6 +23,7 @@ public class Joueur {
         // On initialise le nombre de victoires et défaites à 0
         this.playerNbDefaite = 0;
         this.playerNbVictoire = 0;
+        this.playerNbPtsTotal = 0;
     }
 
     // GETTERS
@@ -40,6 +42,7 @@ public class Joueur {
     public int getPlayerNbVictoire() {
         return playerNbVictoire;
     }
+    public int getPlayerNbPtsTotal() { return playerNbPtsTotal; }
 
     // SETTERS
     public void setPlayerPseudo(String playerPseudo) {
@@ -51,8 +54,7 @@ public class Joueur {
     public void setPlayerNbDefaite(int playerNbDefaite) {
         this.playerNbDefaite = playerNbDefaite;
     }
-    public void setPlayerNbVictoire(int playerNbVictoire) {
-        this.playerNbVictoire = playerNbVictoire;
-    }
+    public void setPlayerNbVictoire(int playerNbVictoire) { this.playerNbVictoire = playerNbVictoire; }
+    public void setPlayerNbPtsTotal(int playerNbPtsTotal) { this.playerNbPtsTotal = playerNbPtsTotal; }
 }
 
