@@ -75,15 +75,9 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
                 case MotionEvent.ACTION_MOVE:
                     Log.d("test", "Action move déclenché !!!");
-
-                    setCompteur(getCompteur() + 1);
                     break;
             }
         }
-
-        Log.d("test", getCompteur() + "");
-
-
 
         Poussoir[] poussoirs = getMaGameView().getPoussoirs();
 
@@ -114,9 +108,6 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
     }
 
-
-
-
     public LinearLayout getLayout() {
         return layout;
     }
@@ -133,11 +124,4 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         this.maGameView = maGameView;
     }
 
-    public int getCompteur() {
-        return compteur;
-    }
-
-    public void setCompteur(int compteur) {
-        this.compteur = compteur;
-    }
 }

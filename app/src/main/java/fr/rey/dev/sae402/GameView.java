@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private SurfaceHolder monSurfaceHolder;
     private int nbJoueurs;
-
     private Paint paintBlack;
     private Paint paintRondelle;
+    private Paint paintBut;
     private Rondelle maRondelle;
     private Poussoir poussoir1;
     private Poussoir poussoir2;
@@ -35,8 +35,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private Joueur joueur2;
     private Joueur joueur3;
     private Joueur joueur4;
-
     private ArrayList<Integer> activePointers;
+    private int nbPaletsJoues;
+    private But but1;
+    private But but2;
 
 
     public GameView(Context context, int nbJoueurs) {
@@ -90,7 +92,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         setPaintBlack(paintBlack);
 
         activePointers = new ArrayList<Integer>();
+        nbPaletsJoues = 0;
 
+        Paint paintBut = new Paint();
+        paintBut.setStyle(Paint.Style.FILL);
+        paintBut.setColor(Color.WHITE);
+        setPaintBut(paintBut);
     }
 
     public GameView(Context context, AttributeSet attrs) {
@@ -112,10 +119,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         canvas.drawRect(0,0,getWidth(), getHeight(), paintBlack);
 
         for (Poussoir poussoir:poussoirs) {
-
             paintPoussoir.setColor(poussoir.getCouleur());
             canvas.drawCircle(poussoir.getX(), poussoir.getY(), poussoir.getRadius(), paintPoussoir);
         }
+
+        getPaintBut().setColor(getBut1().getCouleur());
+        canvas.drawRect(getBut1().getLeft(),getBut1().getTop(),getBut1().getRight(), getBut1().getBottom(), paintBut);
+        getPaintBut().setColor(getBut2().getCouleur());
+        canvas.drawRect(getBut2().getLeft(),getBut2().getTop(),getBut2().getRight(), getBut2().getBottom(), paintBut);
 
         canvas.drawCircle(getMaRondelle().getX(), getMaRondelle().getY(), getMaRondelle().getRadius(), paintRondelle);
         getMonSurfaceHolder().unlockCanvasAndPost(canvas);
@@ -126,6 +137,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         Rondelle maRondelle = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), 30);
         maRondelle.setVitesse(0);
         setMaRondelle(maRondelle);
+
+        Log.d("test", getWidth() + "");
+        but1 = new But((getWidth() /4) + (getWidth() /8), 0, (getWidth() /2) + (getWidth() /8), 20,Color.WHITE);
+        but2 = new But((getWidth() /4) + (getWidth() /8), (getHeight()-20), (getWidth() /2 + getWidth() /8), getHeight(),Color.WHITE);
+
         reset();
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -137,6 +153,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 if(maRondelle.getVitesse() > 0){
                     maRondelle.setVitesse((float) (maRondelle.getVitesse() - 0.1));
                 }
+                testBut();
             }
         }, 0, 2, TimeUnit.MILLISECONDS);
 
@@ -396,6 +413,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         return poussoirs;
     }
 
+    public void testBut(){
+
+    }
+
     public Rondelle getMaRondelle() {
         return maRondelle;
     }
@@ -479,5 +500,37 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         if (indexToRemove != -1) {
             this.activePointers.remove(indexToRemove);
         }
+    }
+
+    public Paint getPaintBut() {
+        return paintBut;
+    }
+
+    public void setPaintBut(Paint paintBut) {
+        this.paintBut = paintBut;
+    }
+
+    public int getNbPaletsJoues() {
+        return nbPaletsJoues;
+    }
+
+    public void setNbPaletsJoues(int nbPaletsJoues) {
+        this.nbPaletsJoues = nbPaletsJoues;
+    }
+
+    public But getBut1() {
+        return but1;
+    }
+
+    public void setBut1(But but1) {
+        this.but1 = but1;
+    }
+
+    public But getBut2() {
+        return but2;
+    }
+
+    public void setBut2(But but2) {
+        this.but2 = but2;
     }
 }
