@@ -31,11 +31,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private Poussoir poussoir2;
     private Poussoir poussoir3;
     private Poussoir poussoir4;
-
     private Joueur joueur1;
     private Joueur joueur2;
     private Joueur joueur3;
     private Joueur joueur4;
+
+    private ArrayList<Integer> activePointers;
 
 
     public GameView(Context context, int nbJoueurs) {
@@ -87,6 +88,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         paintBlack.setStyle(Paint.Style.FILL);
         paintBlack.setColor(Color.BLACK);
         setPaintBlack(paintBlack);
+
+        activePointers = new ArrayList<Integer>();
     }
 
     public GameView(Context context, AttributeSet attrs) {
@@ -120,7 +123,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         Rondelle maRondelle = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), 30);
-        maRondelle.setVitesse(10);
+        maRondelle.setVitesse(0);
         setMaRondelle(maRondelle);
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -129,6 +132,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             public void run() {
                 updateRondelle();
                 dessin();
+                if(maRondelle.getVitesse() > 0){
+                    maRondelle.setVitesse((float) (maRondelle.getVitesse() - 0.1));
+                }
             }
         }, 0, 2, TimeUnit.MILLISECONDS);
 
@@ -268,47 +274,56 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                     getMaRondelle().setDirection("S");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
+                    maRondelle.setVitesse(20);
                     //Log.d("direction", "touche N");
                 } //Touche S
                 else if ((pointSRondelle[0] > (pointNPoussoir[0] - hitboxDistance)) && (pointSRondelle[0] < (pointNPoussoir[0] + hitboxDistance)) && (pointSRondelle[1] > (pointNPoussoir[1] - hitboxDistance)) && (pointSRondelle[1] < (pointNPoussoir[1] + hitboxDistance))) {
                     getMaRondelle().setDirection("N");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
+                    maRondelle.setVitesse(20);
                     //Log.d("direction", "touche S");
                 }//Touche E
                 else if ((pointERondelle[0] > (pointOPoussoir[0] - hitboxDistance)) && (pointERondelle[0] < (pointOPoussoir[0] + hitboxDistance)) && (pointERondelle[1] > (pointOPoussoir[1] - hitboxDistance)) && (pointERondelle[1] < (pointOPoussoir[1] + hitboxDistance))) {
                     getMaRondelle().setDirection("O");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
+                    maRondelle.setVitesse(20);
                     //Log.d("direction", "touche E");
                 }//Touche O
                 else if ((pointORondelle[0] > (pointEPoussoir[0] - hitboxDistance)) && (pointORondelle[0] < (pointEPoussoir[0] + hitboxDistance)) && (pointORondelle[1] > (pointEPoussoir[1] - hitboxDistance)) && (pointORondelle[1] < (pointEPoussoir[1] + hitboxDistance))) {
                     getMaRondelle().setDirection("E");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
+                    maRondelle.setVitesse(20);
                     //Log.d("direction", "touche O");
                 }//Touche NE
                 else if ((pointSORondelle[0] > (pointNEPoussoir[0] - hitboxDistance)) && (pointSORondelle[0] < (pointNEPoussoir[0] + hitboxDistance)) && (pointSORondelle[1] > pointNEPoussoir[1] - hitboxDistance) && (pointSORondelle[1] < (pointNEPoussoir[1] + hitboxDistance))) {
                     getMaRondelle().setDirection("NE");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
+                    maRondelle.setVitesse(20);
                     Log.d("direction", "touche SO");
                 }//Touche NO
                 else if ((pointSERondelle[0] > (pointNOPoussoir[0] - hitboxDistance)) && (pointSERondelle[0] < (pointNOPoussoir[0] + hitboxDistance)) && (pointSERondelle[1] > pointNOPoussoir[1] - hitboxDistance) && (pointSERondelle[1] < (pointNOPoussoir[1] + hitboxDistance))) {
                     getMaRondelle().setDirection("NO");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
+                    maRondelle.setVitesse(20);
                     Log.d("direction", "touche SO");
                 }//Touche SE
                 else if ((pointNORondelle[0] > (pointSEPoussoir[0] - hitboxDistance)) && (pointNORondelle[0] < (pointSEPoussoir[0] + hitboxDistance)) && (pointNORondelle[1] > pointSEPoussoir[1] - hitboxDistance) && (pointNORondelle[1] < (pointSEPoussoir[1] + hitboxDistance))) {
                     getMaRondelle().setDirection("SE");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
+                    maRondelle.setVitesse(20);
                     Log.d("direction", "touche SO");
                 }//Touche SO
                 else if ((pointNERondelle[0] > (pointSOPoussoir[0] - hitboxDistance)) && (pointNERondelle[0] < (pointSOPoussoir[0] + hitboxDistance)) && (pointNERondelle[1] > pointSOPoussoir[1] - hitboxDistance) && (pointNERondelle[1] < (pointSOPoussoir[1] + hitboxDistance))) {
                     getMaRondelle().setDirection("SO");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
+                    getMaRondelle().setAvailable(false);
+                    maRondelle.setVitesse(20);
                     Log.d("direction", "touche SO");
                 }
             }
@@ -427,5 +442,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
     public void setPaintRondelle(Paint paintRondelle) {
         this.paintRondelle = paintRondelle;
+    }
+
+    public ArrayList<Integer> getActivePointers() {
+        return activePointers;
+    }
+
+    public void setActivePointers(ArrayList<Integer> activePointers) {
+        this.activePointers = activePointers;
+    }
+
+    public boolean addActivePointer(int idToAdd) {
+        Log.d("gameview", "idToAdd " + idToAdd + "");
+        boolean result = this.activePointers.add(idToAdd);
+        return result;
+    }
+
+    public void removeActivePointer(int toRemove) {
+        int indexToRemove = this.activePointers.indexOf(toRemove);
+        if (indexToRemove != -1) {
+            this.activePointers.remove(indexToRemove);
+        }
     }
 }

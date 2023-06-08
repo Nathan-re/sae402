@@ -11,12 +11,13 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private LinearLayout layout;
     private GameView maGameView;
-
+    private int compteur;
 
     private int nbJoueurs;
     private int x;
@@ -38,22 +39,53 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
+        compteur = 0;
 
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        int activePointer = motionEvent.getActionIndex();
-        Log.d("test", motionEvent.getAction()+ " -- " + activePointer);
-
-        Poussoir[] poussoirs = getMaGameView().getPoussoirs();
 
         int nbPointers = motionEvent.getPointerCount();
+
         if (nbPointers > nbJoueurs){
             nbPointers = nbJoueurs;
+        }else{
+            int activePointer = motionEvent.getActionIndex();
+
+            switch(motionEvent.getAction() & MotionEvent.ACTION_MASK){
+                case MotionEvent.ACTION_DOWN:
+                    getMaGameView().addActivePointer(0);
+
+                    break;
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    int idToAdd = (int)(motionEvent.getActionIndex());
+                    boolean result = getMaGameView().addActivePointer(idToAdd);
+                    break;
+
+                case MotionEvent.ACTION_POINTER_UP:
+                    getMaGameView().removeActivePointer(motionEvent.getActionIndex());
+                    Log.d("test", "Autre pointer supprimé !!!");
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    getMaGameView().setActivePointers(new ArrayList<Integer>());
+                    Log.d("test", "Premier pointer suprimé !!!");
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    Log.d("test", "Action move déclenché !!!");
+
+                    setCompteur(getCompteur() + 1);
+                    break;
+            }
         }
 
+        Log.d("test", getCompteur() + "");
+
+
+
+        Poussoir[] poussoirs = getMaGameView().getPoussoirs();
 
         for (int i = 0; i < nbPointers; i++) {
             float littleDistance = 999999;
@@ -99,5 +131,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     public void setMaGameView(GameView maGameView) {
         this.maGameView = maGameView;
+    }
+
+    public int getCompteur() {
+        return compteur;
+    }
+
+    public void setCompteur(int compteur) {
+        this.compteur = compteur;
     }
 }
