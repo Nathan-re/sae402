@@ -64,16 +64,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 break;
 
             case 4:
-                this.joueur1 = new Joueur("Jules", Color.YELLOW);
+                this.joueur1 = new Joueur("Jules", Color.argb(255,253,225,45));
                 this.poussoir1 = new Poussoir(100,100, joueur1.getPlayerColor(), 40);
 
-                this.joueur2 = new Joueur("Pierre", Color.BLUE);
+                this.joueur2 = new Joueur("Pierre", Color.argb(255,253,225,45));
                 this.poussoir2 = new Poussoir(200,200, joueur2.getPlayerColor(), 40);
 
-                this.joueur3 = new Joueur("Antoine", Color.GREEN);
+                this.joueur3 = new Joueur("Antoine", Color.argb(255,127,50,195));
                 this.poussoir3 = new Poussoir(300,300, joueur3.getPlayerColor(), 40);
 
-                this.joueur4 = new Joueur("Nathan", Color.RED);
+                this.joueur4 = new Joueur("Nathan", Color.argb(255,127,50,195));
                 this.poussoir4 = new Poussoir(400,400, joueur4.getPlayerColor(), 40);
 
                 break;
@@ -81,7 +81,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
         Paint paintRondelle = new Paint();
         paintRondelle.setStyle(Paint.Style.FILL);
-        paintRondelle.setColor(Color.CYAN);
+        paintRondelle.setColor(Color.WHITE);
         setPaintRondelle(paintRondelle);
 
         Paint paintBlack = new Paint();
@@ -90,6 +90,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         setPaintBlack(paintBlack);
 
         activePointers = new ArrayList<Integer>();
+
     }
 
     public GameView(Context context, AttributeSet attrs) {
@@ -125,6 +126,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         Rondelle maRondelle = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), 30);
         maRondelle.setVitesse(0);
         setMaRondelle(maRondelle);
+        reset();
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
@@ -153,6 +155,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
     public void setMonSurfaceHolder(SurfaceHolder monSurfaceHolder) {
         this.monSurfaceHolder = monSurfaceHolder;
+    }
+
+    public void reset(){
+        poussoir1.setX(getWidth()/4);
+        poussoir1.setY(getHeight()/4);
+
+        poussoir2.setX(getWidth()/4 + getWidth()/2);
+        poussoir2.setY(getHeight()/4);
+
+        poussoir3.setX(getWidth()/4);
+        poussoir3.setY(getHeight()/4 + getHeight()/2) ;
+
+        poussoir4.setX(getWidth()/4 + getWidth()/2);
+        poussoir4.setY(getHeight()/4 + getHeight()/2);
     }
 
     public void updateRondelle(){
