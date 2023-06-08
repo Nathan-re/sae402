@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -36,9 +37,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private Joueur joueur3;
     private Joueur joueur4;
     private ArrayList<Integer> activePointers;
-    private int nbPaletsJoues;
+    private int nbRondellesJouees;
     private But but1;
     private But but2;
+    private int scoreEquipe1;
+    private int scoreEquipe2;
+
+    private PartieClassique partie;
 
 
     public GameView(Context context, int nbJoueurs) {
@@ -92,12 +97,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         setPaintBlack(paintBlack);
 
         activePointers = new ArrayList<Integer>();
-        nbPaletsJoues = 0;
+        nbRondellesJouees = 0;
 
         Paint paintBut = new Paint();
         paintBut.setStyle(Paint.Style.FILL);
         paintBut.setColor(Color.WHITE);
         setPaintBut(paintBut);
+
+        scoreEquipe1 = 0;
+        scoreEquipe2 = 0;
+
     }
 
     public GameView(Context context, AttributeSet attrs) {
@@ -129,6 +138,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         canvas.drawRect(getBut2().getLeft(),getBut2().getTop(),getBut2().getRight(), getBut2().getBottom(), paintBut);
 
         canvas.drawCircle(getMaRondelle().getX(), getMaRondelle().getY(), getMaRondelle().getRadius(), paintRondelle);
+
+
+        Paint paintText = new Paint();
+        paintText.setColor(Color.WHITE);
+        paintText.setStyle(Paint.Style.FILL);
+        paintText.setTextSize(180);
+
+        canvas.rotate(-90, getWidth() /2, getHeight()/2);
+        Log.d("test", getHeight() + "");
+        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth()/2 -200, 800, paintText);
+
+
+
         getMonSurfaceHolder().unlockCanvasAndPost(canvas);
 
     }
@@ -138,7 +160,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         maRondelle.setVitesse(0);
         setMaRondelle(maRondelle);
 
-        Log.d("test", getWidth() + "");
         but1 = new But((getWidth() /4) + (getWidth() /8), 0, (getWidth() /2) + (getWidth() /8), 20,Color.WHITE);
         but2 = new But((getWidth() /4) + (getWidth() /8), (getHeight()-20), (getWidth() /2 + getWidth() /8), getHeight(),Color.WHITE);
 
@@ -153,7 +174,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 if(maRondelle.getVitesse() > 0){
                     maRondelle.setVitesse((float) (maRondelle.getVitesse() - 0.1));
                 }
-                testBut();
             }
         }, 0, 2, TimeUnit.MILLISECONDS);
 
@@ -186,6 +206,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
         poussoir4.setX(getWidth()/4 + getWidth()/2);
         poussoir4.setY(getHeight()/4 + getHeight()/2);
+
+        maRondelle.setX((float)(getWidth() /2));
+        maRondelle.setY((float)(getHeight() /2));
+        maRondelle.setVitesse(0);
     }
 
     public void updateRondelle(){
@@ -258,14 +282,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         pointORondelle[0] = xRondelle - radiusRondelle;
         pointORondelle[1] = yRondelle;
 
-        if(getMaRondelle().getCompteurAvailable() != 0){
-            int currentCompteur = getMaRondelle().getCompteurAvailable();
-            getMaRondelle().setCompteurAvailable(currentCompteur - 1);
+        if(maRondelle.getCompteurAvailable() != 0){
+            int currentCompteur = maRondelle.getCompteurAvailable();
+            maRondelle.setCompteurAvailable(currentCompteur - 1);
         }else{
-            getMaRondelle().setAvailable(true);
+            maRondelle.setAvailable(true);
         }
 
-        if(getMaRondelle().isAvailable() && getMaRondelle().getCompteurAvailable() == 0){
+        if(maRondelle.isAvailable() && maRondelle.getCompteurAvailable() == 0){
             int compteurAvailable = 20;
             for (Poussoir poussoir : getPoussoirs()){
                 int radiusPoussoir = poussoir.getRadius();
@@ -362,6 +386,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             }
         }
 
+
+        if((pointNRondelle[0] > getBut1().getLeft() && pointNRondelle[0] < getBut1().getRight()) && (pointNRondelle[1] <= getBut1().getBottom())){
+            reset();
+            Log.d("résultat" ,"but!");
+            this.butMarque(1);
+        } else if ((pointSRondelle[0] > getBut2().getLeft() && pointSRondelle[0] < getBut2().getRight()) && (pointSRondelle[1] >= getBut2().getTop())) {
+            reset();
+            Log.d("résultat" ,"but!");
+            this.butMarque(2);
+        }
+
         //Rebondir sur les bords
         if(getMaRondelle().getDirection() == "NE" && pointNRondelle[1] < 0){
             getMaRondelle().setDirection("SE");
@@ -389,6 +424,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             getMaRondelle().setDirection("E");
         }
 
+    }
+
+    public void butMarque(int idEquipe){
+        nbRondellesJouees = nbRondellesJouees + 1;
+        if(idEquipe == 1){
+            scoreEquipe1 = scoreEquipe1 + 1;
+        }else if(idEquipe == 2){
+            scoreEquipe2 = scoreEquipe2 + 1;
+        }
+
+        if(scoreEquipe1 == 5 && scoreEquipe2 == 5){
+            Log.d("résultat" ,"But en or !");
+            reset();
+        } else if(nbRondellesJouees >= 10 || (scoreEquipe1 >= 7 || scoreEquipe2 >= 7)){
+            //Fin de partie -> résultat
+            Log.d("résultat" ,"résultat");
+        }else{
+            Log.d("résultat" ,"reset");
+            reset();
+        }
 
     }
 
@@ -411,10 +466,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         }
 
         return poussoirs;
-    }
-
-    public void testBut(){
-
     }
 
     public Rondelle getMaRondelle() {
@@ -510,14 +561,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         this.paintBut = paintBut;
     }
 
-    public int getNbPaletsJoues() {
-        return nbPaletsJoues;
-    }
-
-    public void setNbPaletsJoues(int nbPaletsJoues) {
-        this.nbPaletsJoues = nbPaletsJoues;
-    }
-
     public But getBut1() {
         return but1;
     }
@@ -533,4 +576,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     public void setBut2(But but2) {
         this.but2 = but2;
     }
+
+    public int getNbRondellesJouees() {
+        return nbRondellesJouees;
+    }
+
+    public void setNbRondellesJouees(int nbRondellesJouees) {
+        this.nbRondellesJouees = nbRondellesJouees;
+    }
+
+    public int getScoreEquipe1() {
+        return scoreEquipe1;
+    }
+
+    public int getScoreEquipe2() {
+        return scoreEquipe2;
+    }
+
 }
