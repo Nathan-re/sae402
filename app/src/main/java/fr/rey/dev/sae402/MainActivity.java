@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
         Poussoir[] poussoirs = getMaGameView().getPoussoirs();
+        Log.d("test", poussoirs.length + "");
 
         int nbPointers = motionEvent.getPointerCount();
         if (nbPointers > nbJoueurs){
@@ -62,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             for (Poussoir poussoir : poussoirs) {
                 if((motionEvent.getX(i) > poussoir.getX() - 300) && (motionEvent.getX(i) < poussoir.getX() + 300) && (motionEvent.getY(i) > poussoir.getY() - 300) && (motionEvent.getY(i) < poussoir.getY() + 300)){
                     float distance = (float)(Math.sqrt((float)(Math.pow(poussoir.getX() - motionEvent.getX(i),2)) + (float)(Math.pow(poussoir.getY() - motionEvent.getY(i),2))));
-                    Log.d("test", distance + "");
                     if(distance < littleDistance){
                         currentPoussoir = poussoir;
                         littleX = motionEvent.getX(i);

@@ -23,6 +23,9 @@ import java.util.concurrent.TimeUnit;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private SurfaceHolder monSurfaceHolder;
     private int nbJoueurs;
+
+    private Paint paintBlack;
+    private Paint paintRondelle;
     private Rondelle maRondelle;
     private Poussoir poussoir1;
     private Poussoir poussoir2;
@@ -74,6 +77,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
                 break;
         }
+
+        Paint paintRondelle = new Paint();
+        paintRondelle.setStyle(Paint.Style.FILL);
+        paintRondelle.setColor(Color.CYAN);
+        setPaintRondelle(paintRondelle);
+
+        Paint paintBlack = new Paint();
+        paintBlack.setStyle(Paint.Style.FILL);
+        paintBlack.setColor(Color.BLACK);
+        setPaintBlack(paintBlack);
     }
 
     public GameView(Context context, AttributeSet attrs) {
@@ -85,10 +98,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     public void dessin(){
-
-        Paint paintBlack = new Paint();
-        paintBlack.setStyle(Paint.Style.FILL);
-        paintBlack.setColor(Color.BLACK);
 
         Paint paintPoussoir = new Paint();
         paintPoussoir.setStyle(Paint.Style.FILL);
@@ -103,16 +112,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             paintPoussoir.setColor(poussoir.getCouleur());
             canvas.drawCircle(poussoir.getX(), poussoir.getY(), 40, paintPoussoir);
         }
+
+        canvas.drawCircle(getMaRondelle().getX(), getMaRondelle().getY(), getMaRondelle().getRadius(), paintRondelle);
         getMonSurfaceHolder().unlockCanvasAndPost(canvas);
 
     }
 
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
+        Rondelle maRondelle = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), 40);
+        setMaRondelle(maRondelle);
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
+                updateRondelle();
                 dessin();
             }
         }, 0, 20, TimeUnit.MILLISECONDS);
@@ -134,33 +148,39 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         this.monSurfaceHolder = monSurfaceHolder;
     }
 
+    public void updateRondelle(){
+        getMaRondelle().setX(getMaRondelle().getX() + 1);
+        getMaRondelle().setY(getMaRondelle().getY() + 1);
+
+    }
+
+    public Poussoir[] getPoussoirs() {
+        Poussoir[] poussoirs = new Poussoir[this.nbJoueurs];
+        if(getPoussoir1().getCouleur() != 0){
+            poussoirs[0] = poussoir1;
+        }
+
+        if(getPoussoir2().getCouleur() != 0){
+            poussoirs[1] = poussoir2;
+        }
+
+        if(getPoussoir3().getCouleur() != 0){
+            poussoirs[2] = poussoir3;
+        }
+
+        if(getPoussoir4().getCouleur() != 0){
+            poussoirs[3] = poussoir4;
+        }
+
+        return poussoirs;
+    }
+
     public Rondelle getMaRondelle() {
         return maRondelle;
     }
 
     public void setMaRondelle(Rondelle maRondelle) {
         this.maRondelle = maRondelle;
-    }
-
-    public Poussoir[] getPoussoirs() {
-        Poussoir[] poussoirs = new Poussoir[this.nbJoueurs];
-        if(getPoussoir1() != null){
-            poussoirs[0] = poussoir1;
-        }
-
-        if(getPoussoir2() != null){
-            poussoirs[1] = poussoir2;
-        }
-
-        if(getPoussoir3() != null){
-            poussoirs[2] = poussoir3;
-        }
-
-        if(getPoussoir4() != null){
-            poussoirs[3] = poussoir4;
-        }
-
-        return poussoirs;
     }
 
     public int getNbJoueurs() {
@@ -201,5 +221,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
     public void setPoussoir4(Poussoir poussoir4) {
         this.poussoir4 = poussoir4;
+    }
+
+    public Paint getPaintBlack() {
+        return paintBlack;
+    }
+
+    public void setPaintBlack(Paint paintBlack) {
+        this.paintBlack = paintBlack;
+    }
+
+    public Paint getPaintRondelle() {
+        return paintRondelle;
+    }
+
+    public void setPaintRondelle(Paint paintRondelle) {
+        this.paintRondelle = paintRondelle;
     }
 }
