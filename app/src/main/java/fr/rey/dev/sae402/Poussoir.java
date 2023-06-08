@@ -8,6 +8,15 @@ public class Poussoir {
     private float y;
     private int couleur;
 
+    private int radius;
+
+    public Poussoir(float x, float y, int couleur, int radius){
+        this.x = x;
+        this.y = y;
+        this.couleur = couleur;
+        this.radius = radius;
+    }
+
     public Poussoir(float x, float y, int couleur){
         this.x = x;
         this.y = y;
@@ -41,5 +50,13 @@ public class Poussoir {
 
     public void setCouleur(int couleur) {
         this.couleur = couleur;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 }

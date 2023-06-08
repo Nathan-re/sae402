@@ -44,9 +44,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
+        int activePointer = motionEvent.getActionIndex();
+        Log.d("test", motionEvent.getAction()+ " -- " + activePointer);
 
         Poussoir[] poussoirs = getMaGameView().getPoussoirs();
-        Log.d("test", poussoirs.length + "");
 
         int nbPointers = motionEvent.getPointerCount();
         if (nbPointers > nbJoueurs){

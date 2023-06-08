@@ -54,26 +54,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
         switch (nbJoueurs){
             case 1:
-                this.poussoir1 = new Poussoir(100,100, Color.RED);
+                this.poussoir1 = new Poussoir(100,100, Color.RED, 40);
                 break;
 
             case 2:
-                this.poussoir1 = new Poussoir(100,100, Color.RED);
-                this.poussoir2 = new Poussoir(200,200, Color.GREEN);
+                this.poussoir1 = new Poussoir(100,100, Color.RED, 40);
+                this.poussoir2 = new Poussoir(200,200, Color.GREEN, 40);
                 break;
 
             case 4:
                 this.joueur1 = new Joueur("Jules", Color.YELLOW);
-                this.poussoir1 = new Poussoir(100,100, joueur1.getPlayerColor());
+                this.poussoir1 = new Poussoir(100,100, joueur1.getPlayerColor(), 40);
 
                 this.joueur2 = new Joueur("Pierre", Color.BLUE);
-                this.poussoir2 = new Poussoir(200,200, joueur2.getPlayerColor());
+                this.poussoir2 = new Poussoir(200,200, joueur2.getPlayerColor(), 40);
 
                 this.joueur3 = new Joueur("Antoine", Color.GREEN);
-                this.poussoir3 = new Poussoir(300,300, joueur3.getPlayerColor());
+                this.poussoir3 = new Poussoir(300,300, joueur3.getPlayerColor(), 40);
 
                 this.joueur4 = new Joueur("Nathan", Color.RED);
-                this.poussoir4 = new Poussoir(400,400, joueur4.getPlayerColor());
+                this.poussoir4 = new Poussoir(400,400, joueur4.getPlayerColor(), 40);
 
                 break;
         }
@@ -110,7 +110,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         for (Poussoir poussoir:poussoirs) {
 
             paintPoussoir.setColor(poussoir.getCouleur());
-            canvas.drawCircle(poussoir.getX(), poussoir.getY(), 40, paintPoussoir);
+            canvas.drawCircle(poussoir.getX(), poussoir.getY(), poussoir.getRadius(), paintPoussoir);
         }
 
         canvas.drawCircle(getMaRondelle().getX(), getMaRondelle().getY(), getMaRondelle().getRadius(), paintRondelle);
@@ -119,7 +119,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        Rondelle maRondelle = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), 40);
+        Rondelle maRondelle = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), 30);
+        maRondelle.setVitesse(10);
         setMaRondelle(maRondelle);
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -129,7 +130,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 updateRondelle();
                 dessin();
             }
-        }, 0, 20, TimeUnit.MILLISECONDS);
+        }, 0, 2, TimeUnit.MILLISECONDS);
 
     }
 
@@ -149,8 +150,197 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     public void updateRondelle(){
-        getMaRondelle().setX(getMaRondelle().getX() + 1);
-        getMaRondelle().setY(getMaRondelle().getY() + 1);
+        float vitesse = getMaRondelle().getVitesse();
+        switch(getMaRondelle().getDirection()){
+            case "N":
+                getMaRondelle().setY(getMaRondelle().getY() - (1 * vitesse));
+                break;
+            case "S":
+                getMaRondelle().setY(getMaRondelle().getY() + (1 * vitesse));
+                break;
+            case "E":
+                getMaRondelle().setX(getMaRondelle().getX() + (1 * vitesse));
+                break;
+            case "O":
+                getMaRondelle().setX(getMaRondelle().getX() - (1 * vitesse));
+                break;
+            case "NE":
+                getMaRondelle().setX((float)(getMaRondelle().getX() + (1 * vitesse)));
+                getMaRondelle().setY((float)(getMaRondelle().getY() - (1 * vitesse)));
+                break;
+            case "NO":
+                getMaRondelle().setX((float)(getMaRondelle().getX() - (1 * vitesse)));
+                getMaRondelle().setY((float)(getMaRondelle().getY() - (1 * vitesse)));
+                break;
+            case "SE":
+                getMaRondelle().setX((float)(getMaRondelle().getX() + (1 * vitesse)));
+                getMaRondelle().setY((float)(getMaRondelle().getY() + (1 * vitesse)));
+                break;
+            case "SO":
+                getMaRondelle().setX((float)(getMaRondelle().getX() - (1 * vitesse)));
+                getMaRondelle().setY((float)(getMaRondelle().getY() + (1 * vitesse)));
+                break;
+        }
+
+        float xRondelle = getMaRondelle().getX();
+        float yRondelle = getMaRondelle().getY();
+        int radiusRondelle = getMaRondelle().getRadius();
+        int hitboxDistance = 40;
+
+        float[] pointNRondelle = new float[2];
+        pointNRondelle[0] = xRondelle;
+        pointNRondelle[1] = yRondelle - radiusRondelle;
+
+        float[] pointNORondelle = new float[2];
+        pointNORondelle[0] = xRondelle - (radiusRondelle / 2);
+        pointNORondelle[1] = yRondelle - (radiusRondelle / 2);
+
+        float[] pointNERondelle = new float[2];
+        pointNERondelle[0] = xRondelle + (radiusRondelle / 2);
+        pointNERondelle[1] = yRondelle - (radiusRondelle / 2);
+
+        float[] pointSRondelle = new float[2];
+        pointSRondelle[0] = xRondelle;
+        pointSRondelle[1] = yRondelle + radiusRondelle;
+
+        float[] pointSORondelle = new float[2];
+        pointSORondelle[0] = xRondelle - (radiusRondelle / 2);
+        pointSORondelle[1] = yRondelle + (radiusRondelle / 2);
+
+        float[] pointSERondelle = new float[2];
+        pointSERondelle[0] = xRondelle + (radiusRondelle / 2);
+        pointSERondelle[1] = yRondelle + (radiusRondelle / 2);
+
+        float[] pointERondelle = new float[2];
+        pointERondelle[0] = xRondelle + radiusRondelle;
+        pointERondelle[1] = yRondelle;
+
+        float[] pointORondelle = new float[2];
+        pointORondelle[0] = xRondelle - radiusRondelle;
+        pointORondelle[1] = yRondelle;
+
+        if(getMaRondelle().getCompteurAvailable() != 0){
+            int currentCompteur = getMaRondelle().getCompteurAvailable();
+            getMaRondelle().setCompteurAvailable(currentCompteur - 1);
+        }else{
+            getMaRondelle().setAvailable(true);
+        }
+
+        if(getMaRondelle().isAvailable() && getMaRondelle().getCompteurAvailable() == 0){
+            int compteurAvailable = 20;
+            for (Poussoir poussoir : getPoussoirs()){
+                int radiusPoussoir = poussoir.getRadius();
+
+                float[] pointNPoussoir = new float[2];
+                pointNPoussoir[0] = poussoir.getX();
+                pointNPoussoir[1] = poussoir.getY() - radiusPoussoir;
+
+                float[] pointNEPoussoir = new float[2];
+                pointNEPoussoir[0] = poussoir.getX() + (radiusPoussoir / 2);
+                pointNEPoussoir[1] = poussoir.getY() - (radiusPoussoir);
+
+                float[] pointNOPoussoir = new float[2];
+                pointNOPoussoir[0] = poussoir.getX() - (radiusPoussoir / 2);
+                pointNOPoussoir[1] = poussoir.getY() - (radiusPoussoir);
+
+                float[] pointSPoussoir = new float[2];
+                pointSPoussoir[0] = poussoir.getX();
+                pointSPoussoir[1] = poussoir.getY() + radiusPoussoir;
+
+                float[] pointSEPoussoir = new float[2];
+                pointSEPoussoir[0] = poussoir.getX() + (radiusPoussoir / 2);
+                pointSEPoussoir[1] = poussoir.getY() + radiusPoussoir;
+
+                float[] pointSOPoussoir = new float[2];
+                pointSOPoussoir[0] = poussoir.getX() - (radiusPoussoir / 2);
+                pointSOPoussoir[1] = poussoir.getY() + radiusPoussoir;
+
+                float[] pointEPoussoir = new float[2];
+                pointEPoussoir[0] = poussoir.getX() + radiusPoussoir;
+                pointEPoussoir[1] = poussoir.getY();
+
+                float[] pointOPoussoir = new float[2];
+                pointOPoussoir[0] = poussoir.getX() - radiusPoussoir;
+                pointOPoussoir[1] = poussoir.getY();
+
+                //Touche N
+                if ((pointNRondelle[0] > (pointSPoussoir[0] - hitboxDistance)) && (pointNRondelle[0] < (pointSPoussoir[0] + hitboxDistance)) && (pointNRondelle[1] > (pointSPoussoir[1] - radiusPoussoir - hitboxDistance)) && (pointNRondelle[1] < (pointSPoussoir[1] + hitboxDistance))){
+                    getMaRondelle().setDirection("S");
+                    getMaRondelle().setCompteurAvailable(compteurAvailable);
+                    getMaRondelle().setAvailable(false);
+                    //Log.d("direction", "touche N");
+                } //Touche S
+                else if ((pointSRondelle[0] > (pointNPoussoir[0] - hitboxDistance)) && (pointSRondelle[0] < (pointNPoussoir[0] + hitboxDistance)) && (pointSRondelle[1] > (pointNPoussoir[1] - hitboxDistance)) && (pointSRondelle[1] < (pointNPoussoir[1] + hitboxDistance))) {
+                    getMaRondelle().setDirection("N");
+                    getMaRondelle().setCompteurAvailable(compteurAvailable);
+                    getMaRondelle().setAvailable(false);
+                    //Log.d("direction", "touche S");
+                }//Touche E
+                else if ((pointERondelle[0] > (pointOPoussoir[0] - hitboxDistance)) && (pointERondelle[0] < (pointOPoussoir[0] + hitboxDistance)) && (pointERondelle[1] > (pointOPoussoir[1] - hitboxDistance)) && (pointERondelle[1] < (pointOPoussoir[1] + hitboxDistance))) {
+                    getMaRondelle().setDirection("O");
+                    getMaRondelle().setCompteurAvailable(compteurAvailable);
+                    getMaRondelle().setAvailable(false);
+                    //Log.d("direction", "touche E");
+                }//Touche O
+                else if ((pointORondelle[0] > (pointEPoussoir[0] - hitboxDistance)) && (pointORondelle[0] < (pointEPoussoir[0] + hitboxDistance)) && (pointORondelle[1] > (pointEPoussoir[1] - hitboxDistance)) && (pointORondelle[1] < (pointEPoussoir[1] + hitboxDistance))) {
+                    getMaRondelle().setDirection("E");
+                    getMaRondelle().setCompteurAvailable(compteurAvailable);
+                    getMaRondelle().setAvailable(false);
+                    //Log.d("direction", "touche O");
+                }//Touche NE
+                else if ((pointSORondelle[0] > (pointNEPoussoir[0] - hitboxDistance)) && (pointSORondelle[0] < (pointNEPoussoir[0] + hitboxDistance)) && (pointSORondelle[1] > pointNEPoussoir[1] - hitboxDistance) && (pointSORondelle[1] < (pointNEPoussoir[1] + hitboxDistance))) {
+                    getMaRondelle().setDirection("NE");
+                    getMaRondelle().setCompteurAvailable(compteurAvailable);
+                    getMaRondelle().setAvailable(false);
+                    Log.d("direction", "touche SO");
+                }//Touche NO
+                else if ((pointSERondelle[0] > (pointNOPoussoir[0] - hitboxDistance)) && (pointSERondelle[0] < (pointNOPoussoir[0] + hitboxDistance)) && (pointSERondelle[1] > pointNOPoussoir[1] - hitboxDistance) && (pointSERondelle[1] < (pointNOPoussoir[1] + hitboxDistance))) {
+                    getMaRondelle().setDirection("NO");
+                    getMaRondelle().setCompteurAvailable(compteurAvailable);
+                    getMaRondelle().setAvailable(false);
+                    Log.d("direction", "touche SO");
+                }//Touche SE
+                else if ((pointNORondelle[0] > (pointSEPoussoir[0] - hitboxDistance)) && (pointNORondelle[0] < (pointSEPoussoir[0] + hitboxDistance)) && (pointNORondelle[1] > pointSEPoussoir[1] - hitboxDistance) && (pointNORondelle[1] < (pointSEPoussoir[1] + hitboxDistance))) {
+                    getMaRondelle().setDirection("SE");
+                    getMaRondelle().setCompteurAvailable(compteurAvailable);
+                    getMaRondelle().setAvailable(false);
+                    Log.d("direction", "touche SO");
+                }//Touche SO
+                else if ((pointNERondelle[0] > (pointSOPoussoir[0] - hitboxDistance)) && (pointNERondelle[0] < (pointSOPoussoir[0] + hitboxDistance)) && (pointNERondelle[1] > pointSOPoussoir[1] - hitboxDistance) && (pointNERondelle[1] < (pointSOPoussoir[1] + hitboxDistance))) {
+                    getMaRondelle().setDirection("SO");
+                    getMaRondelle().setCompteurAvailable(compteurAvailable);
+                    Log.d("direction", "touche SO");
+                }
+            }
+        }
+
+        //Rebondir sur les bords
+        if(getMaRondelle().getDirection() == "NE" && pointNRondelle[1] < 0){
+            getMaRondelle().setDirection("SE");
+        }else if(getMaRondelle().getDirection() == "NO" && pointNRondelle[1] < 0){
+            getMaRondelle().setDirection("SO");
+        } else if(pointNRondelle[1] < 0){
+            getMaRondelle().setDirection("S");
+        }else if(getMaRondelle().getDirection() == "SE" && pointSRondelle[1] > getHeight()){
+            getMaRondelle().setDirection("NE");
+        }else if(getMaRondelle().getDirection() == "SO" && pointSRondelle[1] > getHeight()){
+            getMaRondelle().setDirection("NO");
+        } else if (pointSRondelle[1] > getHeight()) {
+            getMaRondelle().setDirection("N");
+        }else if(getMaRondelle().getDirection() == "NE" && pointERondelle[0] > getWidth()){
+            getMaRondelle().setDirection("NO");
+        }else if(getMaRondelle().getDirection() == "SE" && pointERondelle[0] > getWidth()){
+            getMaRondelle().setDirection("SO");
+        } else if (pointERondelle[0] > getWidth()) {
+            getMaRondelle().setDirection("O");
+        }else if(getMaRondelle().getDirection() == "NO" && pointORondelle[0] < 0){
+            getMaRondelle().setDirection("NE");
+        }else if(getMaRondelle().getDirection() == "SO" && pointORondelle[0] < 0){
+            getMaRondelle().setDirection("SE");
+        } else if (pointORondelle[0] < 0) {
+            getMaRondelle().setDirection("E");
+        }
+
 
     }
 
