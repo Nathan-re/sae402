@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class historique extends AppCompatActivity
+public class ChoixEquipe4pers extends AppCompatActivity
 {
 
 
@@ -36,21 +36,16 @@ public class historique extends AppCompatActivity
 
 
 
-    public void retour(View view) {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-
-    }
     public void accessDataBase() {
 
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.historique_matchs);
+        setContentView(R.layout.choix_des_equipes4pers);
 
-
-        Button ButtonRetour = (Button) findViewById(R.id.button_retour);
+        Button lancer_partie4pers = (Button) findViewById(R.id.lancer_partie4pers);
+        Button ButtonRetour = (Button) findViewById(R.id.button_retour_choix_Mode2);
 
         ButtonRetour.setOnClickListener((new View.OnClickListener() {
             @Override
@@ -69,17 +64,21 @@ public class historique extends AppCompatActivity
         ));
 
 
-        /*Intent intentHistorique = new Intent(getApplicationContext(), MainActivity.class);
+        lancer_partie4pers.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-        new Thread(() -> {
-            accessDataBase();
+                Log.i("Retour a l'accueil", "Yep !");
+
+                new Thread(() -> {
 
 
+                    Intent LancerPartie4Pers = new Intent(getApplicationContext(), PartieClassique.class);
+                    startActivity(LancerPartie4Pers);
+                }).start();
 
-
-            startActivity(intentHistorique);
-        }).start();
-*/
+            }}
+        ));
     }
 
 

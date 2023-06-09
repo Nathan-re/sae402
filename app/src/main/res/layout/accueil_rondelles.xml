@@ -24,7 +24,7 @@
         app:layout_constraintVertical_bias="0.045" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/commencer_Joueurs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -51,7 +51,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:weightSum="1"
-        app:layout_constraintBottom_toBottomOf="@id/button2"
+        app:layout_constraintBottom_toBottomOf="@id/commencer_Joueurs"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/textView2">
@@ -67,7 +67,7 @@
             android:textSize="24sp" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/button_historique"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.1"

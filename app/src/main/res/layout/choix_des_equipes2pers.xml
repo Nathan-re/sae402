@@ -9,7 +9,7 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="72dp"
         android:text="Choix des équipes"
         android:textSize="34sp"
         app:layout_constraintBottom_toTopOf="@+id/textView7"
@@ -83,15 +83,26 @@
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <Button
-        android:id="@+id/lancer_partie"
+        android:id="@+id/lancer_partie2pers"
         android:layout_width="129dp"
         android:layout_height="46dp"
-        android:layout_marginTop="228dp"
+        android:layout_marginTop="32dp"
         android:text="Jouer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9"
-        app:layout_constraintVertical_bias="0.428" />
+        app:layout_constraintVertical_bias="0.784" />
 
+    <Button
+        android:id="@+id/button_retour_choix_Mode1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Retour"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023" />
 </androidx.constraintlayout.widget.ConstraintLayout>

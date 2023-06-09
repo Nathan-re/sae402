@@ -22,10 +22,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.choix_des_equipes);
-        Button ButtonPlay = (Button) findViewById(R.id.lancer_partie);
+        setContentView(R.layout.accueil_rondelles);
+        Button ButtonJoueurs = (Button) findViewById(R.id.commencer_Joueurs);
+        Button ButtonHistorique = (Button) findViewById(R.id.button_historique);
 
-        ButtonPlay.setOnClickListener((new View.OnClickListener() {
+        ButtonJoueurs.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -34,19 +35,33 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(() -> {
 
 
-                    Intent intent3 = new Intent(getApplicationContext(), PartieClassique.class);
+                    Intent intent3 = new Intent(getApplicationContext(), choixNombreJoueurs.class);
                     startActivity(intent3);
                 }).start();
 
-
-        Intent intent = new Intent(getApplicationContext(), PartieClassique.class);
-        startActivity(intent);
-
-    }
-
-}
+            }}
         ));
+                ButtonHistorique.setOnClickListener((new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Log.i("get clicked", "ça clique sur historique ");
+                                new Thread(() -> {
+
+
+                                    Intent intent2 = new Intent(getApplicationContext(), historique.class);
+                                    startActivity(intent2);
+                                }).start();
+                            }}
+
+                ));
+      /*  Intent intent = new Intent(getApplicationContext(), PartieClassique.class);
+        startActivity(intent);*/
+
+
+
 
     }
 }
+
+
 
