@@ -9,6 +9,7 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -29,17 +30,22 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         setContentView(R.layout.activity_partie_classique);
 
         this.nbJoueurs = 4;
+
         GameView maGameView = new GameView(this, nbJoueurs);
         maGameView.setOnTouchListener(this);
 
         setMaGameView(maGameView);
 
+        //maGameView.setZOrderOnTop(true);
+
         this.setLayout(findViewById(R.id.layout));
-        layout.addView(maGameView);
+        layout.addView(maGameView, 0);
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         compteur = 0;
+
+
 
     }
 
@@ -65,25 +71,19 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
                 case MotionEvent.ACTION_POINTER_UP:
                     getMaGameView().removeActivePointer(motionEvent.getActionIndex());
-                    Log.d("test", "Autre pointer supprimé !!!");
+                    //Log.d("test", "Autre pointer supprimé !!!");
                     break;
 
                 case MotionEvent.ACTION_UP:
                     getMaGameView().setActivePointers(new ArrayList<Integer>());
-                    Log.d("test", "Premier pointer suprimé !!!");
+                    //Log.d("test", "Premier pointer suprimé !!!");
                     break;
 
                 case MotionEvent.ACTION_MOVE:
-                    Log.d("test", "Action move déclenché !!!");
-
-                    setCompteur(getCompteur() + 1);
+                    //Log.d("test", "Action move déclenché !!!");
                     break;
             }
         }
-
-        Log.d("test", getCompteur() + "");
-
-
 
         Poussoir[] poussoirs = getMaGameView().getPoussoirs();
 
@@ -101,10 +101,8 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
                         littleX = motionEvent.getX(i);
                         littleY = motionEvent.getY(i);
                         littleDistance = distance;
-
                     }
                 }
-
             }
             currentPoussoir.setX(littleX);
             currentPoussoir.setY(littleY);
@@ -113,9 +111,6 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         return true;
 
     }
-
-
-
 
     public LinearLayout getLayout() {
         return layout;
@@ -133,11 +128,4 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         this.maGameView = maGameView;
     }
 
-    public int getCompteur() {
-        return compteur;
-    }
-
-    public void setCompteur(int compteur) {
-        this.compteur = compteur;
-    }
 }
