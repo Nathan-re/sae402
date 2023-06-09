@@ -39,7 +39,13 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent3);
                 }).start();
 
-            }}
+//<<<<<<< HEAD
+
+//=======
+    }
+
+}
+//>>>>>>> a2503125b0b703d2c55e2e96c636e02ca595f606
         ));
                 ButtonHistorique.setOnClickListener((new View.OnClickListener() {
                             @Override
