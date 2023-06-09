@@ -216,7 +216,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         maRondelle.setVitesse(0);
     }
 
+    /*
+    * Déplace la rondelle en fonction de la direction et la vitesse
+    * Effectue les tests de collision entre la rondelle et les poussoirs
+    * Effectue les tests de collision entre les buts et la rondelle -> but marqué ou non
+    * Effectue les tests de collision entre la rondelle et les murs
+    *
+    */
     public void updateRondelle(){
+        //Déplace la balle en fonction de la vitesse et de la direction
         float vitesse = getMaRondelle().getVitesse();
         switch(getMaRondelle().getDirection()){
             case "N":
@@ -256,6 +264,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         int hitboxDistanceDiag = 40;
         int vitesseBalle = 40;
 
+        // Calcule les coordonnées des points de contact de la rondelle (voir schéma)
         float[] pointNRondelle = new float[2];
         pointNRondelle[0] = xRondelle;
         pointNRondelle[1] = yRondelle - radiusRondelle;
@@ -295,6 +304,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             maRondelle.setAvailable(true);
         }
 
+        //Si la rondelle est disponible à la colision
+        // -> calcul des coordonnées des points de contact pour chaque poussoir + gestion des collisions (voir schéma)
         if(maRondelle.isAvailable() && maRondelle.getCompteurAvailable() == 0){
             int compteurAvailable = 10;
             for (Poussoir poussoir : getPoussoirs()){
@@ -399,7 +410,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             }
         }
 
-
+        // Gestion des buts avec les points de contact au Nord et au Sud
         if((pointNRondelle[0] > getBut1().getLeft() && pointNRondelle[0] < getBut1().getRight()) && (pointNRondelle[1] <= getBut1().getBottom())){
             Log.d("résultat" ,"but!");
             this.butMarque(1);
