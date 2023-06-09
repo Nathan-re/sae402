@@ -1,22 +1,14 @@
 package fr.rey.dev.sae402;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,28 +16,14 @@ import java.util.concurrent.TimeUnit;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private SurfaceHolder monSurfaceHolder;
-    private int nbJoueurs;
-    private Paint paintBlack;
-    private Paint paintRondelle;
-    private Paint paintBut;
+    private int nbJoueurs, nbRondellesJouees, scoreEquipe1, scoreEquipe2;
+    private Paint paintBlack, paintPoussoir, paintRondelle, paintBut, paintScore;
+    private Poussoir poussoir1, poussoir2, poussoir3, poussoir4;
     private Rondelle maRondelle;
-    private Poussoir poussoir1;
-    private Poussoir poussoir2;
-    private Poussoir poussoir3;
-    private Poussoir poussoir4;
-    private Joueur joueur1;
-    private Joueur joueur2;
-    private Joueur joueur3;
-    private Joueur joueur4;
+    private Joueur joueur1, joueur2, joueur3, joueur4;
     private ArrayList<Integer> activePointers;
-    private int nbRondellesJouees;
-    private But but1;
-    private But but2;
-    private int scoreEquipe1;
-    private int scoreEquipe2;
-
+    private But but1, but2;
     private PartieClassique partie;
-
 
     public GameView(Context context, int nbJoueurs, PartieClassique partie) {
         super(context);
@@ -53,37 +31,47 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         this.setFocusable(true);
         this.setZOrderOnTop(true);
 
-        SurfaceHolder monSurfaceHolder = getHolder();
-        monSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
-        monSurfaceHolder.addCallback(this);
+        SurfaceHolder monSurfaceHolderCreate = getHolder();
+        monSurfaceHolderCreate.setFormat(PixelFormat.TRANSLUCENT);
+        monSurfaceHolderCreate.addCallback(this);
+        monSurfaceHolder = monSurfaceHolderCreate;
 
-        this.setMonSurfaceHolder(monSurfaceHolder);
+        //Objet Paint pour la rondelle
+        Paint paintRondelleCreate = new Paint();
+        paintRondelleCreate.setStyle(Paint.Style.FILL);
+        paintRondelleCreate.setColor(Color.WHITE);
+        paintRondelle = paintRondelleCreate;
 
-        this.nbJoueurs = nbJoueurs;
+        //Objet Paint pour les poussoirs
+        Paint paintPoussoirCreate = new Paint();
+        paintPoussoirCreate.setStyle(Paint.Style.FILL);
+        paintPoussoir = paintPoussoirCreate;
 
-        Paint paintRondelle = new Paint();
-        paintRondelle.setStyle(Paint.Style.FILL);
-        paintRondelle.setColor(Color.WHITE);
-        setPaintRondelle(paintRondelle);
+        //Objet Paint pour le fond
+        Paint paintBlackCreate = new Paint();
+        paintBlackCreate.setStyle(Paint.Style.FILL);
+        paintBlackCreate.setColor(Color.BLACK);
+        paintBlack = paintBlackCreate;
 
-        Paint paintBlack = new Paint();
-        paintBlack.setStyle(Paint.Style.FILL);
-        paintBlack.setColor(Color.BLACK);
-        setPaintBlack(paintBlack);
+        //Objet Paint pour les buts
+        Paint paintButCreate = new Paint();
+        paintButCreate.setStyle(Paint.Style.FILL);
+        paintButCreate.setColor(Color.WHITE);
+        paintBut = paintButCreate;
+
+        //Objet Paint pour le score
+        Paint paintScoreCreate = new Paint();
+        paintScoreCreate.setColor(Color.WHITE);
+        paintScoreCreate.setStyle(Paint.Style.FILL);
+        paintScoreCreate.setTextSize(180);
+        paintScore = paintScoreCreate;
 
         activePointers = new ArrayList<Integer>();
         nbRondellesJouees = 0;
-
-        Paint paintBut = new Paint();
-        paintBut.setStyle(Paint.Style.FILL);
-        paintBut.setColor(Color.WHITE);
-        setPaintBut(paintBut);
-
+        this.nbJoueurs = nbJoueurs;
         scoreEquipe1 = 0;
         scoreEquipe2 = 0;
-
         this.partie = partie;
-
     }
 
     public GameView(Context context, AttributeSet attrs) {
@@ -94,48 +82,43 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         super(context, attrs, defStyle);
     }
 
+    /**
+    * Dessine les différents éléments du terrain en fonction de leurs attributs (coordonnées, couleur, radius...)
+    */
     public void dessin(){
-
-        Paint paintPoussoir = new Paint();
-        paintPoussoir.setStyle(Paint.Style.FILL);
-
-        Poussoir[] poussoirs = getPoussoirs();
 
         Canvas canvas = getHolder().lockCanvas();
         canvas.drawRect(0,0,getWidth(), getHeight(), paintBlack);
 
-        for (Poussoir poussoir:poussoirs) {
+        //Dessine les poussoirs
+        for (Poussoir poussoir : getPoussoirs()) {
             paintPoussoir.setColor(poussoir.getCouleur());
             canvas.drawCircle(poussoir.getX(), poussoir.getY(), poussoir.getRadius(), paintPoussoir);
         }
 
-        getPaintBut().setColor(getBut1().getCouleur());
-        canvas.drawRect(getBut1().getLeft(),getBut1().getTop(),getBut1().getRight(), getBut1().getBottom(), paintBut);
-        getPaintBut().setColor(getBut2().getCouleur());
-        canvas.drawRect(getBut2().getLeft(),getBut2().getTop(),getBut2().getRight(), getBut2().getBottom(), paintBut);
+        //Dessine les buts
+        for(But but : getButs()){
+            paintBut.setColor(but.getCouleur());
+            canvas.drawRect(but.getLeft(),but.getTop(),but.getRight(), but.getBottom(), paintBut);
+        }
 
-        canvas.drawCircle(getMaRondelle().getX(), getMaRondelle().getY(), getMaRondelle().getRadius(), paintRondelle);
-
-
-        Paint paintText = new Paint();
-        paintText.setColor(Color.WHITE);
-        paintText.setStyle(Paint.Style.FILL);
-        paintText.setTextSize(180);
+        //Dessine la rondelle
+        canvas.drawCircle(maRondelle.getX(), maRondelle.getY(), maRondelle.getRadius(), paintRondelle);
 
         canvas.rotate(-90, getWidth() /2, getHeight()/2);
-        Log.d("test", getHeight() + "");
-        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth()/2 -200, 800, paintText);
+        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth()/2 - 200, 800, paintScore);
 
         getMonSurfaceHolder().unlockCanvasAndPost(canvas);
 
     }
 
+    /**
+    * Instancie les poussoirs, la rondelle et les buts.
+     * Place les élements sur les terrain via la méthode reset().
+     * Met en place la boucle pour appeler les fonctions updateRondelle() et dessin() toutes les 10ms
+     */
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         switch (nbJoueurs){
-            case 1:
-                this.poussoir1 = new Poussoir(100,100, Color.RED, getWidth()/30);
-                break;
-
             case 2:
                 this.poussoir1 = new Poussoir(100,100, Color.RED, getWidth()/30);
                 this.poussoir2 = new Poussoir(200,200, Color.GREEN, getWidth()/30);
@@ -153,13 +136,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
                 this.joueur4 = new Joueur("Nathan", Color.argb(255,127,50,195));
                 this.poussoir4 = new Poussoir(400,400, joueur4.getPlayerColor(), getWidth()/30);
-
                 break;
         }
 
-        Rondelle maRondelle = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), getWidth()/36);
-        maRondelle.setVitesse(0);
-        setMaRondelle(maRondelle);
+        Rondelle maRondelleCreate = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), getWidth()/36);
+        maRondelleCreate.setVitesse(0);
+        maRondelle = maRondelleCreate;
 
         but1 = new But((getWidth() /4) + (getWidth() /8), 0, (getWidth() /2) + (getWidth() /8), 20,Color.WHITE);
         but2 = new But((getWidth() /4) + (getWidth() /8), (getHeight()-20), (getWidth() /2 + getWidth() /8), getHeight(),Color.WHITE);
@@ -180,23 +162,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
     }
 
-
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
     }
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
     }
 
-    public SurfaceHolder getMonSurfaceHolder() {
-        return monSurfaceHolder;
-    }
-
-    public void setMonSurfaceHolder(SurfaceHolder monSurfaceHolder) {
-        this.monSurfaceHolder = monSurfaceHolder;
-    }
-
     /**
-     * Replace les poussoirs et la balle sur le terrain de jeu en modifiant leurs coordonnées
+     * Replace les poussoirs et la balle sur le terrain de jeu en modifiant leurs coordonnées.
      */
     public void reset(){
         poussoir1.setX(getWidth()/4);
@@ -216,12 +188,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         maRondelle.setVitesse(0);
     }
 
-    /*
-    * Déplace la rondelle en fonction de la direction et la vitesse
-    * Effectue les tests de collision entre la rondelle et les poussoirs
-    * Effectue les tests de collision entre les buts et la rondelle -> but marqué ou non
-    * Effectue les tests de collision entre la rondelle et les murs
-    *
+    /**
+    * Déplace la rondelle en fonction de la direction et la vitesse.
+    * Effectue les tests de collision entre la rondelle et les poussoirs.
+    * Effectue les tests de collision entre les buts et la rondelle -> but marqué ou non.
+    * Effectue les tests de collision entre la rondelle et les murs.
     */
     public void updateRondelle(){
         //Déplace la balle en fonction de la vitesse et de la direction
@@ -451,8 +422,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
     }
 
-    /*
-    * Pour un but marqué
+    /**
+    * Pour un but marqué, modifie le score et le nombre de palets joués.
+     * En fonction du score, appelle la méthode reset() pour replacer les objets ou partie.finPartie()
     *
     */
     public void butMarque(int idEquipe){
@@ -464,18 +436,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         }
 
         if(scoreEquipe1 == 5 && scoreEquipe2 == 5){
-            Log.d("résultat" ,"But en or !");
             reset();
         } else if(nbRondellesJouees >= 10 || (scoreEquipe1 >= 7 || scoreEquipe2 >= 7)){
-            this.partie.finPartie();
-            Log.d("résultat" ,"résultat");
+            partie.finPartie();
         }else{
-            Log.d("résultat" ,"reset");
             reset();
         }
 
     }
 
+    /**
+     *  Récupère et place dans un tableau les poussoirs
+     * @return un tableau des poussoirs
+     */
     public Poussoir[] getPoussoirs() {
         Poussoir[] poussoirs = new Poussoir[this.nbJoueurs];
         if(getPoussoir1().getCouleur() != 0){
@@ -497,12 +470,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         return poussoirs;
     }
 
-    public Rondelle getMaRondelle() {
-        return maRondelle;
+    /**
+     *  Récupère et place dans un tableau les buts
+     * @return un tableau des buts
+     */
+    public But[] getButs(){
+        But[] buts= new But[2];
+        buts[0] = getBut1();
+        buts[1] = getBut2();
+        return buts;
     }
 
-    public void setMaRondelle(Rondelle maRondelle) {
-        this.maRondelle = maRondelle;
+
+    public SurfaceHolder getMonSurfaceHolder() {
+        return monSurfaceHolder;
+    }
+
+    public Rondelle getMaRondelle() {
+        return maRondelle;
     }
 
     public int getNbJoueurs() {
@@ -517,32 +502,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         return poussoir1;
     }
 
-    public void setPoussoir1(Poussoir poussoir1) {
-        this.poussoir1 = poussoir1;
-    }
-
     public Poussoir getPoussoir2() {
         return poussoir2;
-    }
-
-    public void setPoussoir2(Poussoir poussoir2) {
-        this.poussoir2 = poussoir2;
     }
 
     public Poussoir getPoussoir3() {
         return poussoir3;
     }
 
-    public void setPoussoir3(Poussoir poussoir3) {
-        this.poussoir3 = poussoir3;
-    }
 
     public Poussoir getPoussoir4() {
         return poussoir4;
-    }
-
-    public void setPoussoir4(Poussoir poussoir4) {
-        this.poussoir4 = poussoir4;
     }
 
     public Paint getPaintBlack() {

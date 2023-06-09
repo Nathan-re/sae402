@@ -37,8 +37,6 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
         setMaGameView(maGameView);
 
-        //maGameView.setZOrderOnTop(true);
-
         this.setLayout(findViewById(R.id.layout));
         layout.addView(maGameView, 0);
 
