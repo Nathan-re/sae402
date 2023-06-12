@@ -56,7 +56,7 @@ public class ChoixEquipe4pers extends AppCompatActivity
                 new Thread(() -> {
 
 
-                    Intent retourIntent1 = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent retourIntent1 = new Intent(getApplicationContext(), ModeDeJeu4Pers.class);
                     startActivity(retourIntent1);
                 }).start();
 

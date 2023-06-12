@@ -58,7 +58,7 @@ public class ChoixEquipe2pers extends AppCompatActivity
                 new Thread(() -> {
 
 
-                    Intent ButtonRetourChoixMode = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent ButtonRetourChoixMode = new Intent(getApplicationContext(), ModeDeJeu2Pers.class);
                     startActivity(ButtonRetourChoixMode);
                 }).start();
 

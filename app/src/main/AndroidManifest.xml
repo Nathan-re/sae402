@@ -33,6 +33,9 @@
         <activity android:name=".ChoixEquipe4pers"
             android:label="Choix des équipes pour 4joueurs"
             android:exported="true"/>
+        <activity android:name=".IncriptionJoueur"
+            android:label="Inscription des joueurs"
+            android:exported="true"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

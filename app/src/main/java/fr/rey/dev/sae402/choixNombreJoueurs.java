@@ -43,9 +43,11 @@ public class choixNombreJoueurs extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choix_nombres_de_joueurs);
+
+
 Button Button2Pers = (Button) findViewById(R.id.choixJoueurs2);
         Button Button4Pers = (Button) findViewById(R.id.choixJoueurs4);
-
+Button ButtonInscriptionJoueur = (Button) findViewById(R.id.InscriptionButton);
         Button ButtonRetourChoixNombreJoueurs = (Button) findViewById(R.id.button_retour_choix_Joueur);
 
         ButtonRetourChoixNombreJoueurs.setOnClickListener((new View.OnClickListener() {
@@ -93,6 +95,20 @@ Button Button2Pers = (Button) findViewById(R.id.choixJoueurs2);
                     startActivity(versPageMode4Pers);
                 }).start();
 
+            }}
+        ));
+
+        ButtonInscriptionJoueur.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.i("Allez ", "Yep !");
+
+                new Thread(() -> {
+
+                    Intent versPageInscriptionJoueur = new Intent(getApplicationContext(), IncriptionJoueur.class);
+                    startActivity(versPageInscriptionJoueur);
+                }).start();
             }}
         ));
 

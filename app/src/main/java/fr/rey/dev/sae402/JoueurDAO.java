@@ -12,6 +12,10 @@ import androidx.room.Query;
 public interface JoueurDAO {
     @Insert // @Insert pour la requête d'ajout
     public void insertJoueur(Joueur aJoueur);
+
+    @Insert
+    public  void InscriptionJoueur(Joueur aJoueur);
+
     @Update //@Update pour la requête de modification
     public void updateJoueur(Joueur aJoueur);
     @Delete // @Delete pour la requête de suppression

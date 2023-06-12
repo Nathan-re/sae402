@@ -24,6 +24,7 @@ public class Joueur {
         this.playerNbDefaite = 0;
         this.playerNbVictoire = 0;
         this.playerNbPtsTotal = 0;
+        this._id = _id;
     }
 
     // GETTERS
@@ -56,5 +57,8 @@ public class Joueur {
     }
     public void setPlayerNbVictoire(int playerNbVictoire) { this.playerNbVictoire = playerNbVictoire; }
     public void setPlayerNbPtsTotal(int playerNbPtsTotal) { this.playerNbPtsTotal = playerNbPtsTotal; }
+    public void set_id(int _id) {
+        this._id = _id;
+    }
 }
 
