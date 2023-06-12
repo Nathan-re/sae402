@@ -15,9 +15,29 @@
         <activity
             android:name=".PartieClassique"
             android:exported="false" />
+        <activity android:name=".historique"
+            android:label="Historique"
+            android:exported="true"/>
+        <activity android:name=".choixNombreJoueurs"
+            android:label="Choix du nombre de joueurs"
+            android:exported="true"/>
+        <activity android:name=".ModeDeJeu2Pers"
+            android:label="Mode de jeu ayant 2 personnes"
+            android:exported="true"/>
+        <activity android:name=".ModeDeJeu4Pers"
+            android:label="Mode de jeu ayant 4 personnes"
+            android:exported="true"/>
+        <activity android:name=".ChoixEquipe2pers"
+            android:label="Choix des équipes pour 2 joueurs"
+            android:exported="true"/>
+        <activity android:name=".ChoixEquipe4pers"
+            android:label="Choix des équipes pour 4joueurs"
+            android:exported="true"/>
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

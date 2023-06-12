@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class historique extends AppCompatActivity
+public class ChoixEquipe2pers extends AppCompatActivity
 {
 
 
@@ -36,23 +36,20 @@ public class historique extends AppCompatActivity
 
 
 
-    public void retour(View view) {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
 
-    }
     public void accessDataBase() {
 
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.historique_matchs);
+        setContentView(R.layout.choix_des_equipes2pers);
 
 
-        Button ButtonRetour = (Button) findViewById(R.id.button_retour);
+        Button ButtonRetourChoixMode = (Button) findViewById(R.id.button_retour_choix_Mode1);
 
-        ButtonRetour.setOnClickListener((new View.OnClickListener() {
+        Button lancer_partie2pers = (Button) findViewById(R.id.lancer_partie2pers);
+        ButtonRetourChoixMode.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -61,8 +58,24 @@ public class historique extends AppCompatActivity
                 new Thread(() -> {
 
 
-                    Intent retourIntent1 = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(retourIntent1);
+                    Intent ButtonRetourChoixMode = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(ButtonRetourChoixMode);
+                }).start();
+
+            }}
+        ));
+
+        lancer_partie2pers.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.i("Retour a l'accueil", "Yep !");
+
+                new Thread(() -> {
+
+
+                    Intent LancerPartie2Pers = new Intent(getApplicationContext(), PartieClassique.class);
+                    startActivity(LancerPartie2Pers);
                 }).start();
 
             }}

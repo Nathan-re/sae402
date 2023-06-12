@@ -1,20 +1,14 @@
 package fr.rey.dev.sae402;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,75 +16,62 @@ import java.util.concurrent.TimeUnit;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private SurfaceHolder monSurfaceHolder;
-    private int nbJoueurs;
-
-    private Paint paintBlack;
-    private Paint paintRondelle;
+    private int nbJoueurs, nbRondellesJouees, scoreEquipe1, scoreEquipe2;
+    private Paint paintBlack, paintPoussoir, paintRondelle, paintBut, paintScore;
+    private Poussoir poussoir1, poussoir2, poussoir3, poussoir4;
     private Rondelle maRondelle;
-    private Poussoir poussoir1;
-    private Poussoir poussoir2;
-    private Poussoir poussoir3;
-    private Poussoir poussoir4;
-    private Joueur joueur1;
-    private Joueur joueur2;
-    private Joueur joueur3;
-    private Joueur joueur4;
-
+    private Joueur joueur1, joueur2, joueur3, joueur4;
     private ArrayList<Integer> activePointers;
+    private But but1, but2;
+    private PartieClassique partie;
 
-
-    public GameView(Context context, int nbJoueurs) {
+    public GameView(Context context, int nbJoueurs, PartieClassique partie) {
         super(context);
 
         this.setFocusable(true);
         this.setZOrderOnTop(true);
 
-        SurfaceHolder monSurfaceHolder = getHolder();
-        monSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
-        monSurfaceHolder.addCallback(this);
+        SurfaceHolder monSurfaceHolderCreate = getHolder();
+        monSurfaceHolderCreate.setFormat(PixelFormat.TRANSLUCENT);
+        monSurfaceHolderCreate.addCallback(this);
+        monSurfaceHolder = monSurfaceHolderCreate;
 
-        this.setMonSurfaceHolder(monSurfaceHolder);
+        //Objet Paint pour la rondelle
+        Paint paintRondelleCreate = new Paint();
+        paintRondelleCreate.setStyle(Paint.Style.FILL);
+        paintRondelleCreate.setColor(Color.WHITE);
+        paintRondelle = paintRondelleCreate;
 
-        this.nbJoueurs = nbJoueurs;
+        //Objet Paint pour les poussoirs
+        Paint paintPoussoirCreate = new Paint();
+        paintPoussoirCreate.setStyle(Paint.Style.FILL);
+        paintPoussoir = paintPoussoirCreate;
 
-        switch (nbJoueurs){
-            case 1:
-                this.poussoir1 = new Poussoir(100,100, Color.RED, 40);
-                break;
+        //Objet Paint pour le fond
+        Paint paintBlackCreate = new Paint();
+        paintBlackCreate.setStyle(Paint.Style.FILL);
+        paintBlackCreate.setColor(Color.BLACK);
+        paintBlack = paintBlackCreate;
 
-            case 2:
-                this.poussoir1 = new Poussoir(100,100, Color.RED, 40);
-                this.poussoir2 = new Poussoir(200,200, Color.GREEN, 40);
-                break;
+        //Objet Paint pour les buts
+        Paint paintButCreate = new Paint();
+        paintButCreate.setStyle(Paint.Style.FILL);
+        paintButCreate.setColor(Color.WHITE);
+        paintBut = paintButCreate;
 
-            case 4:
-                this.joueur1 = new Joueur("Jules", Color.argb(255,253,225,45));
-                this.poussoir1 = new Poussoir(100,100, joueur1.getPlayerColor(), 40);
-
-                this.joueur2 = new Joueur("Pierre", Color.argb(255,253,225,45));
-                this.poussoir2 = new Poussoir(200,200, joueur2.getPlayerColor(), 40);
-
-                this.joueur3 = new Joueur("Antoine", Color.argb(255,127,50,195));
-                this.poussoir3 = new Poussoir(300,300, joueur3.getPlayerColor(), 40);
-
-                this.joueur4 = new Joueur("Nathan", Color.argb(255,127,50,195));
-                this.poussoir4 = new Poussoir(400,400, joueur4.getPlayerColor(), 40);
-
-                break;
-        }
-
-        Paint paintRondelle = new Paint();
-        paintRondelle.setStyle(Paint.Style.FILL);
-        paintRondelle.setColor(Color.WHITE);
-        setPaintRondelle(paintRondelle);
-
-        Paint paintBlack = new Paint();
-        paintBlack.setStyle(Paint.Style.FILL);
-        paintBlack.setColor(Color.BLACK);
-        setPaintBlack(paintBlack);
+        //Objet Paint pour le score
+        Paint paintScoreCreate = new Paint();
+        paintScoreCreate.setColor(Color.WHITE);
+        paintScoreCreate.setStyle(Paint.Style.FILL);
+        paintScoreCreate.setTextSize(180);
+        paintScore = paintScoreCreate;
 
         activePointers = new ArrayList<Integer>();
-
+        nbRondellesJouees = 0;
+        this.nbJoueurs = nbJoueurs;
+        scoreEquipe1 = 0;
+        scoreEquipe2 = 0;
+        this.partie = partie;
     }
 
     public GameView(Context context, AttributeSet attrs) {
@@ -101,31 +82,70 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         super(context, attrs, defStyle);
     }
 
+    /**
+    * Dessine les différents éléments du terrain en fonction de leurs attributs (coordonnées, couleur, radius...)
+    */
     public void dessin(){
-
-        Paint paintPoussoir = new Paint();
-        paintPoussoir.setStyle(Paint.Style.FILL);
-
-        Poussoir[] poussoirs = getPoussoirs();
 
         Canvas canvas = getHolder().lockCanvas();
         canvas.drawRect(0,0,getWidth(), getHeight(), paintBlack);
 
-        for (Poussoir poussoir:poussoirs) {
-
+        //Dessine les poussoirs
+        for (Poussoir poussoir : getPoussoirs()) {
             paintPoussoir.setColor(poussoir.getCouleur());
             canvas.drawCircle(poussoir.getX(), poussoir.getY(), poussoir.getRadius(), paintPoussoir);
         }
 
-        canvas.drawCircle(getMaRondelle().getX(), getMaRondelle().getY(), getMaRondelle().getRadius(), paintRondelle);
+        //Dessine les buts
+        for(But but : getButs()){
+            paintBut.setColor(but.getCouleur());
+            canvas.drawRect(but.getLeft(),but.getTop(),but.getRight(), but.getBottom(), paintBut);
+        }
+
+        //Dessine la rondelle
+        canvas.drawCircle(maRondelle.getX(), maRondelle.getY(), maRondelle.getRadius(), paintRondelle);
+
+        canvas.rotate(-90, getWidth() /2, getHeight()/2);
+        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth()/2 - 200, 800, paintScore);
+
         getMonSurfaceHolder().unlockCanvasAndPost(canvas);
 
     }
 
+    /**
+    * Instancie les poussoirs, la rondelle et les buts.
+     * Place les élements sur les terrain via la méthode reset().
+     * Met en place la boucle pour appeler les fonctions updateRondelle() et dessin() toutes les 10ms
+     */
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        Rondelle maRondelle = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), 30);
-        maRondelle.setVitesse(0);
-        setMaRondelle(maRondelle);
+        switch (nbJoueurs){
+            case 2:
+                this.poussoir1 = new Poussoir(100,100, Color.RED, getWidth()/30);
+                this.poussoir2 = new Poussoir(200,200, Color.GREEN, getWidth()/30);
+                break;
+
+            case 4:
+                this.joueur1 = new Joueur("Jules", Color.argb(255,253,225,45));
+                this.poussoir1 = new Poussoir(100,100, joueur1.getPlayerColor(), getWidth()/30);
+
+                this.joueur2 = new Joueur("Pierre", Color.argb(255,253,225,45));
+                this.poussoir2 = new Poussoir(200,200, joueur2.getPlayerColor(), getWidth()/30);
+
+                this.joueur3 = new Joueur("Antoine", Color.argb(255,127,50,195));
+                this.poussoir3 = new Poussoir(300,300, joueur3.getPlayerColor(), getWidth()/30);
+
+                this.joueur4 = new Joueur("Nathan", Color.argb(255,127,50,195));
+                this.poussoir4 = new Poussoir(400,400, joueur4.getPlayerColor(), getWidth()/30);
+                break;
+        }
+
+        Rondelle maRondelleCreate = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), getWidth()/36);
+        maRondelleCreate.setVitesse(0);
+        maRondelle = maRondelleCreate;
+
+        but1 = new But((getWidth() /4) + (getWidth() /8), 0, (getWidth() /2) + (getWidth() /8), 20,Color.WHITE);
+        but2 = new But((getWidth() /4) + (getWidth() /8), (getHeight()-20), (getWidth() /2 + getWidth() /8), getHeight(),Color.WHITE);
+
         reset();
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -138,25 +158,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                     maRondelle.setVitesse((float) (maRondelle.getVitesse() - 0.1));
                 }
             }
-        }, 0, 2, TimeUnit.MILLISECONDS);
+        }, 0, 10, TimeUnit.MILLISECONDS);
 
     }
 
-
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
     }
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
     }
 
-    public SurfaceHolder getMonSurfaceHolder() {
-        return monSurfaceHolder;
-    }
-
-    public void setMonSurfaceHolder(SurfaceHolder monSurfaceHolder) {
-        this.monSurfaceHolder = monSurfaceHolder;
-    }
-
+    /**
+     * Replace les poussoirs et la balle sur le terrain de jeu en modifiant leurs coordonnées.
+     */
     public void reset(){
         poussoir1.setX(getWidth()/4);
         poussoir1.setY(getHeight()/4);
@@ -169,46 +182,60 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
         poussoir4.setX(getWidth()/4 + getWidth()/2);
         poussoir4.setY(getHeight()/4 + getHeight()/2);
+
+        maRondelle.setX((float)(getWidth() /2));
+        maRondelle.setY((float)(getHeight() /2));
+        maRondelle.setVitesse(0);
     }
 
+    /**
+    * Déplace la rondelle en fonction de la direction et la vitesse.
+    * Effectue les tests de collision entre la rondelle et les poussoirs.
+    * Effectue les tests de collision entre les buts et la rondelle -> but marqué ou non.
+    * Effectue les tests de collision entre la rondelle et les murs.
+    */
     public void updateRondelle(){
+        //Déplace la balle en fonction de la vitesse et de la direction
         float vitesse = getMaRondelle().getVitesse();
         switch(getMaRondelle().getDirection()){
             case "N":
-                getMaRondelle().setY(getMaRondelle().getY() - (1 * vitesse));
+                getMaRondelle().setY((float)(getMaRondelle().getY() - (1.25 * vitesse)));
                 break;
             case "S":
-                getMaRondelle().setY(getMaRondelle().getY() + (1 * vitesse));
+                getMaRondelle().setY((float)(getMaRondelle().getY() + (1.25 * vitesse)));
                 break;
             case "E":
-                getMaRondelle().setX(getMaRondelle().getX() + (1 * vitesse));
+                getMaRondelle().setX((float)(getMaRondelle().getX() + (1.25 * vitesse)));
                 break;
             case "O":
-                getMaRondelle().setX(getMaRondelle().getX() - (1 * vitesse));
+                getMaRondelle().setX((float)(getMaRondelle().getX() - (1.25 * vitesse)));
                 break;
             case "NE":
-                getMaRondelle().setX((float)(getMaRondelle().getX() + (1 * vitesse)));
-                getMaRondelle().setY((float)(getMaRondelle().getY() - (1 * vitesse)));
+                getMaRondelle().setX((float)(getMaRondelle().getX() + (0.75 * vitesse)));
+                getMaRondelle().setY((float)(getMaRondelle().getY() - (0.75 * vitesse)));
                 break;
             case "NO":
-                getMaRondelle().setX((float)(getMaRondelle().getX() - (1 * vitesse)));
-                getMaRondelle().setY((float)(getMaRondelle().getY() - (1 * vitesse)));
+                getMaRondelle().setX((float)(getMaRondelle().getX() - (0.75 * vitesse)));
+                getMaRondelle().setY((float)(getMaRondelle().getY() - (0.75 * vitesse)));
                 break;
             case "SE":
-                getMaRondelle().setX((float)(getMaRondelle().getX() + (1 * vitesse)));
-                getMaRondelle().setY((float)(getMaRondelle().getY() + (1 * vitesse)));
+                getMaRondelle().setX((float)(getMaRondelle().getX() + (0.75 * vitesse)));
+                getMaRondelle().setY((float)(getMaRondelle().getY() + (0.75 * vitesse)));
                 break;
             case "SO":
-                getMaRondelle().setX((float)(getMaRondelle().getX() - (1 * vitesse)));
-                getMaRondelle().setY((float)(getMaRondelle().getY() + (1 * vitesse)));
+                getMaRondelle().setX((float)(getMaRondelle().getX() - (0.75 * vitesse)));
+                getMaRondelle().setY((float)(getMaRondelle().getY() + (0.75 * vitesse)));
                 break;
         }
 
         float xRondelle = getMaRondelle().getX();
         float yRondelle = getMaRondelle().getY();
         int radiusRondelle = getMaRondelle().getRadius();
-        int hitboxDistance = 40;
+        int hitboxDistance = 20;
+        int hitboxDistanceDiag = 40;
+        int vitesseBalle = 40;
 
+        // Calcule les coordonnées des points de contact de la rondelle (voir schéma)
         float[] pointNRondelle = new float[2];
         pointNRondelle[0] = xRondelle;
         pointNRondelle[1] = yRondelle - radiusRondelle;
@@ -241,15 +268,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         pointORondelle[0] = xRondelle - radiusRondelle;
         pointORondelle[1] = yRondelle;
 
-        if(getMaRondelle().getCompteurAvailable() != 0){
-            int currentCompteur = getMaRondelle().getCompteurAvailable();
-            getMaRondelle().setCompteurAvailable(currentCompteur - 1);
+        if(maRondelle.getCompteurAvailable() != 0){
+            int currentCompteur = maRondelle.getCompteurAvailable();
+            maRondelle.setCompteurAvailable(currentCompteur - 1);
         }else{
-            getMaRondelle().setAvailable(true);
+            maRondelle.setAvailable(true);
         }
 
-        if(getMaRondelle().isAvailable() && getMaRondelle().getCompteurAvailable() == 0){
-            int compteurAvailable = 20;
+        //Si la rondelle est disponible à la colision
+        // -> calcul des coordonnées des points de contact pour chaque poussoir + gestion des collisions (voir schéma)
+        if(maRondelle.isAvailable() && maRondelle.getCompteurAvailable() == 0){
+            int compteurAvailable = 10;
             for (Poussoir poussoir : getPoussoirs()){
                 int radiusPoussoir = poussoir.getRadius();
 
@@ -285,67 +314,86 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 pointOPoussoir[0] = poussoir.getX() - radiusPoussoir;
                 pointOPoussoir[1] = poussoir.getY();
 
-                //Touche N
+                //Touche au Nord de la rondelle
                 if ((pointNRondelle[0] > (pointSPoussoir[0] - hitboxDistance)) && (pointNRondelle[0] < (pointSPoussoir[0] + hitboxDistance)) && (pointNRondelle[1] > (pointSPoussoir[1] - radiusPoussoir - hitboxDistance)) && (pointNRondelle[1] < (pointSPoussoir[1] + hitboxDistance))){
                     getMaRondelle().setDirection("S");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(20);
+                    maRondelle.setVitesse(vitesseBalle);
                     //Log.d("direction", "touche N");
-                } //Touche S
+                }
+                //Touche au Sud de la rondelle
                 else if ((pointSRondelle[0] > (pointNPoussoir[0] - hitboxDistance)) && (pointSRondelle[0] < (pointNPoussoir[0] + hitboxDistance)) && (pointSRondelle[1] > (pointNPoussoir[1] - hitboxDistance)) && (pointSRondelle[1] < (pointNPoussoir[1] + hitboxDistance))) {
                     getMaRondelle().setDirection("N");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(20);
+                    maRondelle.setVitesse(vitesseBalle);
                     //Log.d("direction", "touche S");
-                }//Touche E
+                }
+                //Touche à l'Est de la rondelle
                 else if ((pointERondelle[0] > (pointOPoussoir[0] - hitboxDistance)) && (pointERondelle[0] < (pointOPoussoir[0] + hitboxDistance)) && (pointERondelle[1] > (pointOPoussoir[1] - hitboxDistance)) && (pointERondelle[1] < (pointOPoussoir[1] + hitboxDistance))) {
                     getMaRondelle().setDirection("O");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(20);
+                    maRondelle.setVitesse(vitesseBalle);
                     //Log.d("direction", "touche E");
-                }//Touche O
+                }
+                //Touche à l'ouest de la rondelle
                 else if ((pointORondelle[0] > (pointEPoussoir[0] - hitboxDistance)) && (pointORondelle[0] < (pointEPoussoir[0] + hitboxDistance)) && (pointORondelle[1] > (pointEPoussoir[1] - hitboxDistance)) && (pointORondelle[1] < (pointEPoussoir[1] + hitboxDistance))) {
                     getMaRondelle().setDirection("E");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(20);
+                    maRondelle.setVitesse(vitesseBalle);
                     //Log.d("direction", "touche O");
-                }//Touche NE
-                else if ((pointSORondelle[0] > (pointNEPoussoir[0] - hitboxDistance)) && (pointSORondelle[0] < (pointNEPoussoir[0] + hitboxDistance)) && (pointSORondelle[1] > pointNEPoussoir[1] - hitboxDistance) && (pointSORondelle[1] < (pointNEPoussoir[1] + hitboxDistance))) {
+                }
+                //Touche au Sud-ouest de la rondelle
+                else if ((pointSORondelle[0] > (pointNEPoussoir[0] - hitboxDistanceDiag)) && (pointSORondelle[0] < (pointNEPoussoir[0] + hitboxDistanceDiag)) && (pointSORondelle[1] > pointNEPoussoir[1] - hitboxDistanceDiag) && (pointSORondelle[1] < (pointNEPoussoir[1] + hitboxDistanceDiag))) {
                     getMaRondelle().setDirection("NE");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(20);
+                    maRondelle.setVitesse(vitesseBalle);
                     Log.d("direction", "touche SO");
-                }//Touche NO
-                else if ((pointSERondelle[0] > (pointNOPoussoir[0] - hitboxDistance)) && (pointSERondelle[0] < (pointNOPoussoir[0] + hitboxDistance)) && (pointSERondelle[1] > pointNOPoussoir[1] - hitboxDistance) && (pointSERondelle[1] < (pointNOPoussoir[1] + hitboxDistance))) {
+                }
+                //Touche au Sud-Est de la rondelle
+                else if ((pointSERondelle[0] > (pointNOPoussoir[0] - hitboxDistanceDiag)) && (pointSERondelle[0] < (pointNOPoussoir[0] + hitboxDistanceDiag)) && (pointSERondelle[1] > pointNOPoussoir[1] - hitboxDistanceDiag) && (pointSERondelle[1] < (pointNOPoussoir[1] + hitboxDistanceDiag))) {
                     getMaRondelle().setDirection("NO");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(20);
+                    maRondelle.setVitesse(vitesseBalle);
                     Log.d("direction", "touche SO");
-                }//Touche SE
-                else if ((pointNORondelle[0] > (pointSEPoussoir[0] - hitboxDistance)) && (pointNORondelle[0] < (pointSEPoussoir[0] + hitboxDistance)) && (pointNORondelle[1] > pointSEPoussoir[1] - hitboxDistance) && (pointNORondelle[1] < (pointSEPoussoir[1] + hitboxDistance))) {
+                }
+                //Touche au Nord-Ouest de la rondelle
+                else if ((pointNORondelle[0] > (pointSEPoussoir[0] - hitboxDistanceDiag)) && (pointNORondelle[0] < (pointSEPoussoir[0] + hitboxDistanceDiag)) && (pointNORondelle[1] > pointSEPoussoir[1] - hitboxDistanceDiag) && (pointNORondelle[1] < (pointSEPoussoir[1] + hitboxDistanceDiag))) {
                     getMaRondelle().setDirection("SE");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(20);
+                    maRondelle.setVitesse(vitesseBalle);
                     Log.d("direction", "touche SO");
-                }//Touche SO
-                else if ((pointNERondelle[0] > (pointSOPoussoir[0] - hitboxDistance)) && (pointNERondelle[0] < (pointSOPoussoir[0] + hitboxDistance)) && (pointNERondelle[1] > pointSOPoussoir[1] - hitboxDistance) && (pointNERondelle[1] < (pointSOPoussoir[1] + hitboxDistance))) {
+                }
+                //Touche au Nord-Est de la rondelle
+                else if ((pointNERondelle[0] > (pointSOPoussoir[0] - hitboxDistanceDiag)) && (pointNERondelle[0] < (pointSOPoussoir[0] + hitboxDistanceDiag)) && (pointNERondelle[1] > pointSOPoussoir[1] - hitboxDistanceDiag) && (pointNERondelle[1] < (pointSOPoussoir[1] + hitboxDistanceDiag))) {
                     getMaRondelle().setDirection("SO");
                     getMaRondelle().setCompteurAvailable(compteurAvailable);
                     getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(20);
+                    maRondelle.setVitesse(vitesseBalle);
                     Log.d("direction", "touche SO");
                 }
             }
         }
 
-        //Rebondir sur les bords
+        // Gestion des buts avec les points de contact au Nord et au Sud
+        if((pointNRondelle[0] > getBut1().getLeft() && pointNRondelle[0] < getBut1().getRight()) && (pointNRondelle[1] <= getBut1().getBottom())){
+            Log.d("résultat" ,"but!");
+            this.butMarque(1);
+            reset();
+        } else if ((pointSRondelle[0] > getBut2().getLeft() && pointSRondelle[0] < getBut2().getRight()) && (pointSRondelle[1] >= getBut2().getTop())) {
+            Log.d("résultat" ,"but!");
+            this.butMarque(2);
+            reset();
+
+        }
+
+        //Gère le rebond de la rondelle sur les bords du terrain
         if(getMaRondelle().getDirection() == "NE" && pointNRondelle[1] < 0){
             getMaRondelle().setDirection("SE");
         }else if(getMaRondelle().getDirection() == "NO" && pointNRondelle[1] < 0){
@@ -372,9 +420,35 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             getMaRondelle().setDirection("E");
         }
 
+    }
+
+    /**
+    * Pour un but marqué, modifie le score et le nombre de palets joués.
+     * En fonction du score, appelle la méthode reset() pour replacer les objets ou partie.finPartie()
+    *
+    */
+    public void butMarque(int idEquipe){
+        nbRondellesJouees = nbRondellesJouees + 1;
+        if(idEquipe == 1){
+            scoreEquipe1 = scoreEquipe1 + 1;
+        }else if(idEquipe == 2){
+            scoreEquipe2 = scoreEquipe2 + 1;
+        }
+
+        if(scoreEquipe1 == 5 && scoreEquipe2 == 5){
+            reset();
+        } else if(nbRondellesJouees >= 10 || (scoreEquipe1 >= 7 || scoreEquipe2 >= 7)){
+            partie.finPartie();
+        }else{
+            reset();
+        }
 
     }
 
+    /**
+     *  Récupère et place dans un tableau les poussoirs
+     * @return un tableau des poussoirs
+     */
     public Poussoir[] getPoussoirs() {
         Poussoir[] poussoirs = new Poussoir[this.nbJoueurs];
         if(getPoussoir1().getCouleur() != 0){
@@ -396,12 +470,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         return poussoirs;
     }
 
-    public Rondelle getMaRondelle() {
-        return maRondelle;
+    /**
+     *  Récupère et place dans un tableau les buts
+     * @return un tableau des buts
+     */
+    public But[] getButs(){
+        But[] buts= new But[2];
+        buts[0] = getBut1();
+        buts[1] = getBut2();
+        return buts;
     }
 
-    public void setMaRondelle(Rondelle maRondelle) {
-        this.maRondelle = maRondelle;
+
+    public SurfaceHolder getMonSurfaceHolder() {
+        return monSurfaceHolder;
+    }
+
+    public Rondelle getMaRondelle() {
+        return maRondelle;
     }
 
     public int getNbJoueurs() {
@@ -416,32 +502,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         return poussoir1;
     }
 
-    public void setPoussoir1(Poussoir poussoir1) {
-        this.poussoir1 = poussoir1;
-    }
-
     public Poussoir getPoussoir2() {
         return poussoir2;
-    }
-
-    public void setPoussoir2(Poussoir poussoir2) {
-        this.poussoir2 = poussoir2;
     }
 
     public Poussoir getPoussoir3() {
         return poussoir3;
     }
 
-    public void setPoussoir3(Poussoir poussoir3) {
-        this.poussoir3 = poussoir3;
-    }
 
     public Poussoir getPoussoir4() {
         return poussoir4;
-    }
-
-    public void setPoussoir4(Poussoir poussoir4) {
-        this.poussoir4 = poussoir4;
     }
 
     public Paint getPaintBlack() {
@@ -480,4 +551,45 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             this.activePointers.remove(indexToRemove);
         }
     }
+
+    public Paint getPaintBut() {
+        return paintBut;
+    }
+
+    public void setPaintBut(Paint paintBut) {
+        this.paintBut = paintBut;
+    }
+
+    public But getBut1() {
+        return but1;
+    }
+
+    public void setBut1(But but1) {
+        this.but1 = but1;
+    }
+
+    public But getBut2() {
+        return but2;
+    }
+
+    public void setBut2(But but2) {
+        this.but2 = but2;
+    }
+
+    public int getNbRondellesJouees() {
+        return nbRondellesJouees;
+    }
+
+    public void setNbRondellesJouees(int nbRondellesJouees) {
+        this.nbRondellesJouees = nbRondellesJouees;
+    }
+
+    public int getScoreEquipe1() {
+        return scoreEquipe1;
+    }
+
+    public int getScoreEquipe2() {
+        return scoreEquipe2;
+    }
+
 }
