@@ -20,4 +20,6 @@ public interface JoueurDAO {
     public Cursor getAllJoueurs();
     @Query("SELECT _id FROM Joueur")
     public int [] getAllId();
+    @Query("SELECT * FROM Joueur WHERE _id=:idJoueur")
+    public Joueur getJoueurFromId(int idJoueur);
 }
