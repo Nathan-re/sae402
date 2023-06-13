@@ -20,10 +20,7 @@ public class IncriptionJoueur extends AppCompatActivity {
     public void accessDataBase() {
 
         dbAccess = AppDataBase.getAppDataBase(this);
-        //daoQuery = dbAccess.getJoueurDAO();
-
-
-
+        daoQuery = dbAccess.getJoueurDao();
     }
 
     @Override
@@ -53,12 +50,29 @@ public class IncriptionJoueur extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Log.i("Inscription du joueur", "Yep !");
 
+                String playerPseudo = inscriptionPseudo.getText().toString();
+                Joueur joueur = new Joueur(playerPseudo, 1);
+
+                Log.i("Nom du joueur", inscriptionPseudo.getText().toString());
                 new Thread(() -> {
+                    accessDataBase();
+                    daoQuery.insertJoueur(joueur);
                     Intent InscriptionEtRetour = new Intent(getApplicationContext(), choixNombreJoueurs.class);
                     startActivity(InscriptionEtRetour);
                 }).start();
+
+               /* Contact contact =  new Contact(nom, prenom, adresse, codePostal, ville, pays, telephone);
+
+                new Thread(() -> {
+                    accessDataBase();
+
+                    daoQuery.insertContact(contact);
+                    Log.i("Le contenu de contact est", String.valueOf(contact));
+                    startActivity(intent3);
+                }).start();*
+
+                */
             }
         }));
 
