@@ -60,8 +60,8 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         //Log.d("test", view.getHeight() + "");
         int nbPointers = motionEvent.getPointerCount();
 
-        if (nbPointers > nbJoueurs){
-            nbPointers = nbJoueurs;
+        if (nbPointers > nbJoueurs + 4){
+            nbPointers = nbJoueurs + 4;
         }else{
             int activePointer = motionEvent.getActionIndex();
 

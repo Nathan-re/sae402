@@ -38,19 +38,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private ArrayList<Float> positionXPoussoir4;
     private ArrayList<Float> positionYPoussoir4;
 
-    private final static int REFRESH_RATE = 20;
-    private final static int NB_ELEMENTS_ARRAYLIST = 15;
+    private final static int REFRESH_RATE = 1;
+    private final static int NB_ELEMENTS_ARRAYLIST = 45;
     private final static int DIVISEUR_PUISSANCE = 400;
-    private final static float MIN_PUISS = (float)(0.2);
-    private final static float MAX_PUISS = 6;
+    private final static float MIN_PUISS = (float)(0.6);
+    private final static float MAX_PUISS = (float)(2.5);
     private float coeffPoussoir;
-
     private boolean dehorsGauche;
     private boolean dehorsDroite;
     private boolean dehorsHaut;
     private boolean dehorsBas;
+    private float hitboxInt;
 
-    private float vitesseTemp;
+    private float hitboxExt;
 
 
     public GameView(Context context, int nbJoueurs, PartieClassique partie) {
@@ -104,8 +104,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         dehorsDroite = false;
         dehorsHaut = false;
         dehorsBas = false;
-        vitesseTemp = 0;
-
 
         switch (nbJoueurs){
             case 2:
@@ -164,7 +162,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         canvas.drawCircle(maRondelle.getX(), maRondelle.getY(), maRondelle.getRadius(), paintRondelle);
 
         canvas.rotate(-90, getWidth() /2, getHeight()/2);
-        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth()/2 - 200, 800, paintScore);
+        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth()/2 - 200, getHeight()/4 -60, paintScore);
+
+        canvas.drawText(((int)(hitboxExt) + ""), getWidth()/2 + 200, getHeight()/2, paintScore);
+        canvas.drawText(((int)(hitboxInt) + ""), getWidth()/2 - 200, getHeight()/2, paintScore);
 
         getMonSurfaceHolder().unlockCanvasAndPost(canvas);
 
@@ -208,7 +209,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 break;
         }
 
-        Rondelle maRondelleCreate = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), getWidth()/36);
+        Rondelle maRondelleCreate = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), getWidth()/26);
         maRondelleCreate.setVitesse(0);
         maRondelle = maRondelleCreate;
 
@@ -295,6 +296,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
      * Effectue les tests de collision entre la rondelle et les murs.
      */
     public void updateRondelle(){
+        //Pour chaque arraylist, à chaque refresh de la page ->
+        // on supprime la plus ancienne position et on rajoute une nouvelle position correspondant à la plus récente
         switch (nbJoueurs){
             case 2:
                 positionXPoussoir1.remove(0);
@@ -406,45 +409,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         //Déplace la balle en fonction de la vitesse et de la direction
         float vitesse = getMaRondelle().getVitesse();
 
+        //Déplace la rondelle
         getMaRondelle().setX((float)(getMaRondelle().getX() + (getProportionX() * (coeffPoussoir * vitesse))));
         getMaRondelle().setY((float)(getMaRondelle().getY() + (getProportionY() * (coeffPoussoir * vitesse))));
-        /*
-        switch(getMaRondelle().getDirection()){
-
-            case "N":
-                getMaRondelle().setY((float)(getMaRondelle().getY() - (1.25 * vitesse)));
-                break;
-            case "S":
-                getMaRondelle().setY((float)(geMIN_PUISStMaRondelle().getY() + (1.25 * vitesse)));
-                break;
-            case "E":
-                getMaRondelle().setX((float)(getMaRondelle().getX() + (1.25 * vitesse)));
-                break;
-            case "O":
-                getMaRondelle().setX((float)(getMaRondelle().getX() - (1.25 * vitesse)));
-                break;
-            case "NE":
-                getMaRondelle().setX((float)(getMaRondelle().getX() + (0.75 * vitesse)));
-                getMaRondelle().setY((float)(getMaRondelle().getY() - (0.75 * vitesse)));
-                break;
-            case "NO":
-                getMaRondelle().setX((float)(getMaRondelle().getX() - (0.75 * vitesse)));
-                getMaRondelle().setY((float)(getMaRondelle().getY() - (0.75 * vitesse)));
-                break;
-            case "SE":
-                getMaRondelle().setX((float)(getMaRondelle().getX() + (0.75 * vitesse)));
-                getMaRondelle().setY((float)(getMaRondelle().getY() + (0.75 * vitesse)));
-                break;
-            case "SO":
-                getMaRondelle().setX((float)(getMaRondelle().getX() - (0.75 * vitesse)));
-                getMaRondelle().setY((float)(getMaRondelle().getY() + (0.75 * vitesse)));
-                break;
-            case "ELSE":
-                getMaRondelle().setX((float)(getMaRondelle().getX() + (getProportionX() * (1 * vitesse))));
-                getMaRondelle().setY((float)(getMaRondelle().getY() + (getProportionY() * (1 * vitesse))));
-                break;
-        }
-        */
 
         float xRondelle = getMaRondelle().getX();
         float yRondelle = getMaRondelle().getY();
@@ -470,26 +437,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         pointORondelle[0] = xRondelle - radiusRondelle;
         pointORondelle[1] = yRondelle;
 
-        /*
-
-        float[] pointNORondelle = new float[2];
-        pointNORondelle[0] = xRondelle - (radiusRondelle / 2);
-        pointNORondelle[1] = yRondelle - (radiusRondelle / 2);
-
-        float[] pointNERondelle = new float[2];
-        pointNERondelle[0] = xRondelle + (radiusRondelle / 2);
-        pointNERondelle[1] = yRondelle - (radiusRondelle / 2);
-
-        float[] pointSORondelle = new float[2];
-        pointSORondelle[0] = xRondelle - (radiusRondelle / 2);
-        pointSORondelle[1] = yRondelle + (radiusRondelle / 2);
-
-        float[] pointSERondelle = new float[2];
-        pointSERondelle[0] = xRondelle + (radiusRondelle / 2);
-        pointSERondelle[1] = yRondelle + (radiusRondelle / 2);
-
-        */
-
         if(maRondelle.getCompteurAvailable() != 0){
             int currentCompteur = maRondelle.getCompteurAvailable();
             maRondelle.setCompteurAvailable(currentCompteur - 1);
@@ -498,18 +445,34 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         }
 
         //Si la rondelle est disponible à la colision
-        // -> calcul des coordonnées des points de contact pour chaque poussoir + gestion des collisions (voir schéma)
+        //Pour chaque poussoir, il y a contact si distance entre rondelle et poussoir est < que le radius de la rondelle + le radius du poussoir
         if(maRondelle.isAvailable() && maRondelle.getCompteurAvailable() == 0) {
-            int compteurAvailable = 15;
+            int compteurAvailable = 10;
             for (Poussoir poussoir : getPoussoirs()) {
                 float distanceRondelle = (float) (Math.sqrt(Math.pow(maRondelle.getX() - poussoir.getX(), 2) + Math.pow(maRondelle.getY() - poussoir.getY(), 2)));
-                if (distanceRondelle <= maRondelle.getRadius() + poussoir.getRadius()) {
+                float hitboxInterieur = (5 * poussoir.getPuissPoussoir() + 10);
+                float hitboxExterieure = (30 * poussoir.getPuissPoussoir());
+
+                if ((distanceRondelle <= maRondelle.getRadius() + poussoir.getRadius() + hitboxExterieure) && (distanceRondelle >= 0)) {
+                    hitboxExt = hitboxExterieure;
+                    hitboxInt = hitboxInterieur;
+
+                    //Explication de la suite du code :
+                    //Etant donné qu'il n'y a contact que quand la distance séparant les deux centres des cercles (Rondelle et poussoir),
+                    //le maximum de distance est le radius de la rondelle + le radius du poussoir.
+                    //De plus, plus le deltaX (xB - xA) / deltaY est élevé, plus cela veut dire qu'on tape dans l'autre direction (X -> Y)
+                    //Exemple : On tape à l'horizontal dans la rondelle
+                    //-> Le deltaY est très peu élevé
+                    //-> Le deltaX est très élevé (tend vers la distance max)
+                    //Ainsi, en divisant deltaX et deltaY par la distance max, on obtient un chiffre entre 0 et 1,
+                    // soit la proportion de mouvement à appliquer dans chaque direction (0.70 -> 70% en X et 0.30 -> 30% en Y)
                     float deltaX = maRondelle.getX() - poussoir.getX();
                     float deltaY = maRondelle.getY() - poussoir.getY();
                     float proportionX = deltaX / (maRondelle.getRadius() + poussoir.getRadius());
                     float proportionY = deltaY / (maRondelle.getRadius() + poussoir.getRadius());
+
                     coeffPoussoir = poussoir.getPuissPoussoir();
-                    Log.d("test", coeffPoussoir + "");
+                    //Log.d("test", coeffPoussoir + "");
 
                     setProportionX(proportionX);
                     setProportionY(proportionY);
@@ -531,21 +494,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             //Log.d("résultat" ,"but!");
             this.butMarque(2);
             reset();
-
         }
 
-
-        //Touche le mur haut
+        //Gère les contacts entre la rondelle et les murs
         if(pointNRondelle[1] > (0 + 10) && dehorsHaut == true){
             dehorsHaut = false;
-            maRondelle.setVitesse(vitesseTemp);
-            vitesseTemp = 0;
             //Log.d("removeDehors",  "dehorsHaut = false");
 
         }else if (pointNRondelle[1] < (0 + 10)) {
 
             if(dehorsHaut != true){
-                vitesseTemp = maRondelle.getVitesse();
                 //Log.d("Mur haut", "Mur haut");
                 getMaRondelle().setDirection("ELSE");
                 setProportionX(getProportionX() * 1);
@@ -554,14 +512,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             }
         }else if ((pointSRondelle[1] < (getHeight() - 10)) && dehorsBas == true) {
             dehorsBas = false;
-            maRondelle.setVitesse(vitesseTemp);
-            vitesseTemp = 0;
             //Log.d("removeDehors",  "dehorsBas = false");
         }else if ((pointSRondelle[1] > (getHeight() -10))) {
             //Touche le mur bas
 
             if(dehorsBas != true){
-                vitesseTemp = maRondelle.getVitesse();
                 //Log.d("Mur bas", "Mur bas");
                 getMaRondelle().setDirection("ELSE");
                 setProportionX(getProportionX() * 1);
@@ -570,15 +525,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             }
         }else if (pointERondelle[0] < (getWidth() -10) && dehorsDroite == true) {
             dehorsDroite = false;
-            maRondelle.setVitesse(vitesseTemp);
-            vitesseTemp = 0;
             //Log.d("removeDehors",  "dehorsDroite = false");
 
         } else if (pointERondelle[0] > (getWidth() -10)) {
             //Touche le mur droite
-
             if(dehorsDroite != true){
-                vitesseTemp = maRondelle.getVitesse();
                 //Log.d("Mur bas", "Mur droite");
                 getMaRondelle().setDirection("ELSE");
                 setProportionX(getProportionX() * -1);
@@ -588,160 +539,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
         }else if (pointORondelle[0] > (0 + 10) && dehorsGauche == true) {
             dehorsGauche = false;
-            maRondelle.setVitesse(vitesseTemp);
-            vitesseTemp = 0;
             //Log.d("removeDehors",  "dehorsGauche = false");
 
         } else if (pointORondelle[0] < 0 + 10) {
             //Touche le mur gauche
-
             if(dehorsGauche != true){
-                vitesseTemp = maRondelle.getVitesse();
                 //Log.d("Mur gauche", "Mur gauche");
                 getMaRondelle().setDirection("ELSE");
                 setProportionX(getProportionX() * -1);
                 setProportionY(getProportionY() * 1);
                 dehorsGauche = true;
-
             }
         }
-
-            /*
-            for (Poussoir poussoir : getPoussoirs()){
-                int radiusPoussoir = poussoir.getRadius();
-
-                float[] pointNPoussoir = new float[2];
-                pointNPoussoir[0] = poussoir.getX();
-                pointNPoussoir[1] = poussoir.getY() - radiusPoussoir;
-
-                float[] pointNEPoussoir = new float[2];
-                pointNEPoussoir[0] = poussoir.getX() + (radiusPoussoir / 2);
-                pointNEPoussoir[1] = poussoir.getY() - (radiusPoussoir);
-
-                float[] pointNOPoussoir = new float[2];
-                pointNOPoussoir[0] = poussoir.getX() - (radiusPoussoir / 2);
-                pointNOPoussoir[1] = poussoir.getY() - (radiusPoussoir);
-
-                float[] pointSPoussoir = new float[2];
-                pointSPoussoir[0] = poussoir.getX();
-                pointSPoussoir[1] = poussoir.getY() + radiusPoussoir;
-
-                float[] pointSEPoussoir = new float[2];
-                pointSEPoussoir[0] = poussoir.getX() + (radiusPoussoir / 2);
-                pointSEPoussoir[1] = poussoir.getY() + radiusPoussoir;
-
-                float[] pointSOPoussoir = new float[2];
-                pointSOPoussoir[0] = poussoir.getX() - (radiusPoussoir / 2);
-                pointSOPoussoir[1] = poussoir.getY() + radiusPoussoir;
-
-                float[] pointEPoussoir = new float[2];
-                pointEPoussoir[0] = poussoir.getX() + radiusPoussoir;
-                pointEPoussoir[1] = poussoir.getY();
-
-                float[] pointOPoussoir = new float[2];
-                pointOPoussoir[0] = poussoir.getX() - radiusPoussoir;
-                pointOPoussoir[1] = poussoir.getY();
-
-                /*
-                //Touche au Nord de la rondelle
-                if ((pointNRondelle[0] > (pointSPoussoir[0] - hitboxDistance)) && (pointNRondelle[0] < (pointSPoussoir[0] + hitboxDistance)) && (pointNRondelle[1] > (pointSPoussoir[1] - radiusPoussoir - hitboxDistance)) && (pointNRondelle[1] < (pointSPoussoir[1] + hitboxDistance))){
-                    getMaRondelle().setDirection("S");
-                    getMaRondelle().setCompteurAvailable(compteurAvailable);
-                    getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(vitesseBalle);
-                    //Log.d("direction", "touche N");
-                }
-                //Touche au Sud de la rondelle
-                else if ((pointSRondelle[0] > (pointNPoussoir[0] - hitboxDistance)) && (pointSRondelle[0] < (pointNPoussoir[0] + hitboxDistance)) && (pointSRondelle[1] > (pointNPoussoir[1] - hitboxDistance)) && (pointSRondelle[1] < (pointNPoussoir[1] + hitboxDistance))) {
-                    getMaRondelle().setDirection("N");
-                    getMaRondelle().setCompteurAvailable(compteurAvailable);
-                    getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(vitesseBalle);
-                    //Log.d("direction", "touche S");
-                }
-                //Touche à l'Est de la rondelle
-                else if ((pointERondelle[0] > (pointOPoussoir[0] - hitboxDistance)) && (pointERondelle[0] < (pointOPoussoir[0] + hitboxDistance)) && (pointERondelle[1] > (pointOPoussoir[1] - hitboxDistance)) && (pointERondelle[1] < (pointOPoussoir[1] + hitboxDistance))) {
-                    getMaRondelle().setDirection("O");
-                    getMaRondelle().setCompteurAvailable(compteurAvailable);
-                    getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(vitesseBalle);
-                    //Log.d("direction", "touche E");
-                }
-                //Touche à l'ouest de la rondelle
-                else if ((pointORondelle[0] > (pointEPoussoir[0] - hitboxDistance)) && (pointORondelle[0] < (pointEPoussoir[0] + hitboxDistance)) && (pointORondelle[1] > (pointEPoussoir[1] - hitboxDistance)) && (pointORondelle[1] < (pointEPoussoir[1] + hitboxDistance))) {
-                    getMaRondelle().setDirection("E");
-                    getMaRondelle().setCompteurAvailable(compteurAvailable);
-                    getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(vitesseBalle);
-                    //Log.d("direction", "touche O");
-                }
-                //Touche au Sud-ouest de la rondelle
-                else if ((pointSORondelle[0] > (pointNEPoussoir[0] - hitboxDistanceDiag)) && (pointSORondelle[0] < (pointNEPoussoir[0] + hitboxDistanceDiag)) && (pointSORondelle[1] > pointNEPoussoir[1] - hitboxDistanceDiag) && (pointSORondelle[1] < (pointNEPoussoir[1] + hitboxDistanceDiag))) {
-                    getMaRondelle().setDirection("NE");
-                    getMaRondelle().setCompteurAvailable(compteurAvailable);
-                    getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(vitesseBalle);
-                    Log.d("direction", "touche SO");
-                }
-                //Touche au Sud-Est de la rondelle
-                else if ((pointSERondelle[0] > (pointNOPoussoir[0] - hitboxDistanceDiag)) && (pointSERondelle[0] < (pointNOPoussoir[0] + hitboxDistanceDiag)) && (pointSERondelle[1] > pointNOPoussoir[1] - hitboxDistanceDiag) && (pointSERondelle[1] < (pointNOPoussoir[1] + hitboxDistanceDiag))) {
-                    getMaRondelle().setDirection("NO");
-                    getMaRondelle().setCompteurAvailable(compteurAvailable);
-                    getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(vitesseBalle);
-                    Log.d("direction", "touche SO");
-                }
-                //Touche au Nord-Ouest de la rondelle
-                else if ((pointNORondelle[0] > (pointSEPoussoir[0] - hitboxDistanceDiag)) && (pointNORondelle[0] < (pointSEPoussoir[0] + hitboxDistanceDiag)) && (pointNORondelle[1] > pointSEPoussoir[1] - hitboxDistanceDiag) && (pointNORondelle[1] < (pointSEPoussoir[1] + hitboxDistanceDiag))) {
-                    getMaRondelle().setDirection("SE");
-                    getMaRondelle().setCompteurAvailable(compteurAvailable);
-                    getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(vitesseBalle);
-                    Log.d("direction", "touche SO");
-                }
-                //Touche au Nord-Est de la rondelle
-                else if ((pointNERondelle[0] > (pointSOPoussoir[0] - hitboxDistanceDiag)) && (pointNERondelle[0] < (pointSOPoussoir[0] + hitboxDistanceDiag)) && (pointNERondelle[1] > pointSOPoussoir[1] - hitboxDistanceDiag) && (pointNERondelle[1] < (pointSOPoussoir[1] + hitboxDistanceDiag))) {
-                    getMaRondelle().setDirection("SO");
-                    getMaRondelle().setCompteurAvailable(compteurAvailable);
-                    getMaRondelle().setAvailable(false);
-                    maRondelle.setVitesse(vitesseBalle);
-                    Log.d("direction", "touche SO");
-                }
-
-
-            }
-        }
-
-          ANCIENNE VERSION
-        //Gère le rebond de la rondelle sur les bords du terrain
-        if(getMaRondelle().getDirection() == "NE" && pointNRondelle[1] < 0){
-            getMaRondelle().setDirection("SE");
-        }else if(getMaRondelle().getDirection() == "NO" && pointNRondelle[1] < 0){
-            getMaRondelle().setDirection("SO");
-        } else if(pointNRondelle[1] < 0){
-            getMaRondelle().setDirection("S");
-        }else if(getMaRondelle().getDirection() == "SE" && pointSRondelle[1] > getHeight()){
-            getMaRondelle().setDirection("NE");
-        }else if(getMaRondelle().getDirection() == "SO" && pointSRondelle[1] > getHeight()){
-            getMaRondelle().setDirection("NO");
-        } else if (pointSRondelle[1] > getHeight()) {
-            getMaRondelle().setDirection("N");
-        }else if(getMaRondelle().getDirection() == "NE" && pointERondelle[0] > getWidth()){
-            getMaRondelle().setDirection("NO");
-        }else if(getMaRondelle().getDirection() == "SE" && pointERondelle[0] > getWidth()){
-            getMaRondelle().setDirection("SO");
-        } else if (pointERondelle[0] > getWidth()) {
-            getMaRondelle().setDirection("O");
-        }else if(getMaRondelle().getDirection() == "NO" && pointORondelle[0] < 0){
-            getMaRondelle().setDirection("NE");
-        }else if(getMaRondelle().getDirection() == "SO" && pointORondelle[0] < 0){
-            getMaRondelle().setDirection("SE");
-        } else if (pointORondelle[0] < 0) {
-            getMaRondelle().setDirection("E");
-        }
-
-         */
-
     }
 
     /**
