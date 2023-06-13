@@ -48,17 +48,16 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
     }
 
-    @Override
     /**
-     * S'éxecute à chaque touche, mouvement ou à un lâcher de touche
-     *
+     * S'éxecute à chaque touche, mouvement ou à un lâcher de touche.
      *Pour chaque pointeur, recherche un poussoir à côté de la touche,
-     *s'il y en a un la méthode modifie ses coordonnées pour correspondre à celle de la touche
+     *s'il y en a un la méthode modifie ses coordonnées pour correspondre à celle de la touche.
      *
      * @return true
      */
+    @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        Log.d("test", view.getHeight() + "");
+        //Log.d("test", view.getHeight() + "");
         int nbPointers = motionEvent.getPointerCount();
 
         if (nbPointers > nbJoueurs){
@@ -92,7 +91,7 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
             }
         }
 
-        Poussoir[] poussoirs = getMaGameView().getPoussoirs();
+        Poussoir[] poussoirs = maGameView.getPoussoirs();;
 
         for (int i = 0; i < nbPointers; i++) {
             float littleDistance = 999999;
@@ -119,7 +118,6 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         }
 
         return true;
-
     }
 
     public void finPartie(){
@@ -142,5 +140,7 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
     public void setMaGameView(GameView maGameView) {
         this.maGameView = maGameView;
     }
+
+
 
 }
