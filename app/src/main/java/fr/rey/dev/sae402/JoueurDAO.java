@@ -25,8 +25,8 @@ public interface JoueurDAO {
     @Query("SELECT * FROM Joueur") // @Query pour la requête parsonnalisée
     Cursor getAllJoueurs();
 
-    @Query("SELECT * FROM Joueur") // @Query pour la requête parsonnalisée
-    List getAllJoueursList();
+    //@Query("SELECT * FROM Joueur") // @Query pour la requête parsonnalisée
+    //List getAllJoueursList();
     @Query("SELECT _id FROM Joueur")
     public int [] getAllId();
     @Query("SELECT * FROM Joueur WHERE _id=:idJoueur")
