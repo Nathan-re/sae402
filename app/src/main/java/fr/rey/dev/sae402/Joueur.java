@@ -1,6 +1,7 @@
 package fr.rey.dev.sae402;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -8,6 +9,7 @@ import androidx.room.PrimaryKey;
 public class Joueur {
 
     // ATTRIBUTS
+    @ColumnInfo(name = "_id") // Nommage de la colonne pour la foreign key dans Partie.java
     @PrimaryKey(autoGenerate = true) @NonNull // Création de la clé primaire de la table (id) avec @Entity
     private int _id;
     private String playerPseudo;
@@ -27,27 +29,15 @@ public class Joueur {
     }
 
     // GETTERS
-    public int get_id() {
-        return _id;
-    }
-    public String getPlayerPseudo() {
-        return playerPseudo;
-    }
-    public int getPlayerColor() {
-        return playerColor;
-    }
-    public int getPlayerNbDefaite() {
-        return playerNbDefaite;
-    }
-    public int getPlayerNbVictoire() {
-        return playerNbVictoire;
-    }
+    public int get_id() { return _id; }
+    public String getPlayerPseudo() { return playerPseudo; }
+    public int getPlayerColor() { return playerColor; }
+    public int getPlayerNbDefaite() { return playerNbDefaite; }
+    public int getPlayerNbVictoire() { return playerNbVictoire; }
     public int getPlayerNbPtsTotal() { return playerNbPtsTotal; }
 
     // SETTERS
-    public void setPlayerPseudo(String playerPseudo) {
-        this.playerPseudo = playerPseudo;
-    }
+    public void setPlayerPseudo(String playerPseudo) { this.playerPseudo = playerPseudo; }
     public void setPlayerColor(int playerColor) {
         this.playerColor = playerColor;
     }
