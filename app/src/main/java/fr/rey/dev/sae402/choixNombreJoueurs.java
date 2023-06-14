@@ -2,21 +2,27 @@ package fr.rey.dev.sae402;
 
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import fr.rey.dev.sae402.AppDataBase;
 
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
+
 public class choixNombreJoueurs extends AppCompatActivity
 {
-
-
+    private AppDataBase dbAccess;
     private JoueurDAO daoQuery;
+
+
 
 
     private Joueur joeueur;
@@ -37,8 +43,15 @@ public class choixNombreJoueurs extends AppCompatActivity
 
 
     public void accessDataBase() {
+        dbAccess = AppDataBase.getAppDataBase(this);
+        daoQuery = dbAccess.getJoueurDao();
 
     }
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
