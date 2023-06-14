@@ -1,5 +1,7 @@
 package fr.rey.dev.sae402;
 
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -41,6 +43,8 @@ public class Partie {
     private int idJoueurGagnant;
     private int score;
 
+
+
     // CONSTRUCTEUR
     public Partie(int _id, String typePartie, int idJoueurGagnant, int score) {
         this._id = _id;
@@ -48,6 +52,9 @@ public class Partie {
         this.idJoueurGagnant = idJoueurGagnant;
         this.score = score;
     }
+
+
+
 
     public void set_id(int _id) {
         this._id = _id;
@@ -113,6 +120,8 @@ public class Partie {
     public int getScore() {
         return score;
     }
+//
+
 
     // SETTERS
 

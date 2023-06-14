@@ -14,7 +14,12 @@ import android.widget.TextView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import fr.rey.dev.sae402.AppDataBase;
+import fr.rey.dev.sae402.JoueurDAO;
+import fr.rey.dev.sae402.Joueur;
+
 
 public class PartieClassique extends AppCompatActivity implements View.OnTouchListener {
 
@@ -33,6 +38,9 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
     private int x;
     private int y;
 
+    private String[] equipe1;
+    private String[] equipe2;
+
 
     public void accessDataBase() {
         dbAccess = AppDataBase.getAppDataBase(this);
@@ -50,9 +58,17 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_partie_classique);
 
+        accessDataBase();
+
+
+        equipe1 = getIntent().getStringArrayExtra("equipe1");
+        equipe2 = getIntent().getStringArrayExtra("equipe2");
+
+       // Log.i("Choix des équipes", "Joueur D équipe 2: " + equipe1.getEquipe());
+        //Log.i("Choix des équipes", "Joueur D équipe 2: " + equipe2.getEquipe());
         this.nbJoueurs = 4;
 
-        GameView maGameView = new GameView(this, nbJoueurs, this);
+        GameView maGameView = new GameView(this, nbJoueurs, this); // coucou c'est klara ^^
         maGameView.setOnTouchListener(this);
 
         setMaGameView(maGameView);
@@ -141,6 +157,24 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
     }
 
     public void finPartie(){
+
+        new Thread(() -> {
+            // Insérer les joueurs de l'équipe 1 dans la base de données
+            for (String pseudo : equipe1) {
+                Joueur joueur = new Joueur();
+                joueur.setPlayerPseudo(pseudo);
+                daoQuery.insertJoueur(joueur);
+            }
+
+            // Insérer les joueurs de l'équipe 2 dans la base de données
+            for (String pseudo : equipe2) {
+                Joueur joueur = new Joueur();
+                joueur.setPlayerPseudo(pseudo);
+                daoQuery.insertJoueur(joueur);
+            }
+            Log.i("Equipe 1", Arrays.toString(equipe1));
+            Log.i("Equipe 2", Arrays.toString(equipe2));
+        }).start();
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
     }
@@ -161,6 +195,12 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         this.maGameView = maGameView;
     }
 
+    public String[] getEquipe1() {
+        return equipe1;
+    }
 
+    public String[] getEquipe2() {
+        return equipe2;
+    }
 
 }
