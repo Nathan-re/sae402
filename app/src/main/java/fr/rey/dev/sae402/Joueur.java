@@ -15,15 +15,25 @@ public class Joueur {
 
     // ATTRIBUTS
     @ColumnInfo(name = "_id") // Nommage de la colonne pour la foreign key dans Partie.java
-    @PrimaryKey(autoGenerate = true) @NonNull // Création de la clé primaire de la table (id) avec @Entity
-    private int _id;
-    private String playerPseudo;
-    private int playerColor;
-    private int playerNbDefaite;
-    private int playerNbVictoire;
-    private int playerNbPtsTotal;
+    @PrimaryKey(autoGenerate = true)
+    @NonNull // Création de la clé primaire de la table (id) avec @Entity
+    public int _id;
+    @ColumnInfo(name = "playerPseudo")
+    public String playerPseudo;
+    @ColumnInfo(name = "playerColor")
+    public int playerColor;
+    @ColumnInfo(name = "playerNbDefaite")
+    public int playerNbDefaite;
+    @ColumnInfo(name = "playerNbVictoire")
+    public int playerNbVictoire;
+    @ColumnInfo(name = "playerNbPtsTotal")
+    public int playerNbPtsTotal;
 
     // CONSTRUCTEUR
+
+     public Joueur () {
+
+        }
     public Joueur (String playerPseudo , int playerColor) {
         this.playerPseudo = playerPseudo;
         this.playerColor = playerColor;
@@ -33,10 +43,12 @@ public class Joueur {
         this.playerNbPtsTotal = 0;
 
     }
-    /*@Override
+    @Override
     public String toString() {
-        return playerPseudo; // Ou toute autre représentation souhaitée
-    }*/
+        return playerPseudo;
+    }
+
+
 
     // GETTERS
     public int get_id() { return _id; }
