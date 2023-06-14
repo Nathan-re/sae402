@@ -111,12 +111,10 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
                         }
                     }
                 }
-
             }
             currentPoussoir.setX(littleX);
             currentPoussoir.setY(littleY);
         }
-
         return true;
     }
 
@@ -140,7 +138,4 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
     public void setMaGameView(GameView maGameView) {
         this.maGameView = maGameView;
     }
-
-
-
 }

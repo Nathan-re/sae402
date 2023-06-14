@@ -15,7 +15,7 @@
         <activity
             android:name=".PartieClassique"
             android:exported="false" />
-        <activity android:name=".historique"
+        <activity android:name=".Historique"
             android:label="Historique"
             android:exported="true"/>
         <activity android:name=".choixNombreJoueurs"

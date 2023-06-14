@@ -12,10 +12,8 @@ import androidx.room.RoomDatabase;
 
 @Database(entities = {Joueur.class, Partie.class}, version = 1)
 public abstract class AppDataBase extends RoomDatabase {
-    // on crée une instance de la classe qui est statique : pattern singleton
-    // qui garantie l'existence d'une seule instance
+    // on crée une instance de la classe qui est statique : pattern singleton qui garantie l'existence d'une seule instance
     private static AppDataBase bddInstance = null;
-
     // on crée un accès pour chaque DAO
     public abstract JoueurDAO getJoueurDao();
     public abstract PartieDAO getPartieDao();

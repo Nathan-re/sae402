@@ -7,9 +7,7 @@ public class Poussoir {
     private float x;
     private float y;
     private int couleur;
-
     private int radius;
-
     private float puissPoussoir;
 
     public Poussoir(float x, float y, int couleur, int radius){

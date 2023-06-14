@@ -25,9 +25,6 @@ Spinner spinnerequipe2;
     private AppDataBase dbAccess;
     private JoueurDAO daoQuery;
 
-
-
-
     public void accessDataBase() {
         dbAccess = AppDataBase.getAppDataBase(this);
         daoQuery = dbAccess.getJoueurDao();
@@ -67,7 +64,7 @@ Spinner spinnerequipe2;
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-// Associer l'adapter au Spinner
+        // Associer l'adapter au Spinner
         spinnerequipe1.setAdapter(adapter);
         spinnerequipe2.setAdapter(adapter);
 
@@ -78,8 +75,6 @@ Spinner spinnerequipe2;
                 Log.i("Retour a l'accueil", "Yep !");
 
                 new Thread(() -> {
-
-
                     Intent ButtonRetourChoixMode = new Intent(getApplicationContext(), ModeDeJeu2Pers.class);
                     startActivity(ButtonRetourChoixMode);
                 }).start();
@@ -94,12 +89,9 @@ Spinner spinnerequipe2;
                 Log.i("Retour a l'accueil", "Yep !");
 
                 new Thread(() -> {
-
-
                     Intent LancerPartie2Pers = new Intent(getApplicationContext(), PartieClassique.class);
                     startActivity(LancerPartie2Pers);
                 }).start();
-
             }}
         ));
 

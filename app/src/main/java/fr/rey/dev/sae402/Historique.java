@@ -12,29 +12,18 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class historique extends AppCompatActivity
+public class Historique extends AppCompatActivity
 {
-
-
     private JoueurDAO daoQuery;
 
-
-    private Joueur joeueur;
+// score equipe pseudo, récup id partie avec clé étrangère
+    private Joueur joueur;
     private TextView textView;
     private Button button;
     private EditText editText;
     private String nom;
     private String prenom;
     private String score;
-    private String date;
-    private String heure;
-    private String duree;
-    private String gagnant;
-    private String perdant;
-    private String scoreGagnant;
-    private String scorePerdant;
-
-
 
     public void retour(View view) {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);

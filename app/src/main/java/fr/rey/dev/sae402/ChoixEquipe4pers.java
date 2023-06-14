@@ -19,7 +19,7 @@ public class ChoixEquipe4pers extends AppCompatActivity
     private JoueurDAO daoQuery;
 
 
-    private Joueur joeueur;
+    private Joueur joueur;
     private TextView textView;
     private Button button;
     private EditText editText;

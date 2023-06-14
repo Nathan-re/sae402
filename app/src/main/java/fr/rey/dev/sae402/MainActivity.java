@@ -5,15 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                                 new Thread(() -> {
 
 
-                                    Intent intent2 = new Intent(getApplicationContext(), historique.class);
+                                    Intent intent2 = new Intent(getApplicationContext(), Historique.class);
                                     startActivity(intent2);
                                 }).start();
                             }}

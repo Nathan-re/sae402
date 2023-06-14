@@ -19,7 +19,7 @@ public class choixNombreJoueurs extends AppCompatActivity
     private JoueurDAO daoQuery;
 
 
-    private Joueur joeueur;
+    private Joueur joueur;
     private TextView textView;
     private Button button;
     private EditText editText;
@@ -45,9 +45,9 @@ public class choixNombreJoueurs extends AppCompatActivity
         setContentView(R.layout.choix_nombres_de_joueurs);
 
 
-Button Button2Pers = (Button) findViewById(R.id.choixJoueurs2);
+        Button Button2Pers = (Button) findViewById(R.id.choixJoueurs2);
         Button Button4Pers = (Button) findViewById(R.id.choixJoueurs4);
-Button ButtonInscriptionJoueur = (Button) findViewById(R.id.InscriptionButton);
+        Button ButtonInscriptionJoueur = (Button) findViewById(R.id.InscriptionButton);
         Button ButtonRetourChoixNombreJoueurs = (Button) findViewById(R.id.button_retour_choix_Joueur);
 
         ButtonRetourChoixNombreJoueurs.setOnClickListener((new View.OnClickListener() {
