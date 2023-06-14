@@ -25,6 +25,8 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
     private int x;
     private int y;
 
+    private final static int RADIUS_TOUCHE = 300;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +103,7 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
             for (Poussoir poussoir : poussoirs) {
                 if((poussoir.getX() - poussoir.getRadius() >= 0) || (poussoir.getY() - poussoir.getRadius() >= 0) || (poussoir.getY() + poussoir.getRadius() <= view.getHeight()) || (poussoir.getX() + poussoir.getRadius() <= view.getWidth())){
-                    if((motionEvent.getX(i) > poussoir.getX() - 300) && (motionEvent.getX(i) < poussoir.getX() + 300) && (motionEvent.getY(i) > poussoir.getY() - 300) && (motionEvent.getY(i) < poussoir.getY() + 300)){
+                    if((motionEvent.getX(i) > poussoir.getX() - RADIUS_TOUCHE) && (motionEvent.getX(i) < poussoir.getX() + RADIUS_TOUCHE) && (motionEvent.getY(i) > poussoir.getY() - RADIUS_TOUCHE) && (motionEvent.getY(i) < poussoir.getY() + RADIUS_TOUCHE)){
                         float distance = (float)(Math.sqrt((float)(Math.pow(poussoir.getX() - motionEvent.getX(i),2)) + (float)(Math.pow(poussoir.getY() - motionEvent.getY(i),2))));
                         if(distance < littleDistance){
                             currentPoussoir = poussoir;

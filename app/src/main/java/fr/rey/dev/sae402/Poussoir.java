@@ -20,6 +20,14 @@ public class Poussoir {
         puissPoussoir = 0;
     }
 
+    public Poussoir(float x, float y, int couleur, int radius, float puissPoussoir){
+        this.x = x;
+        this.y = y;
+        this.couleur = couleur;
+        this.radius = radius;
+        this.puissPoussoir = puissPoussoir;
+    }
+
     public Poussoir(float x, float y, int couleur){
         this.x = x;
         this.y = y;
