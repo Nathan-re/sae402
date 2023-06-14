@@ -31,4 +31,6 @@ public interface JoueurDAO {
     public int [] getAllId();
     @Query("SELECT * FROM Joueur WHERE _id=:idJoueur")
     public Joueur getJoueurFromId(int idJoueur);
+
+
 }

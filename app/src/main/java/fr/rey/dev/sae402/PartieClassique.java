@@ -14,25 +14,61 @@ import android.widget.TextView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import fr.rey.dev.sae402.AppDataBase;
+import fr.rey.dev.sae402.JoueurDAO;
+import fr.rey.dev.sae402.Joueur;
+
 
 public class PartieClassique extends AppCompatActivity implements View.OnTouchListener {
 
     private LinearLayout layout;
     private GameView maGameView;
+
+    private AppDataBase dbAccess;
+    private JoueurDAO daoQuery;
+
+
+
+
     private int compteur;
 
     private int nbJoueurs;
     private int x;
     private int y;
 
+    private String[] equipe1;
+    private String[] equipe2;
+
+
+    public void accessDataBase() {
+        dbAccess = AppDataBase.getAppDataBase(this);
+        daoQuery = dbAccess.getJoueurDao();
+    }
+
+
+
+
+
+    private final static int RADIUS_TOUCHE = 300;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_partie_classique);
 
+        accessDataBase();
+
+
+        equipe1 = getIntent().getStringArrayExtra("equipe1");
+        equipe2 = getIntent().getStringArrayExtra("equipe2");
+
+       // Log.i("Choix des équipes", "Joueur D équipe 2: " + equipe1.getEquipe());
+        //Log.i("Choix des équipes", "Joueur D équipe 2: " + equipe2.getEquipe());
         this.nbJoueurs = 4;
 
-        GameView maGameView = new GameView(this, nbJoueurs, this);
+        GameView maGameView = new GameView(this, nbJoueurs, this); // coucou c'est klara ^^
         maGameView.setOnTouchListener(this);
 
         setMaGameView(maGameView);
@@ -101,7 +137,7 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
             for (Poussoir poussoir : poussoirs) {
                 if((poussoir.getX() - poussoir.getRadius() >= 0) || (poussoir.getY() - poussoir.getRadius() >= 0) || (poussoir.getY() + poussoir.getRadius() <= view.getHeight()) || (poussoir.getX() + poussoir.getRadius() <= view.getWidth())){
-                    if((motionEvent.getX(i) > poussoir.getX() - 300) && (motionEvent.getX(i) < poussoir.getX() + 300) && (motionEvent.getY(i) > poussoir.getY() - 300) && (motionEvent.getY(i) < poussoir.getY() + 300)){
+                    if((motionEvent.getX(i) > poussoir.getX() - RADIUS_TOUCHE) && (motionEvent.getX(i) < poussoir.getX() + RADIUS_TOUCHE) && (motionEvent.getY(i) > poussoir.getY() - RADIUS_TOUCHE) && (motionEvent.getY(i) < poussoir.getY() + RADIUS_TOUCHE)){
                         float distance = (float)(Math.sqrt((float)(Math.pow(poussoir.getX() - motionEvent.getX(i),2)) + (float)(Math.pow(poussoir.getY() - motionEvent.getY(i),2))));
                         if(distance < littleDistance){
                             currentPoussoir = poussoir;
@@ -119,6 +155,24 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
     }
 
     public void finPartie(){
+
+        new Thread(() -> {
+            // Insérer les joueurs de l'équipe 1 dans la base de données
+            for (String pseudo : equipe1) {
+                Joueur joueur = new Joueur();
+                joueur.setPlayerPseudo(pseudo);
+                daoQuery.insertJoueur(joueur);
+            }
+
+            // Insérer les joueurs de l'équipe 2 dans la base de données
+            for (String pseudo : equipe2) {
+                Joueur joueur = new Joueur();
+                joueur.setPlayerPseudo(pseudo);
+                daoQuery.insertJoueur(joueur);
+            }
+            Log.i("Equipe 1", Arrays.toString(equipe1));
+            Log.i("Equipe 2", Arrays.toString(equipe2));
+        }).start();
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
     }
@@ -138,4 +192,16 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
     public void setMaGameView(GameView maGameView) {
         this.maGameView = maGameView;
     }
+<<<<<<< HEAD
+=======
+
+    public String[] getEquipe1() {
+        return equipe1;
+    }
+
+    public String[] getEquipe2() {
+        return equipe2;
+    }
+
+>>>>>>> de5312720739f8254b27d5acf151d3ecde2d6712
 }
