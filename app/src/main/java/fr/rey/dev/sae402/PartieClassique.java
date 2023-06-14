@@ -192,8 +192,6 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
     public void setMaGameView(GameView maGameView) {
         this.maGameView = maGameView;
     }
-<<<<<<< HEAD
-=======
 
     public String[] getEquipe1() {
         return equipe1;
@@ -201,7 +199,5 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
     public String[] getEquipe2() {
         return equipe2;
-    }
+    }}
 
->>>>>>> de5312720739f8254b27d5acf151d3ecde2d6712
-}

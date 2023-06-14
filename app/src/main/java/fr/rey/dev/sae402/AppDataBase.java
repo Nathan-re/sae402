@@ -9,26 +9,21 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Joueur.class}, version = 3)
+@Database(entities = {Joueur.class, Partie.class}, version = 3)
 public abstract class AppDataBase extends RoomDatabase {
-<<<<<<< HEAD
-    // on crée une instance de la classe qui est statique : pattern singleton qui garantie l'existence d'une seule instance
-    private static AppDataBase bddInstance = null;
-    // on crée un accès pour chaque DAO
-=======
 
     private static AppDataBase bddInstance;
 
->>>>>>> de5312720739f8254b27d5acf151d3ecde2d6712
     public abstract JoueurDAO getJoueurDao();
-
+    public abstract PartieDAO getPartieDao();
+    //.addMigrations(MIGRATION_1_2)
     public static AppDataBase getAppDataBase(Context context) {
         if (bddInstance == null) {
             synchronized (AppDataBase.class) {
                 if (bddInstance == null) {
                     bddInstance = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDataBase.class, "joueur-partie")
-                            .addMigrations(MIGRATION_1_2)
+
                             .build();
                 }
             }
@@ -51,4 +46,3 @@ public abstract class AppDataBase extends RoomDatabase {
     };
 
 }
-

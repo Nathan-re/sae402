@@ -25,25 +25,6 @@ public class ChoixEquipe4pers extends AppCompatActivity
     private JoueurDAO daoQuery;
 
 
-<<<<<<< HEAD
-    private Joueur joueur;
-    private TextView textView;
-    private Button button;
-    private EditText editText;
-    private String nom;
-    private String prenom;
-    private String score;
-    private String date;
-    private String heure;
-    private String duree;
-    private String gagnant;
-    private String perdant;
-    private String scoreGagnant;
-    private String scorePerdant;
-=======
->>>>>>> de5312720739f8254b27d5acf151d3ecde2d6712
-
-
     private class DatabaseOperationTask extends AsyncTask<Void, Void, List<Joueur>> {
         @Override
         protected List<Joueur> doInBackground(Void... voids) {
