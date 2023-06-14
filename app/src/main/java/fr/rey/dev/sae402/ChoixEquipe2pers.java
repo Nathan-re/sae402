@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.os.AsyncTask;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +27,21 @@ Spinner spinnerequipe2;
     private JoueurDAO daoQuery;
 
 
+    private class DatabaseOperationTask extends AsyncTask<Void, Void, List<Joueur>> {
+        @Override
+        protected List<Joueur> doInBackground(Void... voids) {
+            return daoQuery.getAllJoueursList();
+        }
 
+        @Override
+        protected void onPostExecute(List<Joueur> joueurs) {
+            super.onPostExecute(joueurs);
+            ArrayAdapter<Joueur> adapter = new ArrayAdapter<>(ChoixEquipe2pers.this, android.R.layout.simple_spinner_item, joueurs);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerequipe1.setAdapter(adapter);
+            spinnerequipe2.setAdapter(adapter);
+        }
+    }
 
     public void accessDataBase() {
         dbAccess = AppDataBase.getAppDataBase(this);
@@ -57,19 +72,15 @@ Spinner spinnerequipe2;
         Button ButtonRetourChoixMode = findViewById(R.id.button_retour_choix_Mode1);
         Button lancer_partie2pers = findViewById(R.id.lancer_partie2pers);
 
-        Cursor joueurCursor = daoQuery.getAllJoueurs();
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                joueurCursor,
-                new String[]{"playerPseudo"},
-                new int[]{android.R.id.text1}
-        );
+        /*List<Joueur> joueurs = daoQuery.getAllJoueursList();
+        ArrayAdapter<Joueur> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, joueurs);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-// Associer l'adapter au Spinner
+
         spinnerequipe1.setAdapter(adapter);
-        spinnerequipe2.setAdapter(adapter);
+        spinnerequipe2.setAdapter(adapter);*/
+
+        new DatabaseOperationTask().execute();
 
         ButtonRetourChoixMode.setOnClickListener((new View.OnClickListener() {
             @Override
@@ -91,7 +102,7 @@ Spinner spinnerequipe2;
             @Override
             public void onClick(View view) {
 
-                Log.i("Retour a l'accueil", "Yep !");
+                Log.i("Lance la game", "Yep !");
 
                 new Thread(() -> {
 
