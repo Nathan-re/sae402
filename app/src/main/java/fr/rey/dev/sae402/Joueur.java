@@ -29,6 +29,9 @@ public class Joueur {
     @ColumnInfo(name = "playerNbPtsTotal")
     public int playerNbPtsTotal;
 
+    @ColumnInfo(name = "equipe")
+    public String equipe;
+
     // CONSTRUCTEUR
 
      public Joueur () {
@@ -73,6 +76,11 @@ public class Joueur {
     }
 
 
+    public int getId() {
+        return _id;
+    }
+
+ 
 }
 
 

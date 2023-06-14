@@ -14,16 +14,34 @@ import android.widget.TextView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PartieClassique extends AppCompatActivity implements View.OnTouchListener {
 
     private LinearLayout layout;
     private GameView maGameView;
+
+    private AppDataBase dbAccess;
+    private JoueurDAO daoQuery;
+
+
+
+
     private int compteur;
 
     private int nbJoueurs;
     private int x;
     private int y;
+
+
+    public void accessDataBase() {
+        dbAccess = AppDataBase.getAppDataBase(this);
+        daoQuery = dbAccess.getJoueurDao();
+    }
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
