@@ -17,6 +17,7 @@ public class ModeDeJeu4Pers extends AppCompatActivity
 
 
     private JoueurDAO daoQuery;
+    private AppDataBase dbAccess;
 
 
     private Joueur joeueur;
@@ -37,7 +38,8 @@ public class ModeDeJeu4Pers extends AppCompatActivity
 
 
     public void accessDataBase() {
-
+        dbAccess = AppDataBase.getAppDataBase(this);
+        daoQuery = dbAccess.getJoueurDao();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

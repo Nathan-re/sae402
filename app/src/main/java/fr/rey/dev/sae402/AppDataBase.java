@@ -15,14 +15,14 @@ public abstract class AppDataBase extends RoomDatabase {
     private static AppDataBase bddInstance;
 
     public abstract JoueurDAO getJoueurDao();
-
+    //.addMigrations(MIGRATION_1_2)
     public static AppDataBase getAppDataBase(Context context) {
         if (bddInstance == null) {
             synchronized (AppDataBase.class) {
                 if (bddInstance == null) {
                     bddInstance = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDataBase.class, "joueur-partie")
-                            .addMigrations(MIGRATION_1_2)
+
                             .build();
                 }
             }
