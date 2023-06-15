@@ -1,5 +1,7 @@
 package fr.rey.dev.sae402;
 
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -28,7 +30,6 @@ import androidx.room.PrimaryKey;
                 childColumns = "idJoueur4"
         )})
 public class Partie {
-
     // ATTRIBUTS
     @PrimaryKey(autoGenerate = true) @NonNull
     private int _id;
@@ -41,13 +42,20 @@ public class Partie {
     private int idJoueurGagnant;
     private int score;
 
+
+
     // CONSTRUCTEUR
-    public Partie(int _id, String typePartie, int idJoueurGagnant, int score) {
+    public Partie(int _id, String typePartie, int idJoueur1, int idJoueur2, int idJoueur3, int idJoueur4, int idJoueurGagnant, int score) {
         this._id = _id;
         this.typePartie = typePartie;
+<<<<<<< HEAD
+=======
         this.idJoueurGagnant = idJoueurGagnant;
         this.score = score;
     }
+
+
+
 
     public void set_id(int _id) {
         this._id = _id;
@@ -62,38 +70,12 @@ public class Partie {
     }
 
     public void setIdJoueur1(int idJoueur1) {
+>>>>>>> de5312720739f8254b27d5acf151d3ecde2d6712
         this.idJoueur1 = idJoueur1;
-    }
-
-    public int getIdJoueur2() {
-        return idJoueur2;
-    }
-
-    public void setIdJoueur2(int idJoueur2) {
         this.idJoueur2 = idJoueur2;
-    }
-
-    public int getIdJoueur3() {
-        return idJoueur3;
-    }
-
-    public void setIdJoueur3(int idJoueur3) {
         this.idJoueur3 = idJoueur3;
-    }
-
-    public int getIdJoueur4() {
-        return idJoueur4;
-    }
-
-    public void setIdJoueur4(int idJoueur4) {
         this.idJoueur4 = idJoueur4;
-    }
-
-    public void setIdJoueurGagnant(int idJoueurGagnant) {
         this.idJoueurGagnant = idJoueurGagnant;
-    }
-
-    public void setScore(int score) {
         this.score = score;
     }
 
@@ -113,8 +95,14 @@ public class Partie {
     public int getScore() {
         return score;
     }
+//
+
 
     // SETTERS
-
+    public void setIdJoueurGagnant(int idJoueurGagnant) {
+        this.idJoueurGagnant = idJoueurGagnant;
+    }
+    public void setScore(int score) { this.score = score; }
+    public void setTypePartie(String typePartie) { this.typePartie = typePartie; }
 }
 

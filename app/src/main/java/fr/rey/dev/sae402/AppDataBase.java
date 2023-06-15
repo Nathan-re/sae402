@@ -9,12 +9,13 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Joueur.class}, version = 3)
+@Database(entities = {Joueur.class, Partie.class}, version = 3)
 public abstract class AppDataBase extends RoomDatabase {
 
     private static AppDataBase bddInstance;
 
     public abstract JoueurDAO getJoueurDao();
+    public abstract PartieDAO getPartieDao();
     //.addMigrations(MIGRATION_1_2)
     public static AppDataBase getAppDataBase(Context context) {
         if (bddInstance == null) {
@@ -45,4 +46,3 @@ public abstract class AppDataBase extends RoomDatabase {
     };
 
 }
-
