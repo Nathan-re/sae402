@@ -9,13 +9,21 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.os.AsyncTask;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ChoixEquipe4pers extends AppCompatActivity
-{
+import fr.rey.dev.sae402.AppDataBase;
+import fr.rey.dev.sae402.Joueur;
+import fr.rey.dev.sae402.JoueurDAO;
+import fr.rey.dev.sae402.ModeDeJeu4Pers;
+import fr.rey.dev.sae402.Partie;
+import fr.rey.dev.sae402.PartieClassique;
+import fr.rey.dev.sae402.PartieDAO;
+import fr.rey.dev.sae402.R;
+
+public class ChoixEquipe4pers extends AppCompatActivity {
 
     Spinner spinnerAequipe1;
     Spinner spinnerBequipe1;
@@ -23,9 +31,7 @@ public class ChoixEquipe4pers extends AppCompatActivity
     Spinner spinnerDequipe2;
     private AppDataBase dbAccess;
     private JoueurDAO daoQuery;
-
-
-
+    private PartieDAO partieDAO;
 
     private class DatabaseOperationTask extends AsyncTask<Void, Void, List<Joueur>> {
         @Override
@@ -45,17 +51,6 @@ public class ChoixEquipe4pers extends AppCompatActivity
         }
     }
 
-  /*  private class InsertJoueursTask extends AsyncTask<Joueur, Void, Void> {
-        @Override
-        protected Void doInBackground(Joueur... joueurs) {
-            daoQuery.insertJoueur(joueurs[0]);
-            daoQuery.insertJoueur(joueurs[1]);
-            daoQuery.insertJoueur(joueurs[2]);
-            daoQuery.insertJoueur(joueurs[3]);
-            return null;
-        }
-    }*/
-
     private class InsertJoueursTask extends AsyncTask<Joueur, Void, Void> {
         @Override
         protected Void doInBackground(Joueur... joueurs) {
@@ -68,10 +63,14 @@ public class ChoixEquipe4pers extends AppCompatActivity
         }
     }
 
+
+
     public void accessDataBase() {
         dbAccess = AppDataBase.getAppDataBase(this);
         daoQuery = dbAccess.getJoueurDao();
+        partieDAO = dbAccess.getPartieDao();
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,69 +81,69 @@ public class ChoixEquipe4pers extends AppCompatActivity
         spinnerBequipe1 = findViewById(R.id.spinner2_4pers);
         spinnerCequipe2 = findViewById(R.id.spinner3_4pers);
         spinnerDequipe2 = findViewById(R.id.spinner4_4pers);
-        Button lancer_partie4pers = (Button) findViewById(R.id.lancer_partie4pers);
-        Button ButtonRetour = (Button) findViewById(R.id.button_retour_choix_Mode2);
+        Button lancer_partie4pers = findViewById(R.id.lancer_partie4pers);
+        Button buttonRetour = findViewById(R.id.button_retour_choix_Mode2);
 
         new DatabaseOperationTask().execute();
-        ButtonRetour.setOnClickListener((new View.OnClickListener() {
+        buttonRetour.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Log.i("Retour a l'accueil", "Yep !");
-
-                new Thread(() -> {
-
-
-                    Intent retourIntent1 = new Intent(getApplicationContext(), ModeDeJeu4Pers.class);
-                    startActivity(retourIntent1);
-                }).start();
-
-            }}
-        ));
-
+                Log.i("Retour à l'accueil", "Yep !");
+                Intent retourIntent1 = new Intent(getApplicationContext(), ModeDeJeu4Pers.class);
+                startActivity(retourIntent1);
+            }
+        }));
 
         lancer_partie4pers.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Log.i("Retour a l'accueil", "Yep !");
+                Log.i("Lancer la partie", "Yep !");
                 Joueur joueurAequipe1 = (Joueur) spinnerAequipe1.getSelectedItem();
                 Joueur joueurBequipe1 = (Joueur) spinnerBequipe1.getSelectedItem();
                 Joueur joueurCequipe2 = (Joueur) spinnerCequipe2.getSelectedItem();
                 Joueur joueurDequipe2 = (Joueur) spinnerDequipe2.getSelectedItem();
 
-                String[] equipe1 = {joueurAequipe1.getPlayerPseudo(), joueurBequipe1.getPlayerPseudo()};
-                String[] equipe2 = {joueurCequipe2.getPlayerPseudo(), joueurDequipe2.getPlayerPseudo()};
+                String[] equipe1String = new String[]{joueurAequipe1.getPlayerPseudo(), joueurBequipe1.getPlayerPseudo()};
+                String[] equipe2String = new String[]{joueurCequipe2.getPlayerPseudo(), joueurDequipe2.getPlayerPseudo()};
+
+
 
                 new InsertJoueursTask().execute(joueurAequipe1, joueurBequipe1, joueurCequipe2, joueurDequipe2);
-
                 Log.i("Choix des équipes", "Joueur A équipe 1: " + joueurAequipe1.getPlayerPseudo());
                 Log.i("Choix des équipes", "Joueur B équipe 1: " + joueurBequipe1.getPlayerPseudo());
                 Log.i("Choix des équipes", "Joueur C équipe 2: " + joueurCequipe2.getPlayerPseudo());
                 Log.i("Choix des équipes", "Joueur D équipe 2: " + joueurDequipe2.getPlayerPseudo());
 
-                Log.i("equipe 1", String.valueOf(equipe1));
-                Log.i("equipe 2", String.valueOf(equipe2));
-            /*    new Thread(() -> {
-
-                    Intent LancerPartie4Pers = new Intent(getApplicationContext(), PartieClassique.class);
-                    LancerPartie4Pers.putExtra("equipe1", equipe1);
-                    LancerPartie4Pers.putExtra("equipe2", equipe2);
-                    startActivity(LancerPartie4Pers);
-                }).start(); */
-
                 new Thread(() -> {
-                    Intent LancerPartie4Pers = new Intent(getApplicationContext(), PartieClassique.class);
-                    LancerPartie4Pers.putExtra("equipe1", new String[]{joueurAequipe1.getPlayerPseudo(), joueurBequipe1.getPlayerPseudo()});
-                    LancerPartie4Pers.putExtra("equipe2", new String[]{joueurCequipe2.getPlayerPseudo(), joueurDequipe2.getPlayerPseudo()});
-                    startActivity(LancerPartie4Pers);
+                    Intent lancerPartie4Pers = new Intent(getApplicationContext(), PartieClassique.class);
+                    lancerPartie4Pers.putExtra("equipe1String", equipe1String);
+                    lancerPartie4Pers.putExtra("equipe2String", equipe2String);
+String[] equipe1 = new String[]{joueurAequipe1.getPlayerPseudo(), joueurBequipe1.getPlayerPseudo()};
+String[] equipe2 = new String[]{joueurCequipe2.getPlayerPseudo(), joueurDequipe2.getPlayerPseudo()};
+
+int[] equipe1Id = new int[]{joueurAequipe1.getId(), joueurBequipe1.getId()};
+int[] equipe2Id = new int[]{joueurCequipe2.getId(), joueurDequipe2.getId()};
+                    Log.i("TABLEAU EQUIPE 1", String.valueOf(equipe1[0]));
+                    Log.i("TABLEAU EQUIPE 1", String.valueOf(equipe1[1]));
+                    Log.i("TABLEAU EQUIPE 2", String.valueOf(equipe2[0]));
+                    Log.i("TABLEAU EQUIPE 2", String.valueOf(equipe2[1]));
+
+                    Log.i("TABLEAU EQUIPE 1 ID", String.valueOf(equipe1Id[0]));
+                    Log.i("TABLEAU EQUIPE 1 ID", String.valueOf(equipe1Id[1]));
+                    Log.i("TABLEAU EQUIPE 2 ID", String.valueOf(equipe2Id[0]));
+                    Log.i("TABLEAU EQUIPE 2 ID", String.valueOf(equipe2Id[1]));
+
+
+
+                    lancerPartie4Pers.putExtra("joueurAequipe1", joueurAequipe1);
+                    lancerPartie4Pers.putExtra("joueurBequipe1", joueurBequipe1);
+                    lancerPartie4Pers.putExtra("joueurCequipe2", joueurCequipe2);
+                    lancerPartie4Pers.putExtra("joueurDequipe2", joueurDequipe2);
+
+                    startActivity(lancerPartie4Pers);
+
                 }).start();
-
-            }}
-        ));
+            }
+        }));
     }
-
-
-
-
 }

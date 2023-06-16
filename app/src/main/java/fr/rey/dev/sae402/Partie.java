@@ -1,11 +1,14 @@
 package fr.rey.dev.sae402;
 
-import android.os.Bundle;
-
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
+
+import java.util.Arrays;
+import java.util.List;
+
 
 // Création de la table (Partie) avec @Entity et et des foreign keys (id des joueurs) avec @ForeignKeys
 @Entity (foreignKeys = {
@@ -42,16 +45,44 @@ public class Partie {
     private int idJoueur4;
     private int idJoueurGagnant;
     private int score;
+    // Equipes
+    private String[] equipe1Joueurs;
+
+    private String[] equipe2Joueurs;
 
 
 
     // CONSTRUCTEUR
-    public Partie(int _id, String typePartie, int idJoueurGagnant, int score) {
+   /* public Partie(int _id, String typePartie, int idJoueurGagnant, int score, String equipe1, String equipe2) {
         this._id = _id;
         this.typePartie = typePartie;
         this.idJoueurGagnant = idJoueurGagnant;
         this.score = score;
+        this.equipe1 = equipe1;
+        this.equipe2 = equipe2;
+    } */
+
+    public Partie(int _id, String typePartie, int idJoueurGagnant, int score, String[] equipe1Joueurs, String[] equipe2Joueurs) {
+        this._id = _id;
+        this.typePartie = typePartie;
+        this.idJoueurGagnant = idJoueurGagnant;
+        this.score = score;
+this.equipe1Joueurs = equipe1Joueurs;
+this.equipe2Joueurs = equipe2Joueurs;
     }
+
+
+   /*
+    public Partie(int id, String classique, int idJoueurGagnant, int score, String equipe11, String equipe22) {
+        this._id = _id;
+        this.typePartie = typePartie;
+        this.idJoueurGagnant = idJoueurGagnant;
+        this.score = score;
+        this.equipe1 = equipe1;
+        this.equipe2 = equipe2;
+    }*/
+
+
 
 
 
@@ -120,10 +151,29 @@ public class Partie {
     public int getScore() {
         return score;
     }
+
+    public String[] getEquipe1Joueurs() {
+        return equipe1Joueurs;
+    }
+
+    public void setEquipe1Joueurs(String[] equipe1Joueurs) {
+        this.equipe1Joueurs = equipe1Joueurs;
+    }
+
+    public String[] getEquipe2Joueurs() {
+        return equipe2Joueurs;
+    }
+
+    public void setEquipe2Joueurs(String[] equipe2Joueurs) {
+        this.equipe2Joueurs = equipe2Joueurs;
+    }
 //
 
 
     // SETTERS
+
+
+
 
 }
 

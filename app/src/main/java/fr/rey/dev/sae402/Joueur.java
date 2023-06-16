@@ -9,9 +9,11 @@ import  androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import java.io.Serializable;
+
 
 @Entity // Création de la table (Joueur) avec @Entity
-public class Joueur {
+public class Joueur  implements Serializable {
 
     // ATTRIBUTS
     @ColumnInfo(name = "_id") // Nommage de la colonne pour la foreign key dans Partie.java
@@ -80,7 +82,16 @@ public class Joueur {
         return _id;
     }
 
- 
+
+    public String getPseudo() {
+        return playerPseudo;
+    }
+
+    public String getNom() {
+        return playerPseudo;
+    }
+
+
 }
 
 
