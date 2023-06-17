@@ -8,6 +8,7 @@ import androidx.room.Update;
 import androidx.room.Delete;
 import androidx.room.Query;
 
+
 @Dao // Création de l'interfacte DAO pour partie avec @Dao (liaison)
 public interface PartieDAO {
     @Insert // @Insert pour la requête d'ajout

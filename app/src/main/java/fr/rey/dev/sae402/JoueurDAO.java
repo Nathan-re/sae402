@@ -43,4 +43,7 @@ public interface JoueurDAO {
     @Query("SELECT _id FROM Joueur WHERE playerPseudo = :pseudo")
     int getJoueurId(String pseudo);
 
+    @Query("SELECT * FROM Joueur WHERE playerPseudo = :pseudo LIMIT 1")
+    Joueur getJoueurByPseudo(String pseudo);
+
 }
