@@ -46,3 +46,4 @@ public abstract class AppDataBase extends RoomDatabase {
     };
 
 }
+

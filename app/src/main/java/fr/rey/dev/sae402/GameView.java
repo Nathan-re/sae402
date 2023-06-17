@@ -387,6 +387,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 positionYPoussoir2.remove(0);
                 positionXPoussoir2.add(poussoir2.getX());
                 positionYPoussoir2.add(poussoir2.getY());
+
                 //Calcule la distance parcourue en NB_ELEMENTS_ARRAYLIST itération
 
                 float distFromLast3 = (float)(Math.sqrt(Math.pow(positionXPoussoir2.get(positionXPoussoir2.size() - 1) - positionXPoussoir2.get(positionXPoussoir2.size() - 2), 2) + Math.pow(positionYPoussoir2.get(positionYPoussoir2.size() -1) - positionYPoussoir2.get(positionYPoussoir2.size() -2), 2)));
@@ -452,8 +453,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         float xRondelle = getMaRondelle().getX();
         float yRondelle = getMaRondelle().getY();
         int radiusRondelle = getMaRondelle().getRadius();
-        int hitboxDistance = 0;
-        int hitboxDistanceDiag = 0;
         int vitesseBalle = 30;
 
         // Calcule les coordonnées des points de contact de la rondelle (voir schéma)
@@ -575,7 +574,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
         }else if (pointORondelle[0] > (0 + 10) && dehorsGauche == true) {
             dehorsGauche = false;
-            //Log.d("removeDehors",  "dehorsGauche = false");
 
         } else if (pointORondelle[0] < 0 + 10) {
             //Touche le mur gauche

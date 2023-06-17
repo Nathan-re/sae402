@@ -28,8 +28,8 @@ public class Historique extends AppCompatActivity
         startActivity(intent);
     }
     public void accessDataBase() {
-        dbAccess = AppDataBase.getAppDataBase(this); // Le paramètre est l'objet courant
-        daoQuery = dbAccess.getPartieDao();
+        //dbAccess = AppDataBase.getAppDataBase(this); // Le paramètre est l'objet courant
+        //daoQuery = dbAccess.getPartieDao();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Historique extends AppCompatActivity
 
             runOnUiThread(
                     () -> {
-                        String[] columnNames = {"typePartie", "score", ""}
+                        String[] columnNames = {"typePartie", "score", ""};
                     }
             );
         });

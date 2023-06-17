@@ -173,6 +173,8 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
             Log.i("Equipe 1", Arrays.toString(equipe1));
             Log.i("Equipe 2", Arrays.toString(equipe2));
         }).start();
+
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
     }

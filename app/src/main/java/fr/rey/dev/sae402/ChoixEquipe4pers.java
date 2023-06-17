@@ -111,25 +111,31 @@ public class ChoixEquipe4pers extends AppCompatActivity
                 Joueur joueurCequipe2 = (Joueur) spinnerCequipe2.getSelectedItem();
                 Joueur joueurDequipe2 = (Joueur) spinnerDequipe2.getSelectedItem();
 
-                String[] equipe1 = {joueurAequipe1.getPlayerPseudo(), joueurBequipe1.getPlayerPseudo()};
-                String[] equipe2 = {joueurCequipe2.getPlayerPseudo(), joueurDequipe2.getPlayerPseudo()};
+                int[] equipe1 = {joueurAequipe1.get_id(), joueurBequipe1.get_id()};
+                int[] equipe2 = {joueurCequipe2.get_id(), joueurDequipe2.get_id()};
 
                 new InsertJoueursTask().execute(joueurAequipe1, joueurBequipe1, joueurCequipe2, joueurDequipe2);
 
-                Log.i("Choix des équipes", "Joueur A équipe 1: " + joueurAequipe1.getPlayerPseudo());
-                Log.i("Choix des équipes", "Joueur B équipe 1: " + joueurBequipe1.getPlayerPseudo());
+                Log.i("Choix des équipes", "Joueur A équipe 1: " + equipe1[1]);
+                Log.i("Choix des équipes", "Joueur B équipe 2: " + equipe1[0]);
+                Log.i("Choix des équipes", "Joueur A équipe 1: " + equipe2[1]);
+                Log.i("Choix des équipes", "Joueur B équipe 2: " + equipe2[0]);
+                /*Log.i("Choix des équipes", "Joueur B équipe 1: " + joueurBequipe1.getPlayerPseudo());
                 Log.i("Choix des équipes", "Joueur C équipe 2: " + joueurCequipe2.getPlayerPseudo());
                 Log.i("Choix des équipes", "Joueur D équipe 2: " + joueurDequipe2.getPlayerPseudo());
+                 */
 
                 Log.i("equipe 1", String.valueOf(equipe1));
                 Log.i("equipe 2", String.valueOf(equipe2));
-            /*    new Thread(() -> {
+
+
+               new Thread(() -> {
 
                     Intent LancerPartie4Pers = new Intent(getApplicationContext(), PartieClassique.class);
                     LancerPartie4Pers.putExtra("equipe1", equipe1);
                     LancerPartie4Pers.putExtra("equipe2", equipe2);
                     startActivity(LancerPartie4Pers);
-                }).start(); */
+                }).start();
 
                 new Thread(() -> {
                     Intent LancerPartie4Pers = new Intent(getApplicationContext(), PartieClassique.class);
