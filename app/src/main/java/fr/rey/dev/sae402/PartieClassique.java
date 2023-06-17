@@ -16,6 +16,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import fr.rey.dev.sae402.AppDataBase;
 import fr.rey.dev.sae402.JoueurDAO;
 import fr.rey.dev.sae402.Joueur;
@@ -28,8 +29,6 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
     private AppDataBase dbAccess;
     private JoueurDAO daoQuery;
-
-
 
 
     private int compteur;
@@ -48,9 +47,6 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
     }
 
 
-
-
-
     private final static int RADIUS_TOUCHE = 300;
 
     @Override
@@ -61,10 +57,15 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         accessDataBase();
 
 
-        equipe1 = getIntent().getStringArrayExtra("equipe1");
+       /* equipe1 = getIntent().getStringArrayExtra("equipe1");
         equipe2 = getIntent().getStringArrayExtra("equipe2");
+*/
 
-       // Log.i("Choix des équipes", "Joueur D équipe 2: " + equipe1.getEquipe());
+
+
+
+
+        // Log.i("Choix des équipes", "Joueur D équipe 2: " + equipe1.getEquipe());
         //Log.i("Choix des équipes", "Joueur D équipe 2: " + equipe2.getEquipe());
         this.nbJoueurs = 4;
 
@@ -81,13 +82,12 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         compteur = 0;
 
 
-
     }
 
     /**
      * S'éxecute à chaque touche, mouvement ou à un lâcher de touche.
-     *Pour chaque pointeur, recherche un poussoir à côté de la touche,
-     *s'il y en a un la méthode modifie ses coordonnées pour correspondre à celle de la touche.
+     * Pour chaque pointeur, recherche un poussoir à côté de la touche,
+     * s'il y en a un la méthode modifie ses coordonnées pour correspondre à celle de la touche.
      *
      * @return true
      */
@@ -96,18 +96,18 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         //Log.d("test", view.getHeight() + "");
         int nbPointers = motionEvent.getPointerCount();
 
-        if (nbPointers > nbJoueurs + 4){
+        if (nbPointers > nbJoueurs + 4) {
             nbPointers = nbJoueurs + 4;
-        }else{
+        } else {
             int activePointer = motionEvent.getActionIndex();
 
-            switch(motionEvent.getAction() & MotionEvent.ACTION_MASK){
+            switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                     getMaGameView().addActivePointer(0);
 
                     break;
                 case MotionEvent.ACTION_POINTER_DOWN:
-                    int idToAdd = (int)(motionEvent.getActionIndex());
+                    int idToAdd = (int) (motionEvent.getActionIndex());
                     boolean result = getMaGameView().addActivePointer(idToAdd);
                     break;
 
@@ -127,19 +127,20 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
             }
         }
 
-        Poussoir[] poussoirs = maGameView.getPoussoirs();;
+        Poussoir[] poussoirs = maGameView.getPoussoirs();
+        ;
 
         for (int i = 0; i < nbPointers; i++) {
             float littleDistance = 999999;
             float littleX = 0;
             float littleY = 0;
-            Poussoir currentPoussoir = new Poussoir(0,0);
+            Poussoir currentPoussoir = new Poussoir(0, 0);
 
             for (Poussoir poussoir : poussoirs) {
-                if((poussoir.getX() - poussoir.getRadius() >= 0) || (poussoir.getY() - poussoir.getRadius() >= 0) || (poussoir.getY() + poussoir.getRadius() <= view.getHeight()) || (poussoir.getX() + poussoir.getRadius() <= view.getWidth())){
-                    if((motionEvent.getX(i) > poussoir.getX() - RADIUS_TOUCHE) && (motionEvent.getX(i) < poussoir.getX() + RADIUS_TOUCHE) && (motionEvent.getY(i) > poussoir.getY() - RADIUS_TOUCHE) && (motionEvent.getY(i) < poussoir.getY() + RADIUS_TOUCHE)){
-                        float distance = (float)(Math.sqrt((float)(Math.pow(poussoir.getX() - motionEvent.getX(i),2)) + (float)(Math.pow(poussoir.getY() - motionEvent.getY(i),2))));
-                        if(distance < littleDistance){
+                if ((poussoir.getX() - poussoir.getRadius() >= 0) || (poussoir.getY() - poussoir.getRadius() >= 0) || (poussoir.getY() + poussoir.getRadius() <= view.getHeight()) || (poussoir.getX() + poussoir.getRadius() <= view.getWidth())) {
+                    if ((motionEvent.getX(i) > poussoir.getX() - RADIUS_TOUCHE) && (motionEvent.getX(i) < poussoir.getX() + RADIUS_TOUCHE) && (motionEvent.getY(i) > poussoir.getY() - RADIUS_TOUCHE) && (motionEvent.getY(i) < poussoir.getY() + RADIUS_TOUCHE)) {
+                        float distance = (float) (Math.sqrt((float) (Math.pow(poussoir.getX() - motionEvent.getX(i), 2)) + (float) (Math.pow(poussoir.getY() - motionEvent.getY(i), 2))));
+                        if (distance < littleDistance) {
                             currentPoussoir = poussoir;
                             littleX = motionEvent.getX(i);
                             littleY = motionEvent.getY(i);
@@ -147,18 +148,22 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
                         }
                     }
                 }
+
             }
             currentPoussoir.setX(littleX);
             currentPoussoir.setY(littleY);
         }
+
         return true;
     }
 
-    public void finPartie(){
+     public void finPartie() {
 
         new Thread(() -> {
+
+
             // Insérer les joueurs de l'équipe 1 dans la base de données
-            for (String pseudo : equipe1) {
+           /* for (String pseudo : equipe1) {
                 Joueur joueur = new Joueur();
                 joueur.setPlayerPseudo(pseudo);
                 daoQuery.insertJoueur(joueur);
@@ -171,13 +176,36 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
                 daoQuery.insertJoueur(joueur);
             }
             Log.i("Equipe 1", Arrays.toString(equipe1));
-            Log.i("Equipe 2", Arrays.toString(equipe2));
+            Log.i("Equipe 2", Arrays.toString(equipe2)); */
+
+
         }).start();
 
 
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
+        Intent envoiePartieFin = new Intent(getApplicationContext(), FinDePartie.class);
+         Joueur joueurAequipe1bis = (Joueur) getIntent().getSerializableExtra("joueurAequipe1");
+         Joueur joueurBequipe1bis = (Joueur) getIntent().getSerializableExtra("joueurBequipe1");
+         Joueur joueurCequipe2bis = (Joueur) getIntent().getSerializableExtra("joueurCequipe2");
+         Joueur joueurDequipe2bis = (Joueur) getIntent().getSerializableExtra("joueurDequipe2");
+
+
+
+         envoiePartieFin.putExtra("joueurAequipe1", joueurAequipe1bis);
+         envoiePartieFin.putExtra("joueurBequipe1", joueurBequipe1bis);
+         envoiePartieFin.putExtra("joueurCequipe2", joueurCequipe2bis);
+         envoiePartieFin.putExtra("joueurDequipe2", joueurDequipe2bis);
+
+         Log.i("joueurAequipe1bis", joueurAequipe1bis.getPlayerPseudo());
+            Log.i("joueurBequipe1bis", joueurBequipe1bis.getPlayerPseudo());
+            Log.i("joueurCequipe2bis", joueurCequipe2bis.getPlayerPseudo());
+            Log.i("joueurDequipe2bis", joueurDequipe2bis.getPlayerPseudo());
+
+
+
+        startActivity(envoiePartieFin);
     }
+
+
 
     public LinearLayout getLayout() {
         return layout;
@@ -201,5 +229,6 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
     public String[] getEquipe2() {
         return equipe2;
-    }}
+    }
 
+}

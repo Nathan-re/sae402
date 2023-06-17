@@ -6,17 +6,22 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+
+
 @Database(entities = {Joueur.class, Partie.class}, version = 3)
+@TypeConverters(ListConverter.class)
 public abstract class AppDataBase extends RoomDatabase {
 
     private static AppDataBase bddInstance;
 
     public abstract JoueurDAO getJoueurDao();
-    public abstract PartieDAO getPartieDao();
-    //.addMigrations(MIGRATION_1_2)
+public abstract PartieDAO getPartieDao();
+
     public static AppDataBase getAppDataBase(Context context) {
         if (bddInstance == null) {
             synchronized (AppDataBase.class) {
@@ -44,6 +49,7 @@ public abstract class AppDataBase extends RoomDatabase {
             database.execSQL("DROP TABLE IF EXISTS `Joueur_old`");
         }
     };
+
 
 }
 

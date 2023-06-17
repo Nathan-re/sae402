@@ -2,6 +2,7 @@ package fr.rey.dev.sae402;
 
 import android.database.Cursor;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Update;
@@ -32,5 +33,17 @@ public interface JoueurDAO {
     @Query("SELECT * FROM Joueur WHERE _id=:idJoueur")
     public Joueur getJoueurFromId(int idJoueur);
 
+
+    @Query("SELECT * FROM Joueur WHERE equipe = :equipe11")
+    List<Joueur> getJoueursByEquipe1(String equipe11);
+
+    @Query("SELECT * FROM Joueur WHERE equipe = :equipe22")
+    List<Joueur> getJoueursByEquipe2(String equipe22);
+
+    @Query("SELECT _id FROM Joueur WHERE playerPseudo = :pseudo")
+    int getJoueurId(String pseudo);
+
+    @Query("SELECT * FROM Joueur WHERE playerPseudo = :pseudo LIMIT 1")
+    Joueur getJoueurByPseudo(String pseudo);
 
 }

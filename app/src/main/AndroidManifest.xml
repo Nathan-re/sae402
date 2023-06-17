@@ -36,6 +36,9 @@
         <activity android:name=".IncriptionJoueur"
             android:label="Inscription des joueurs"
             android:exported="true"/>
+        <activity android:name=".FinDePartie"
+            android:label="Fin de partie"
+            android:exported="true"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
