@@ -55,7 +55,8 @@ public class Partie {
     private Integer idJoueur3;
     private Integer idJoueur4;
     private Integer idJoueurGagnant;
-    private int score;
+    private int scoreEquipe1;
+    private int scoreEquipe2;
 
     @ColumnInfo(typeAffinity = ColumnInfo.TEXT)
     private List<String> equipe1Joueurs;
@@ -63,11 +64,12 @@ public class Partie {
     @ColumnInfo(typeAffinity = ColumnInfo.TEXT)
     private List<String> equipe2Joueurs;
 
-    public Partie(int _id, String typePartie, Integer idJoueurGagnant, int score, List<String> equipe1Joueurs, List<String> equipe2Joueurs) {
+    public Partie(int _id, String typePartie, Integer idJoueurGagnant, int scoreEquipe1, int scoreEquipe2, List<String> equipe1Joueurs, List<String> equipe2Joueurs) {
         this._id = _id;
         this.typePartie = typePartie;
         this.idJoueurGagnant = idJoueurGagnant;
-        this.score = score;
+        this.scoreEquipe1 = scoreEquipe1;
+        this.scoreEquipe2 = scoreEquipe2;
         this.equipe1Joueurs = equipe1Joueurs;
         this.equipe2Joueurs = equipe2Joueurs;
     }
@@ -120,8 +122,12 @@ public class Partie {
         this.idJoueurGagnant = idJoueurGagnant;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setScoreEquipe1(int scoreEquipe1) {
+        this.scoreEquipe1 = scoreEquipe1;
+    }
+
+    public void setScoreEquipe2(int scoreEquipe2) {
+        this.scoreEquipe2 = scoreEquipe2;
     }
 
     public int get_id() {
@@ -136,8 +142,12 @@ public class Partie {
         return idJoueurGagnant;
     }
 
-    public int getScore() {
-        return score;
+    public int getScoreEquipe1() {
+        return scoreEquipe1;
+    }
+
+    public int getScoreEquipe2() {
+        return scoreEquipe2;
     }
 
     public List<String> getEquipe1Joueurs() {
@@ -161,7 +171,7 @@ public class Partie {
         return  "#" + _id +
                 " " + typePartie + '\'' +
                 " " + equipe1Joueurs +
-                ", score :" + score +
+                ", score :" + scoreEquipe1 + " - " + scoreEquipe2 +
                 " " + equipe2Joueurs;
     }
 /*    @Override

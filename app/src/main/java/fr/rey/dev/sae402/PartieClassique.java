@@ -210,6 +210,8 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         }
         Log.d("before Intent", "before Intent");
         envoiePartieFin.putExtra("nbJoueurs", nbJoueurs);
+        envoiePartieFin.putExtra("scoreEquipe1", maGameView.getScoreEquipe1());
+        envoiePartieFin.putExtra("scoreEquipe2", maGameView.getScoreEquipe2());
         startActivity(envoiePartieFin);
     }
 
