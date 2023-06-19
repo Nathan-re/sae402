@@ -112,7 +112,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 break;
         }
 
-        Log.d("test", "fin du constructeur");
 
     }
 
@@ -145,10 +144,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         //Dessine la rondelle
+        Log.d("avant rotate", getWidth() + " & " + getHeight());
+
         canvas.drawCircle(maRondelle.getX(), maRondelle.getY(), maRondelle.getRadius(), paintRondelle);
 
         canvas.rotate(-90, getWidth() / 2, getHeight() / 2);
-        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth() / 2 - 200, getHeight() / 4 - 60, paintScore);
+
+        Log.d("apres rotate", getWidth() + " & " + getHeight());
+        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth() / 2 -200, 800, paintScore);
 
         /*
         canvas.drawText(((int)(poussoir1.getPuissPoussoir()) + ""), getWidth()/2 + 400, getHeight()/2, paintScore);
@@ -159,7 +162,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         getMonSurfaceHolder().unlockCanvasAndPost(canvas);
 
-        Log.d("test", "fin de dessin");
 
     }
 
@@ -230,7 +232,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 break;
         }
 
-        Log.d("test", "before surface created");
 
         reset();
 
@@ -238,7 +239,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                Log.d("test", "boucle");
                 updateRondelle();
                 dessin();
                 if (maRondelle.getVitesse() >= VITESSE_REMOVE) {
@@ -361,7 +361,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     poussoir1.setPuissPoussoir(MIN_PUISS);
                 }
 
-                Log.d("test", distFromLast2 + "");
 
 
                 positionXPoussoir2.remove(0);
@@ -419,7 +418,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     poussoir4.setPuissPoussoir(MIN_PUISS);
                 }
 
-                Log.d("test", maRondelle.getVitesse() + "");
                 break;
         }
 
@@ -462,7 +460,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //Si la rondelle est disponible à la colision
         //Pour chaque poussoir, il y a contact si distance entre rondelle et poussoir est < que le radius de la rondelle + le radius du poussoir
         if (maRondelle.isAvailable() && maRondelle.getCompteurAvailable() == 0) {
-            int compteurAvailable = 10;
+            int compteurAvailable = 8;
             for (Poussoir poussoir : getPoussoirs()) {
                 float distanceRondelle = (float) (Math.sqrt(Math.pow(maRondelle.getX() - poussoir.getX(), 2) + Math.pow(maRondelle.getY() - poussoir.getY(), 2)));
                 float hitboxInterieur = (5 * poussoir.getPuissPoussoir() + 10);
@@ -579,9 +577,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             scoreEquipe2 = scoreEquipe2 + 1;
         }
 
-        if (scoreEquipe1 == 5 && scoreEquipe2 == 5) {
-            reset();
-        } else if (nbRondellesJouees >= 10 || (scoreEquipe1 >= 7 || scoreEquipe2 >= 7)) {
+        if (scoreEquipe1 == 10 || scoreEquipe2 == 10) {
             Log.d("finPartie", "finPartie");
             partie.finPartie();
         } else {
