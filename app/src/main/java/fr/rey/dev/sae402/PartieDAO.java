@@ -21,7 +21,7 @@ public interface PartieDAO {
     @Delete // @Delete pour la requête de suppression
     public void deletePartie(Partie aPartie);
 
-    @Query("SELECT _id FROM Partie")
+    @Query("SELECT _id FROM Partie ORDER BY _id DESC")
     public int [] getAllId();
 
     @Query("SELECT MAX(_id) FROM Partie")

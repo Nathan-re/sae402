@@ -57,6 +57,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listView2" />
+        app:layout_constraintTop_toBottomOf="@+id/Liste_des_matchs" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,12 @@
 package fr.rey.dev.sae402;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,12 +28,24 @@ public class Historique extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.historique_matchs);
-
+        Button retour = findViewById(R.id.button_retour);
         accessDataBase();
+
 
         partieListView = findViewById(R.id.Liste_des_matchs);
 
         new RetrievePartiesTask().execute();
+
+        retour.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("Retour a l'accueil", "Yep !");
+                Intent retourAccueil = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(retourAccueil);
+                Log.i("TAG", "onClick: ");
+            }
+        }));
+
     }
 
     private class RetrievePartiesTask extends AsyncTask<Void, Void, List<Partie>> {
