@@ -46,7 +46,7 @@ public class ModeDeJeu2Pers extends AppCompatActivity
 
 
         Button ButtonRetour2Pers = (Button) findViewById(R.id.retour2personnes);
-        Button ButtonJouer2Pers1 = (Button) findViewById(R.id.choixMode1pers2);
+      /*  Button ButtonJouer2Pers1 = (Button) findViewById(R.id.choixMode1pers2);*/
         Button ButtonJouer2Pers2 = (Button) findViewById(R.id.choixMode2pers2);
 
         ButtonRetour2Pers.setOnClickListener((new View.OnClickListener() {
@@ -65,7 +65,7 @@ public class ModeDeJeu2Pers extends AppCompatActivity
             }}
         ));
 
-        ButtonJouer2Pers1.setOnClickListener((new View.OnClickListener() {
+      /*  ButtonJouer2Pers1.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -79,7 +79,7 @@ public class ModeDeJeu2Pers extends AppCompatActivity
                 }).start();
 
             }}
-        ));
+        ));*/
 
         ButtonJouer2Pers2.setOnClickListener((new View.OnClickListener() {
             @Override

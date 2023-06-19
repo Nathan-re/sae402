@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.accueil_rondelles);
         Button ButtonJoueurs = (Button) findViewById(R.id.commencer_Joueurs);
         Button ButtonHistorique = (Button) findViewById(R.id.button_historique);
-
+Button ButtonListeJoueurs = (Button) findViewById(R.id.ListDesJoueurs);
         ButtonJoueurs.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,6 +53,19 @@ public class MainActivity extends AppCompatActivity {
                             }}
 
                 ));
+        ButtonListeJoueurs.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("get clicked", "ça clique sur historique ");
+                new Thread(() -> {
+
+
+                    Intent intentListJoueurs = new Intent(getApplicationContext(), ListeDeJoueurs.class);
+                    startActivity(intentListJoueurs);
+                }).start();
+            }}
+
+        ));
       /*  Intent intent = new Intent(getApplicationContext(), PartieClassique.class);
         startActivity(intent);*/
 

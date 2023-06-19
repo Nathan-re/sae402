@@ -50,8 +50,14 @@ public class Joueur implements Serializable {
 
     @Override
     public String toString() {
-        return playerPseudo;
+        return "Joueur [nom=" + playerPseudo + "]";
     }
+
+    public String toSimpleString() {
+        return playerPseudo + " - Score: " + playerNbPtsTotal;
+    }
+
+
 
     // GETTERS
     public Integer get_id() {
@@ -114,4 +120,6 @@ public class Joueur implements Serializable {
     public String getNom() {
         return playerPseudo;
     }
+
+
 }

@@ -74,10 +74,10 @@
             android:textColor="@color/black"
             android:textAlignment="center"
             android:layout_weight="0.9"
-            android:text="TextView" />
+            android:text="In Progress" />
 
         <Button
-            android:id="@+id/choixMode2pers4"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.1"
@@ -110,7 +110,7 @@
             android:textColor="@color/black"
             android:textAlignment="center"
             android:layout_weight="0.9"
-            android:text="TextView" />
+            android:text="Classique" />
 
         <Button
             android:id="@+id/choixMode1pers4"
