@@ -169,7 +169,7 @@ public class Partie {
     @Override
     public String toString() {
         return  "#" + _id +
-                " " + typePartie +
+                " " + typePartie + '\'' +
                 " " + equipe1Joueurs +
                 ", score :" + scoreEquipe1 + " - " + scoreEquipe2 +
                 " " + equipe2Joueurs;

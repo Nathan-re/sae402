@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,12 +23,23 @@ public class FinDePartie extends AppCompatActivity {
     private JoueurDAO joueurDao;
     private int nbJoueurs;
 
+    private TextView TextViewScoreEquipe1;
+    private TextView TextViewScoreEquipe2;
+
+
     @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fin_de_partie);
         accessDataBase();
+
+        this.TextViewScoreEquipe1 = findViewById(R.id.scoreEquipe1);
+        this.TextViewScoreEquipe2 = findViewById(R.id.scoreEquipe2);
+        int scoreEquipe1 = getIntent().getIntExtra("scoreEquipe1", 0);
+        int scoreEquipe2 = getIntent().getIntExtra("scoreEquipe2", 0);
+        this.TextViewScoreEquipe1.setText(scoreEquipe1 + "");
+        this.TextViewScoreEquipe2.setText(scoreEquipe2 + "");
 
         ListView equipe1JoueurListView = findViewById(R.id.equipe1_joueur);
         ListView equipe2JoueurListView = findViewById(R.id.equipe2_joueur);
@@ -108,12 +120,15 @@ public class FinDePartie extends AppCompatActivity {
 
          /*   int idPartie = partieDao.getPartieId();
             int scorePartie = 1; */
-
-            Partie partie = new Partie(idPartie, "Classique", 1, scorePartie, equipe1JoueursArray, equipe2JoueursArray);
-            Log.i("Contenue de la partie", partie.toString());
+            int scoreEquipe1 = getIntent().getIntExtra("scoreEquipe1", 0);
+            int scoreEquipe2 = getIntent().getIntExtra("scoreEquipe2", 0);
+            Log.d("test", scoreEquipe1 + "");
+            Log.d("test", scoreEquipe2 + "");
+            Partie partie = new Partie(idPartie, "Classique", Integer.valueOf(1),scoreEquipe1, scoreEquipe2, equipe1JoueursArray, equipe2JoueursArray);
+            Log.i("Contenu de la partie", partie.toString());
             if (joueursExist(partie.getEquipe1Joueurs()) && joueursExist(partie.getEquipe2Joueurs())) {
                 partieDao.insertPartie(partie);
-                Log.i("Contenue de la partie", partie.toString());
+                Log.i("Contenu de la partie", partie.toString());
             } else {
                 Log.i("Erreur", "Les joueurs n'existent pas");
             }

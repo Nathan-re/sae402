@@ -23,29 +23,33 @@ public class Historique extends AppCompatActivity {
     private AppDataBase dbAccess;
     private PartieDAO partieDao;
     private ListView partieListView;
+    private Button buttonRetour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.historique_matchs);
-        Button retour = findViewById(R.id.button_retour);
-        accessDataBase();
+        buttonRetour = findViewById(R.id.buttonRetourAccueil);
 
+        accessDataBase();
 
         partieListView = findViewById(R.id.Liste_des_matchs);
 
         new RetrievePartiesTask().execute();
 
-        retour.setOnClickListener((new View.OnClickListener() {
+        buttonRetour.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("Retour a l'accueil", "Yep !");
-                Intent retourAccueil = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(retourAccueil);
-                Log.i("TAG", "onClick: ");
-            }
-        }));
 
+                Log.i("Retour a l'accueil", "Yep !");
+
+                new Thread(() -> {
+                    Intent ButtonRetourChoixMode = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(ButtonRetourChoixMode);
+                }).start();
+
+            }}
+        ));
     }
 
     private class RetrievePartiesTask extends AsyncTask<Void, Void, List<Partie>> {
