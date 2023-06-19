@@ -47,6 +47,7 @@ public class Partie {
     @NonNull
     private int _id;
 
+    //Attributs
     private String typePartie;
     private Integer idJoueur1;
     private Integer idJoueur2;

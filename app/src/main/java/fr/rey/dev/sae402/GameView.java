@@ -9,14 +9,17 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback{
+public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder monSurfaceHolder;
     private int nbJoueurs, nbRondellesJouees, scoreEquipe1, scoreEquipe2;
+    private float proportionX, proportionY, coeffPoussoir, hitboxExt, hitboxInt;
+    private boolean dehorsGauche, dehorsDroite, dehorsHaut, dehorsBas;
     private Paint paintBlack, paintPoussoir, paintRondelle, paintBut, paintScore;
     private Poussoir poussoir1, poussoir2, poussoir3, poussoir4;
     private Rondelle maRondelle;
@@ -24,41 +27,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private ArrayList<Integer> activePointers;
     private But but1, but2;
     private PartieClassique partie;
-
-    private float proportionX, proportionY;
-    private ArrayList<Float> positionXPoussoir1;
-    private ArrayList<Float> positionYPoussoir1;
-
-    private ArrayList<Float> positionXPoussoir2;
-    private ArrayList<Float> positionYPoussoir2;
-
-    private ArrayList<Float> positionXPoussoir3;
-    private ArrayList<Float> positionYPoussoir3;
-
-    private ArrayList<Float> positionXPoussoir4;
-    private ArrayList<Float> positionYPoussoir4;
-
+    private ArrayList<Float> positionXPoussoir1, positionYPoussoir1, positionXPoussoir2, positionYPoussoir2, positionXPoussoir3, positionYPoussoir3, positionXPoussoir4, positionYPoussoir4;
+    private float[] tableauPuiss;
     private final static int REFRESH_RATE = 1;
     private final static int NB_ELEMENTS_ARRAYLIST = 4;
-    private final static int DIVISEUR_PUISSANCE = 400;
-    private final static float MIN_PUISS = (float)(0.4);
-    private final static float MAX_PUISS = (float)(5);
-    private float coeffPoussoir;
-    private boolean dehorsGauche;
-    private boolean dehorsDroite;
-    private boolean dehorsHaut;
-    private boolean dehorsBas;
-    private float hitboxInt;
-
-    private float hitboxExt;
-
-    private float accuPuiss1, accuPuiss2, accuPuiss3, accuPuiss4;
-    private float lastPosX;
-    private float lastPosY;
-
-    private float currentDirection;
-
-    private float[] tableauPuiss;
+    private final static int DIVISEUR_PUISSANCE = 30;
+    private final static float MIN_PUISS = (float) (0.4);
+    private final static float MAX_PUISS = (float) (3);
+    private final static float VITESSE_REMOVE = (float) (0.3);
 
 
     public GameView(Context context, int nbJoueurs, PartieClassique partie) {
@@ -112,24 +88,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         dehorsDroite = false;
         dehorsHaut = false;
         dehorsBas = false;
-        accuPuiss1 = (float)(0.2);
-        accuPuiss2 = (float)(0.2);
-        accuPuiss3 = (float)(0.2);
-        accuPuiss4 = (float)(0.2);
-        tableauPuiss = new float[10];
-        tableauPuiss[0] = (float)(0.6);
-        tableauPuiss[1] = (float)(0.5);
-        tableauPuiss[2] = (float)(0.4);
-        tableauPuiss[3] = (float)(0.4);
-        tableauPuiss[4] = (float)(0.4);
-        tableauPuiss[5] = (float)(0.4);
-        tableauPuiss[6] = (float)(0.4);
-        tableauPuiss[7] = (float)(0.4);
-        tableauPuiss[8] = (float)(0.4);
-        tableauPuiss[9] = (float)(0.4);
 
-
-        switch (nbJoueurs){
+        switch (nbJoueurs) {
             case 2:
                 positionXPoussoir1 = new ArrayList<Float>();
                 positionYPoussoir1 = new ArrayList<Float>();
@@ -152,6 +112,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 break;
         }
 
+        Log.d("test", "fin du constructeur");
+
     }
 
     public GameView(Context context, AttributeSet attrs) {
@@ -165,10 +127,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     /**
      * Dessine les différents éléments du terrain en fonction de leurs attributs (coordonnées, couleur, radius...)
      */
-    public void dessin(){
+    public void dessin() {
 
         Canvas canvas = getHolder().lockCanvas();
-        canvas.drawRect(0,0,getWidth(), getHeight(), paintBlack);
+        canvas.drawRect(0, 0, getWidth(), getHeight(), paintBlack);
 
         //Dessine les poussoirs
         for (Poussoir poussoir : getPoussoirs()) {
@@ -177,23 +139,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         }
 
         //Dessine les buts
-        for(But but : getButs()){
+        for (But but : getButs()) {
             paintBut.setColor(but.getCouleur());
-            canvas.drawRect(but.getLeft(),but.getTop(),but.getRight(), but.getBottom(), paintBut);
+            canvas.drawRect(but.getLeft(), but.getTop(), but.getRight(), but.getBottom(), paintBut);
         }
 
         //Dessine la rondelle
         canvas.drawCircle(maRondelle.getX(), maRondelle.getY(), maRondelle.getRadius(), paintRondelle);
 
-        canvas.rotate(-90, getWidth() /2, getHeight()/2);
-        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth()/2 - 200, getHeight()/4 -60, paintScore);
+        canvas.rotate(-90, getWidth() / 2, getHeight() / 2);
+        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth() / 2 - 200, getHeight() / 4 - 60, paintScore);
 
-        canvas.drawText(((int)(accuPuiss1) + ""), getWidth()/2 + 400, getHeight()/2, paintScore);
-        canvas.drawText(((int)(accuPuiss2) + ""), getWidth()/2 + 200, getHeight()/2, paintScore);
-        canvas.drawText(((int)(accuPuiss3) + ""), getWidth()/2 - 200, getHeight()/2, paintScore);
-        canvas.drawText(((int)(accuPuiss4) + ""), getWidth()/2 - 400, getHeight()/2, paintScore);
+        /*
+        canvas.drawText(((int)(poussoir1.getPuissPoussoir()) + ""), getWidth()/2 + 400, getHeight()/2, paintScore);
+        canvas.drawText(((int)(poussoir2.getPuissPoussoir()) + ""), getWidth()/2 + 200, getHeight()/2, paintScore);
+        canvas.drawText(((int)(poussoir3.getPuissPoussoir()) + ""), getWidth()/2 - 200, getHeight()/2, paintScore);
+        canvas.drawText(((int)(poussoir4.getPuissPoussoir()) + ""), getWidth()/2 - 400, getHeight()/2, paintScore);
+        */
 
         getMonSurfaceHolder().unlockCanvasAndPost(canvas);
+
+        Log.d("test", "fin de dessin");
 
     }
 
@@ -204,38 +170,38 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
      */
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
 
-        switch (nbJoueurs){
+        switch (nbJoueurs) {
             case 2:
-                this.poussoir1 = new Poussoir(100,100, Color.RED, getWidth()/30,0);
-                this.poussoir2 = new Poussoir(200,200, Color.GREEN, getWidth()/30,0);
+                this.poussoir1 = new Poussoir(100, 100, Color.argb(255, 253, 225, 45), getWidth() / 24, 0);
+                this.poussoir2 = new Poussoir(200, 200, Color.argb(255, 127, 50, 195), getWidth() / 24, 0);
                 break;
 
             case 4:
-                this.joueur1 = new Joueur("Jules", Color.argb(255,253,225,45));
-                this.poussoir1 = new Poussoir(100,100, joueur1.getPlayerColor(), getWidth()/30, 0);
+                this.joueur1 = new Joueur("Jules", Color.argb(255, 253, 225, 45));
+                this.poussoir1 = new Poussoir(100, 100, joueur1.getPlayerColor(), getWidth() / 24, 0);
 
-                this.joueur2 = new Joueur("Pierre", Color.argb(255,253,225,45));
-                this.poussoir2 = new Poussoir(200,200, joueur2.getPlayerColor(), getWidth()/30, 0);
-
-
-                this.joueur3 = new Joueur("Antoine", Color.argb(255,127,50,195));
-                this.poussoir3 = new Poussoir(300,300, joueur3.getPlayerColor(), getWidth()/30, 0);
+                this.joueur2 = new Joueur("Pierre", Color.argb(255, 253, 225, 45));
+                this.poussoir2 = new Poussoir(200, 200, joueur2.getPlayerColor(), getWidth() / 24, 0);
 
 
-                this.joueur4 = new Joueur("Nathan", Color.argb(255,127,50,195));
-                this.poussoir4 = new Poussoir(400,400, joueur4.getPlayerColor(), getWidth()/30, 0);
+                this.joueur3 = new Joueur("Antoine", Color.argb(255, 127, 50, 195));
+                this.poussoir3 = new Poussoir(300, 300, joueur3.getPlayerColor(), getWidth() / 24, 0);
+
+
+                this.joueur4 = new Joueur("Nathan", Color.argb(255, 127, 50, 195));
+                this.poussoir4 = new Poussoir(400, 400, joueur4.getPlayerColor(), getWidth() / 24, 0);
 
                 break;
         }
 
-        Rondelle maRondelleCreate = new Rondelle((float)(getWidth() /2), (float)(getHeight() /2), getWidth()/26);
+        Rondelle maRondelleCreate = new Rondelle((float) (getWidth() / 2), (float) (getHeight() / 2), getWidth() / 28);
         maRondelleCreate.setVitesse(0);
         maRondelle = maRondelleCreate;
 
-        but1 = new But((getWidth() /4) + (getWidth() /8), 0, (getWidth() /2) + (getWidth() /8), 20,Color.WHITE);
-        but2 = new But((getWidth() /4) + (getWidth() /8), (getHeight()-20), (getWidth() /2 + getWidth() /8), getHeight(),Color.WHITE);
+        but1 = new But((getWidth() / 4) + (getWidth() / 8), 0, (getWidth() / 2) + (getWidth() / 8), 20, Color.WHITE);
+        but2 = new But((getWidth() / 4) + (getWidth() / 8), (getHeight() - 20), (getWidth() / 2 + getWidth() / 8), getHeight(), Color.WHITE);
 
-        switch (nbJoueurs){
+        switch (nbJoueurs) {
             case 2:
                 for (int i = 0; i < NB_ELEMENTS_ARRAYLIST; i++) {
                     //Log.d("ajoute", "ajout arrayList");
@@ -264,6 +230,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 break;
         }
 
+        Log.d("test", "before surface created");
 
         reset();
 
@@ -271,11 +238,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
+                Log.d("test", "boucle");
                 updateRondelle();
                 dessin();
-                if(maRondelle.getVitesse() > 0){
-                    maRondelle.setVitesse((float) (maRondelle.getVitesse() - 0.3
-                    ));
+                if (maRondelle.getVitesse() >= VITESSE_REMOVE) {
+                    maRondelle.setVitesse((float) (maRondelle.getVitesse() - VITESSE_REMOVE));
+                } else {
+                    maRondelle.setVitesse(0);
+
                 }
             }
         }, 0, REFRESH_RATE, TimeUnit.MILLISECONDS);
@@ -284,27 +254,41 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
     }
+
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
     }
 
     /**
      * Replace les poussoirs et la balle sur le terrain de jeu en modifiant leurs coordonnées.
      */
-    public void reset(){
-        poussoir1.setX(getWidth()/4);
-        poussoir1.setY(getHeight()/4);
+    public void reset() {
 
-        poussoir2.setX(getWidth()/4 + getWidth()/2);
-        poussoir2.setY(getHeight()/4);
+        switch (nbJoueurs) {
+            case 2:
+                poussoir1.setX(getWidth() / 2);
+                poussoir1.setY(getHeight() / 4);
 
-        poussoir3.setX(getWidth()/4);
-        poussoir3.setY(getHeight()/4 + getHeight()/2) ;
+                poussoir2.setX(getWidth() / 2);
+                poussoir2.setY(getHeight() / 4 + getHeight() / 2);
+                break;
+            case 4:
+                poussoir1.setX(getWidth() / 4);
+                poussoir1.setY(getHeight() / 4);
 
-        poussoir4.setX(getWidth()/4 + getWidth()/2);
-        poussoir4.setY(getHeight()/4 + getHeight()/2);
+                poussoir2.setX(getWidth() / 4 + getWidth() / 2);
+                poussoir2.setY(getHeight() / 4);
 
-        maRondelle.setX((float)(getWidth() /2));
-        maRondelle.setY((float)(getHeight() /2));
+                poussoir3.setX(getWidth() / 4);
+                poussoir3.setY(getHeight() / 4 + getHeight() / 2);
+
+                poussoir4.setX(getWidth() / 4 + getWidth() / 2);
+                poussoir4.setY(getHeight() / 4 + getHeight() / 2);
+                break;
+        }
+
+
+        maRondelle.setX((float) (getWidth() / 2));
+        maRondelle.setY((float) (getHeight() / 2));
         maRondelle.setVitesse(0);
     }
 
@@ -314,42 +298,46 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
      * Effectue les tests de collision entre les buts et la rondelle -> but marqué ou non.
      * Effectue les tests de collision entre la rondelle et les murs.
      */
-    public void updateRondelle(){
+    public void updateRondelle() {
         //Pour chaque arraylist, à chaque refresh de la page ->
         // on supprime la plus ancienne position et on rajoute une nouvelle position correspondant à la plus récente
-        switch (nbJoueurs){
+        switch (nbJoueurs) {
             case 2:
+
                 positionXPoussoir1.remove(0);
                 positionYPoussoir1.remove(0);
                 positionXPoussoir1.add(poussoir1.getX());
                 positionYPoussoir1.add(poussoir1.getY());
-
                 //Calcule la distance parcourue en NB_ELEMENTS_ARRAYLIST itération
-                float distancePoussoir1 = (float)(Math.sqrt(Math.pow(positionXPoussoir1.get(positionXPoussoir1.size() - 1) - positionXPoussoir1.get(0), 2) + Math.pow(positionYPoussoir1.get(positionYPoussoir1.size() -1) - positionYPoussoir1.get(0), 2)));
-                float puissance1 = distancePoussoir1 / DIVISEUR_PUISSANCE;
 
-                if(distancePoussoir1 != 0 && puissance1 < MAX_PUISS){
-                    poussoir1.setPuissPoussoir(puissance1);
-                }else if(puissance1 > MAX_PUISS){
+                float distFromLastPos = (float) (Math.sqrt(Math.pow(positionXPoussoir1.get(positionXPoussoir1.size() - 1) - positionXPoussoir1.get(positionXPoussoir1.size() - 2), 2) + Math.pow(positionYPoussoir1.get(positionYPoussoir1.size() - 1) - positionYPoussoir1.get(positionYPoussoir1.size() - 2), 2)));
+                //float distFromLastPos2 = (float)(Math.sqrt(Math.pow(positionXPoussoir1.get(positionXPoussoir1.size() - 2) - positionXPoussoir1.get(positionXPoussoir1.size() - 3), 2) + Math.pow(positionYPoussoir1.get(positionYPoussoir1.size() -2) - positionYPoussoir1.get(positionYPoussoir1.size() -3), 2)));
+
+                float coeff = distFromLastPos / DIVISEUR_PUISSANCE;
+                if (coeff > MIN_PUISS && coeff < MAX_PUISS) {
+                    poussoir1.setPuissPoussoir(coeff);
+                } else if (coeff > MAX_PUISS) {
                     poussoir1.setPuissPoussoir(MAX_PUISS);
-                } else if (distancePoussoir1 == 0) {
+                } else {
                     poussoir1.setPuissPoussoir(MIN_PUISS);
                 }
+
 
                 positionXPoussoir2.remove(0);
                 positionYPoussoir2.remove(0);
                 positionXPoussoir2.add(poussoir2.getX());
                 positionYPoussoir2.add(poussoir2.getY());
-
                 //Calcule la distance parcourue en NB_ELEMENTS_ARRAYLIST itération
-                float distancePoussoir2 = (float)(Math.sqrt(Math.pow(positionXPoussoir2.get(positionXPoussoir2.size() - 1) - positionXPoussoir2.get(0), 2) + Math.pow(positionYPoussoir2.get(positionYPoussoir2.size() -1) - positionYPoussoir2.get(0), 2)));
-                float puissance2 = distancePoussoir2 / DIVISEUR_PUISSANCE;
-                //Log.d("test2", puissance2 + "");
-                if(distancePoussoir2 != 0 && puissance2 < MAX_PUISS){
-                    poussoir2.setPuissPoussoir(puissance2);
-                }else if(puissance2 > MAX_PUISS){
+
+                float distFromLastPos3 = (float) (Math.sqrt(Math.pow(positionXPoussoir2.get(positionXPoussoir2.size() - 1) - positionXPoussoir2.get(positionXPoussoir2.size() - 2), 2) + Math.pow(positionYPoussoir2.get(positionYPoussoir2.size() - 1) - positionYPoussoir2.get(positionYPoussoir2.size() - 2), 2)));
+                float distFromLastPos4 = (float) (Math.sqrt(Math.pow(positionXPoussoir2.get(positionXPoussoir2.size() - 2) - positionXPoussoir2.get(positionXPoussoir2.size() - 3), 2) + Math.pow(positionYPoussoir2.get(positionYPoussoir2.size() - 2) - positionYPoussoir2.get(positionYPoussoir2.size() - 3), 2)));
+
+                coeff = distFromLastPos3 / DIVISEUR_PUISSANCE;
+                if (coeff > MIN_PUISS && coeff < MAX_PUISS) {
+                    poussoir2.setPuissPoussoir(coeff);
+                } else if (coeff > MAX_PUISS) {
                     poussoir2.setPuissPoussoir(MAX_PUISS);
-                } else if (distancePoussoir2 == 0) {
+                } else {
                     poussoir2.setPuissPoussoir(MIN_PUISS);
                 }
                 break;
@@ -359,62 +347,39 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 positionXPoussoir1.add(poussoir1.getX());
                 positionYPoussoir1.add(poussoir1.getY());
                 //Calcule la distance parcourue en NB_ELEMENTS_ARRAYLIST itération
-                float distancePouss1 = (float)(Math.sqrt(Math.pow(positionXPoussoir1.get(positionXPoussoir1.size() - 1) - positionXPoussoir1.get(0), 2) + Math.pow(positionYPoussoir1.get(positionYPoussoir1.size() -1) - positionYPoussoir1.get(0), 2)));
-                float puiss1 = distancePouss1 / DIVISEUR_PUISSANCE;
-                //Log.d("test", puiss1 + "");
 
+                float distFromLast = (float) (Math.sqrt(Math.pow(positionXPoussoir1.get(positionXPoussoir1.size() - 1) - positionXPoussoir1.get(positionXPoussoir1.size() - 2), 2) + Math.pow(positionYPoussoir1.get(positionYPoussoir1.size() - 1) - positionYPoussoir1.get(positionYPoussoir1.size() - 2), 2)));
+                //float distFromLast2 = (float)(Math.sqrt(Math.pow(positionXPoussoir1.get(positionXPoussoir1.size() - 2) - positionXPoussoir1.get(positionXPoussoir1.size() - 3), 2) + Math.pow(positionYPoussoir1.get(positionYPoussoir1.size() -2) - positionYPoussoir1.get(positionYPoussoir1.size() -3), 2)));
+                float distFromLast2 = (float) (Math.sqrt(Math.pow(positionXPoussoir1.get(positionXPoussoir1.size() - 1) - positionXPoussoir1.get(positionXPoussoir1.size() - 3), 2) + Math.pow(positionYPoussoir1.get(positionYPoussoir1.size() - 1) - positionYPoussoir1.get(positionYPoussoir1.size() - 3), 2)));
 
-                float distFromLast = (float)(Math.sqrt(Math.pow(positionXPoussoir1.get(positionXPoussoir1.size() - 1) - positionXPoussoir1.get(positionXPoussoir1.size() - 2), 2) + Math.pow(positionYPoussoir1.get(positionYPoussoir1.size() -1) - positionYPoussoir1.get(positionYPoussoir1.size() -2), 2)));
-                float distFromLast2 = (float)(Math.sqrt(Math.pow(positionXPoussoir1.get(positionXPoussoir1.size() - 2) - positionXPoussoir1.get(positionXPoussoir1.size() - 3), 2) + Math.pow(positionYPoussoir1.get(positionYPoussoir1.size() -2) - positionYPoussoir1.get(positionYPoussoir1.size() -3), 2)));
-                //Log.d("distFromLast", distFromLast + "");
-
-                if(distFromLast > distFromLast2 && accuPuiss1 < MAX_PUISS){
-                    accuPuiss1 = (float)(accuPuiss1 + tableauPuiss[(int)(Math.ceil(accuPuiss1))]);
-                }else if((distFromLast < distFromLast2) && accuPuiss1 >= 0.2){
-                    accuPuiss1 = (float)(accuPuiss1 - tableauPuiss[(int)(Math.ceil(accuPuiss1))]);
-                } else if (distFromLast == distFromLast2) {
-                    accuPuiss1 = 0;
-                }
-
-                if( accuPuiss1 > MIN_PUISS){
-                    poussoir1.setPuissPoussoir(accuPuiss1);
-                }else if(accuPuiss1 < 5){
-                    poussoir1.setPuissPoussoir(MIN_PUISS);
-                }else{
+                coeff = distFromLast2 / DIVISEUR_PUISSANCE;
+                if (coeff > MIN_PUISS && coeff < MAX_PUISS) {
+                    poussoir1.setPuissPoussoir(coeff);
+                } else if (coeff > MAX_PUISS) {
+                    poussoir1.setPuissPoussoir(MAX_PUISS);
+                } else {
                     poussoir1.setPuissPoussoir(MIN_PUISS);
                 }
 
+                Log.d("test", distFromLast2 + "");
 
-
-
-                //Log.d("accuPuiss1", accuPuiss1 + "");
 
                 positionXPoussoir2.remove(0);
                 positionYPoussoir2.remove(0);
                 positionXPoussoir2.add(poussoir2.getX());
                 positionYPoussoir2.add(poussoir2.getY());
+
                 //Calcule la distance parcourue en NB_ELEMENTS_ARRAYLIST itération
-                float distancePouss2 = (float)(Math.sqrt(Math.pow(positionXPoussoir2.get(positionXPoussoir2.size() - 1) - positionXPoussoir2.get(0), 2) + Math.pow(positionYPoussoir2.get(positionYPoussoir2.size() -1) - positionYPoussoir2.get(0), 2)));
-                float puiss2 = distancePouss2 / DIVISEUR_PUISSANCE;
-                //Log.d("test4", puiss2 + "");
 
-                float distFromLast3 = (float)(Math.sqrt(Math.pow(positionXPoussoir2.get(positionXPoussoir2.size() - 1) - positionXPoussoir2.get(positionXPoussoir2.size() - 2), 2) + Math.pow(positionYPoussoir2.get(positionYPoussoir2.size() -1) - positionYPoussoir2.get(positionYPoussoir2.size() -2), 2)));
-                float distFromLast4 = (float)(Math.sqrt(Math.pow(positionXPoussoir2.get(positionXPoussoir2.size() - 2) - positionXPoussoir2.get(positionXPoussoir2.size() - 3), 2) + Math.pow(positionYPoussoir2.get(positionYPoussoir2.size() -2) - positionYPoussoir2.get(positionYPoussoir2.size() -3), 2)));
-                //Log.d("distFromLast", distFromLast + "");
+                float distFromLast3 = (float) (Math.sqrt(Math.pow(positionXPoussoir2.get(positionXPoussoir2.size() - 1) - positionXPoussoir2.get(positionXPoussoir2.size() - 2), 2) + Math.pow(positionYPoussoir2.get(positionYPoussoir2.size() - 1) - positionYPoussoir2.get(positionYPoussoir2.size() - 2), 2)));
+                float distFromLast4 = (float) (Math.sqrt(Math.pow(positionXPoussoir2.get(positionXPoussoir2.size() - 2) - positionXPoussoir2.get(positionXPoussoir2.size() - 3), 2) + Math.pow(positionYPoussoir2.get(positionYPoussoir2.size() - 2) - positionYPoussoir2.get(positionYPoussoir2.size() - 3), 2)));
 
-                if(distFromLast3 > distFromLast4 && accuPuiss2 < MAX_PUISS){
-                    accuPuiss2 = (float)(accuPuiss2 + tableauPuiss[(int)(Math.ceil(accuPuiss2))]);
-                }else if((distFromLast3 < distFromLast4) && accuPuiss2 >= 0.2){
-                    accuPuiss2 = (float)(accuPuiss2 - tableauPuiss[(int)(Math.ceil(accuPuiss2))]);
-                } else if (distFromLast3 == distFromLast4) {
-                    accuPuiss2 = 0;
-                }
-
-                if( accuPuiss2 > MIN_PUISS){
-                    poussoir2.setPuissPoussoir(accuPuiss2);
-                }else if(accuPuiss2 < 5){
-                    poussoir2.setPuissPoussoir(MIN_PUISS);
-                }else{
+                coeff = distFromLast3 / DIVISEUR_PUISSANCE;
+                if (coeff > MIN_PUISS && coeff < MAX_PUISS) {
+                    poussoir2.setPuissPoussoir(coeff);
+                } else if (coeff > MAX_PUISS) {
+                    poussoir2.setPuissPoussoir(MAX_PUISS);
+                } else {
                     poussoir2.setPuissPoussoir(MIN_PUISS);
                 }
 
@@ -423,60 +388,38 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 positionXPoussoir3.add(poussoir3.getX());
                 positionYPoussoir3.add(poussoir3.getY());
                 //Calcule la distance parcourue en NB_ELEMENTS_ARRAYLIST itération
-                float distancePouss3 = (float)(Math.sqrt(Math.pow(positionXPoussoir3.get(positionXPoussoir3.size() - 1) - positionXPoussoir3.get(0), 2) + Math.pow(positionYPoussoir3.get(positionYPoussoir3.size() -1) - positionYPoussoir3.get(0), 2)));
-                float puiss3 = distancePouss3 / DIVISEUR_PUISSANCE;
-                //Log.d("test5", puiss3 + "");
 
-                float distFromLast5 = (float)(Math.sqrt(Math.pow(positionXPoussoir3.get(positionXPoussoir3.size() - 1) - positionXPoussoir3.get(positionXPoussoir3.size() - 2), 2) + Math.pow(positionYPoussoir3.get(positionYPoussoir3.size() -1) - positionYPoussoir3.get(positionYPoussoir3.size() -2), 2)));
-                float distFromLast6 = (float)(Math.sqrt(Math.pow(positionXPoussoir3.get(positionXPoussoir3.size() - 2) - positionXPoussoir3.get(positionXPoussoir3.size() - 3), 2) + Math.pow(positionYPoussoir3.get(positionYPoussoir3.size() -2) - positionYPoussoir3.get(positionYPoussoir3.size() -3), 2)));
-                //Log.d("distFromLast", distFromLast + "");
+                float distFromLast5 = (float) (Math.sqrt(Math.pow(positionXPoussoir3.get(positionXPoussoir3.size() - 1) - positionXPoussoir3.get(positionXPoussoir3.size() - 2), 2) + Math.pow(positionYPoussoir3.get(positionYPoussoir3.size() - 1) - positionYPoussoir3.get(positionYPoussoir3.size() - 2), 2)));
+                float distFromLast6 = (float) (Math.sqrt(Math.pow(positionXPoussoir3.get(positionXPoussoir3.size() - 2) - positionXPoussoir3.get(positionXPoussoir3.size() - 3), 2) + Math.pow(positionYPoussoir3.get(positionYPoussoir3.size() - 2) - positionYPoussoir3.get(positionYPoussoir3.size() - 3), 2)));
 
-                if(distFromLast5 > distFromLast6 && accuPuiss3 < MAX_PUISS){
-                    accuPuiss3 = (float)(accuPuiss3 + tableauPuiss[(int)(Math.ceil(accuPuiss3))]);
-                }else if((distFromLast5 < distFromLast6) && accuPuiss3 >= 0.2){
-                    accuPuiss3 = (float)(accuPuiss3 - tableauPuiss[(int)(Math.ceil(accuPuiss3))]);
-                } else if (distFromLast5 == distFromLast6) {
-                    accuPuiss3 = 0;
-                }
-
-                if( accuPuiss3 > MIN_PUISS){
-                    poussoir3.setPuissPoussoir(accuPuiss3);
-                }else if(accuPuiss3 < 5){
-                    poussoir3.setPuissPoussoir(MIN_PUISS);
-                }else{
+                coeff = distFromLast5 / DIVISEUR_PUISSANCE;
+                if (coeff > MIN_PUISS && coeff < MAX_PUISS) {
+                    poussoir3.setPuissPoussoir(coeff);
+                } else if (coeff > MAX_PUISS) {
+                    poussoir3.setPuissPoussoir(MAX_PUISS);
+                } else {
                     poussoir3.setPuissPoussoir(MIN_PUISS);
                 }
-
 
                 positionXPoussoir4.remove(0);
                 positionYPoussoir4.remove(0);
                 positionXPoussoir4.add(poussoir4.getX());
                 positionYPoussoir4.add(poussoir4.getY());
                 //Calcule la distance parcourue en NB_ELEMENTS_ARRAYLIST itération
-                float distancePouss4 = (float)(Math.sqrt(Math.pow(positionXPoussoir4.get(positionXPoussoir4.size() - 1) - positionXPoussoir4.get(0), 2) + Math.pow(positionYPoussoir4.get(positionYPoussoir4.size() -1) - positionYPoussoir4.get(0), 2)));
-                float puiss4 = distancePouss4 / DIVISEUR_PUISSANCE;
-                //Log.d("test6", puiss4 + "");
 
-                float distFromLast7 = (float)(Math.sqrt(Math.pow(positionXPoussoir4.get(positionXPoussoir4.size() - 1) - positionXPoussoir4.get(positionXPoussoir4.size() - 2), 2) + Math.pow(positionYPoussoir4.get(positionYPoussoir4.size() -1) - positionYPoussoir4.get(positionYPoussoir4.size() -2), 2)));
-                float distFromLast8 = (float)(Math.sqrt(Math.pow(positionXPoussoir4.get(positionXPoussoir4.size() - 2) - positionXPoussoir4.get(positionXPoussoir4.size() - 3), 2) + Math.pow(positionYPoussoir4.get(positionYPoussoir4.size() -2) - positionYPoussoir4.get(positionYPoussoir4.size() -3), 2)));
-                //Log.d("distFromLast", distFromLast7 + "");
+                float distFromLast7 = (float) (Math.sqrt(Math.pow(positionXPoussoir4.get(positionXPoussoir4.size() - 1) - positionXPoussoir4.get(positionXPoussoir4.size() - 2), 2) + Math.pow(positionYPoussoir4.get(positionYPoussoir4.size() - 1) - positionYPoussoir4.get(positionYPoussoir4.size() - 2), 2)));
+                float distFromLast8 = (float) (Math.sqrt(Math.pow(positionXPoussoir4.get(positionXPoussoir4.size() - 2) - positionXPoussoir4.get(positionXPoussoir4.size() - 3), 2) + Math.pow(positionYPoussoir4.get(positionYPoussoir4.size() - 2) - positionYPoussoir4.get(positionYPoussoir4.size() - 3), 2)));
 
-
-                if(distFromLast7 > distFromLast8 && accuPuiss4 < MAX_PUISS){
-                    accuPuiss4 = (float)(accuPuiss4 + tableauPuiss[(int)(Math.ceil(accuPuiss4))]);
-                }else if((distFromLast7 < distFromLast8) && accuPuiss4 >= 0.2){
-                    accuPuiss4 = (float)(accuPuiss4 - tableauPuiss[(int)(Math.ceil(accuPuiss4))]);
-                } else if (distFromLast7 == distFromLast8) {
-                    accuPuiss4 = 0;
-                }
-                if( accuPuiss4 > MIN_PUISS){
-                    poussoir4.setPuissPoussoir(accuPuiss4);
-                }else if(accuPuiss4 < 5){
-                    poussoir4.setPuissPoussoir(MIN_PUISS);
-                }else{
+                coeff = distFromLast7 / DIVISEUR_PUISSANCE;
+                if (coeff > MIN_PUISS && coeff < MAX_PUISS) {
+                    poussoir4.setPuissPoussoir(coeff);
+                } else if (coeff > MAX_PUISS) {
+                    poussoir4.setPuissPoussoir(MAX_PUISS);
+                } else {
                     poussoir4.setPuissPoussoir(MIN_PUISS);
                 }
 
+                Log.d("test", maRondelle.getVitesse() + "");
                 break;
         }
 
@@ -484,14 +427,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         float vitesse = getMaRondelle().getVitesse();
 
         //Déplace la rondelle
-        getMaRondelle().setX((float)(getMaRondelle().getX() + (getProportionX() * (coeffPoussoir * vitesse))));
-        getMaRondelle().setY((float)(getMaRondelle().getY() + (getProportionY() * (coeffPoussoir * vitesse))));
+        getMaRondelle().setX((float) (getMaRondelle().getX() + (getProportionX() * (coeffPoussoir * vitesse))));
+        getMaRondelle().setY((float) (getMaRondelle().getY() + (getProportionY() * (coeffPoussoir * vitesse))));
 
         float xRondelle = getMaRondelle().getX();
         float yRondelle = getMaRondelle().getY();
         int radiusRondelle = getMaRondelle().getRadius();
-        int hitboxDistance = 0;
-        int hitboxDistanceDiag = 0;
         int vitesseBalle = 30;
 
         // Calcule les coordonnées des points de contact de la rondelle (voir schéma)
@@ -511,16 +452,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         pointORondelle[0] = xRondelle - radiusRondelle;
         pointORondelle[1] = yRondelle;
 
-        if(maRondelle.getCompteurAvailable() != 0){
+        if (maRondelle.getCompteurAvailable() != 0) {
             int currentCompteur = maRondelle.getCompteurAvailable();
             maRondelle.setCompteurAvailable(currentCompteur - 1);
-        }else{
+        } else {
             maRondelle.setAvailable(true);
         }
 
         //Si la rondelle est disponible à la colision
         //Pour chaque poussoir, il y a contact si distance entre rondelle et poussoir est < que le radius de la rondelle + le radius du poussoir
-        if(maRondelle.isAvailable() && maRondelle.getCompteurAvailable() == 0) {
+        if (maRondelle.isAvailable() && maRondelle.getCompteurAvailable() == 0) {
             int compteurAvailable = 10;
             for (Poussoir poussoir : getPoussoirs()) {
                 float distanceRondelle = (float) (Math.sqrt(Math.pow(maRondelle.getX() - poussoir.getX(), 2) + Math.pow(maRondelle.getY() - poussoir.getY(), 2)));
@@ -571,39 +512,39 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         }
 
         //Gère les contacts entre la rondelle et les murs
-        if(pointNRondelle[1] > (0 + 10) && dehorsHaut == true){
+        if (pointNRondelle[1] > (0 + 10) && dehorsHaut == true) {
             dehorsHaut = false;
             //Log.d("removeDehors",  "dehorsHaut = false");
 
-        }else if (pointNRondelle[1] < (0 + 10)) {
+        } else if (pointNRondelle[1] < (0 + 10)) {
 
-            if(dehorsHaut != true){
+            if (dehorsHaut != true) {
                 //Log.d("Mur haut", "Mur haut");
                 getMaRondelle().setDirection("ELSE");
                 setProportionX(getProportionX() * 1);
                 setProportionY(getProportionY() * -1);
                 dehorsHaut = true;
             }
-        }else if ((pointSRondelle[1] < (getHeight() - 10)) && dehorsBas == true) {
+        } else if ((pointSRondelle[1] < (getHeight() - 10)) && dehorsBas == true) {
             dehorsBas = false;
             //Log.d("removeDehors",  "dehorsBas = false");
-        }else if ((pointSRondelle[1] > (getHeight() -10))) {
+        } else if ((pointSRondelle[1] > (getHeight() - 10))) {
             //Touche le mur bas
 
-            if(dehorsBas != true){
+            if (dehorsBas != true) {
                 //Log.d("Mur bas", "Mur bas");
                 getMaRondelle().setDirection("ELSE");
                 setProportionX(getProportionX() * 1);
                 setProportionY(getProportionY() * -1);
                 dehorsBas = true;
             }
-        }else if (pointERondelle[0] < (getWidth() -10) && dehorsDroite == true) {
+        } else if (pointERondelle[0] < (getWidth() - 10) && dehorsDroite == true) {
             dehorsDroite = false;
             //Log.d("removeDehors",  "dehorsDroite = false");
 
-        } else if (pointERondelle[0] > (getWidth() -10)) {
+        } else if (pointERondelle[0] > (getWidth() - 10)) {
             //Touche le mur droite
-            if(dehorsDroite != true){
+            if (dehorsDroite != true) {
                 //Log.d("Mur bas", "Mur droite");
                 getMaRondelle().setDirection("ELSE");
                 setProportionX(getProportionX() * -1);
@@ -611,13 +552,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 dehorsDroite = true;
             }
 
-        }else if (pointORondelle[0] > (0 + 10) && dehorsGauche == true) {
+        } else if (pointORondelle[0] > (0 + 10) && dehorsGauche == true) {
             dehorsGauche = false;
-            //Log.d("removeDehors",  "dehorsGauche = false");
 
         } else if (pointORondelle[0] < 0 + 10) {
             //Touche le mur gauche
-            if(dehorsGauche != true){
+            if (dehorsGauche != true) {
                 //Log.d("Mur gauche", "Mur gauche");
                 getMaRondelle().setDirection("ELSE");
                 setProportionX(getProportionX() * -1);
@@ -630,57 +570,56 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     /**
      * Pour un but marqué, modifie le score et le nombre de palets joués.
      * En fonction du score, appelle la méthode reset() pour replacer les objets ou partie.finPartie()
-     *
      */
-    public void butMarque(int idEquipe){
+    public void butMarque(int idEquipe) {
         nbRondellesJouees = nbRondellesJouees + 1;
-        if(idEquipe == 1){
+        if (idEquipe == 1) {
             scoreEquipe1 = scoreEquipe1 + 1;
-        }else if(idEquipe == 2){
+        } else if (idEquipe == 2) {
             scoreEquipe2 = scoreEquipe2 + 1;
         }
 
-        if(scoreEquipe1 == 5 && scoreEquipe2 == 5){
+        if (scoreEquipe1 == 5 && scoreEquipe2 == 5) {
             reset();
-        } else if(nbRondellesJouees >= 10 || (scoreEquipe1 >= 7 || scoreEquipe2 >= 7)){
+        } else if (nbRondellesJouees >= 10 || (scoreEquipe1 >= 7 || scoreEquipe2 >= 7)) {
+            Log.d("finPartie", "finPartie");
             partie.finPartie();
-        }else{
+        } else {
             reset();
         }
 
     }
 
     /**
-     *  Récupère et place dans un tableau les poussoirs
+     * Récupère et place dans un tableau les poussoirs
+     *
      * @return un tableau des poussoirs
      */
     public Poussoir[] getPoussoirs() {
-        Poussoir[] poussoirs = new Poussoir[this.nbJoueurs];
-        if(getPoussoir1().getCouleur() != 0){
-            poussoirs[0] = poussoir1;
-        }
-
-        if(getPoussoir2().getCouleur() != 0){
-            poussoirs[1] = poussoir2;
-        }
-
-        if(getPoussoir3().getCouleur() != 0){
-            poussoirs[2] = poussoir3;
-        }
-
-        if(getPoussoir4().getCouleur() != 0){
-            poussoirs[3] = poussoir4;
+        Poussoir[] poussoirs = new Poussoir[nbJoueurs];
+        switch (nbJoueurs) {
+            case 2:
+                poussoirs[0] = poussoir1;
+                poussoirs[1] = poussoir2;
+                break;
+            case 4:
+                poussoirs[0] = poussoir1;
+                poussoirs[1] = poussoir2;
+                poussoirs[2] = poussoir3;
+                poussoirs[3] = poussoir4;
+                break;
         }
 
         return poussoirs;
     }
 
     /**
-     *  Récupère et place dans un tableau les buts
+     * Récupère et place dans un tableau les buts
+     *
      * @return un tableau des buts
      */
-    public But[] getButs(){
-        But[] buts= new But[2];
+    public But[] getButs() {
+        But[] buts = new But[2];
         buts[0] = getBut1();
         buts[1] = getBut2();
         return buts;

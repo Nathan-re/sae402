@@ -17,8 +17,8 @@ import java.util.List;
 
 public class ChoixEquipe2pers extends AppCompatActivity
 {
-Spinner spinnerequipe1;
-Spinner spinnerequipe2;
+    Spinner spinnerequipe1;
+    Spinner spinnerequipe2;
     private AppDataBase dbAccess;
     private JoueurDAO daoQuery;
 
@@ -101,11 +101,24 @@ Spinner spinnerequipe2;
                 Log.i("Choix des équipes", "Joueur  équipe 1: " + joueurequipe1.getPlayerPseudo());
                 Log.i("Choix des équipes", "Joueur  équipe 2: " + joueurequipe2.getPlayerPseudo());
 
+                Log.d("test", "before else");
+
+                Joueur joueurAequipe1 = (Joueur) spinnerequipe1.getSelectedItem();
+                Joueur joueurCequipe2 = (Joueur) spinnerequipe2.getSelectedItem();
+
+                String[] equipe1String = new String[]{joueurAequipe1.getPlayerPseudo()};
+                String[] equipe2String = new String[]{joueurCequipe2.getPlayerPseudo()};
 
                 new Thread(() -> {
-
-
                     Intent LancerPartie2Pers = new Intent(getApplicationContext(), PartieClassique.class);
+                    LancerPartie2Pers.putExtra("equipe1String", equipe1String);
+                    LancerPartie2Pers.putExtra("equipe2String", equipe2String);
+
+                    LancerPartie2Pers.putExtra("joueurAequipe1", joueurAequipe1);
+                    LancerPartie2Pers.putExtra("joueurCequipe2", joueurCequipe2);
+
+                    LancerPartie2Pers.putExtra("nbJoueurs", (int)(2));
+
                     startActivity(LancerPartie2Pers);
                 }).start();
 

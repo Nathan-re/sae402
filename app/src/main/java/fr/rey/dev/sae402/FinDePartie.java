@@ -20,6 +20,7 @@ public class FinDePartie extends AppCompatActivity {
     private AppDataBase dbAccess;
     private PartieDAO partieDao;
     private JoueurDAO joueurDao;
+    private int nbJoueurs;
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -31,14 +32,28 @@ public class FinDePartie extends AppCompatActivity {
         ListView equipe1JoueurListView = findViewById(R.id.equipe1_joueur);
         ListView equipe2JoueurListView = findViewById(R.id.equipe2_joueur);
 
-        // Récupérer les joueurs sélectionnés dans les spinners
-        Joueur joueurAequipe1bis = (Joueur) getIntent().getSerializableExtra("joueurAequipe1");
-        Joueur joueurBequipe1bis = (Joueur) getIntent().getSerializableExtra("joueurBequipe1");
-        Joueur joueurCequipe2bis = (Joueur) getIntent().getSerializableExtra("joueurCequipe2");
-        Joueur joueurDequipe2bis = (Joueur) getIntent().getSerializableExtra("joueurDequipe2");
-        ArrayList<String> equipe1JoueursArray = new ArrayList<>(Arrays.asList(joueurAequipe1bis.getPlayerPseudo(), joueurBequipe1bis.getPlayerPseudo()));
-        ArrayList<String> equipe2JoueursArray = new ArrayList<>(Arrays.asList(joueurCequipe2bis.getPlayerPseudo(), joueurDequipe2bis.getPlayerPseudo()));
+        nbJoueurs = getIntent().getIntExtra("nbJoueurs", 4);
+        ArrayList<String> equipe1JoueursArray = new ArrayList<String>();
+        ArrayList<String> equipe2JoueursArray = new ArrayList<String>();
+        switch(nbJoueurs){
+            case 2:
+                Joueur joueurAequipe1bis = (Joueur) getIntent().getSerializableExtra("joueurAequipe1");
+                Joueur joueurCequipe2bis = (Joueur) getIntent().getSerializableExtra("joueurCequipe2");
+                equipe1JoueursArray.add(joueurAequipe1bis.getPlayerPseudo());
+                equipe2JoueursArray.add(joueurCequipe2bis.getPlayerPseudo());
 
+                break;
+            case 4:
+                Joueur joueurAequipe1 = (Joueur) getIntent().getSerializableExtra("joueurAequipe1");
+                Joueur joueurBequipe1 = (Joueur) getIntent().getSerializableExtra("joueurBequipe1");
+                Joueur joueurCequipe2 = (Joueur) getIntent().getSerializableExtra("joueurCequipe2");
+                Joueur joueurDequipe2 = (Joueur) getIntent().getSerializableExtra("joueurDequipe2");
+                equipe1JoueursArray.add(joueurAequipe1.getPlayerPseudo());
+                equipe1JoueursArray.add(joueurBequipe1.getPlayerPseudo());
+                equipe2JoueursArray.add(joueurCequipe2.getPlayerPseudo());
+                equipe2JoueursArray.add(joueurDequipe2.getPlayerPseudo());
+                break;
+        }
         Log.i("Tableau Equipe 1", equipe1JoueursArray.toString());
         Log.d("Tableau Equipe 2", equipe2JoueursArray.toString());
 /*

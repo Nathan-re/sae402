@@ -56,18 +56,15 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
         accessDataBase();
 
-
        /* equipe1 = getIntent().getStringArrayExtra("equipe1");
         equipe2 = getIntent().getStringArrayExtra("equipe2");
-*/
-
-
-
+        */
 
 
         // Log.i("Choix des équipes", "Joueur D équipe 2: " + equipe1.getEquipe());
         //Log.i("Choix des équipes", "Joueur D équipe 2: " + equipe2.getEquipe());
-        this.nbJoueurs = 4;
+
+        nbJoueurs = getIntent().getIntExtra("nbJoueurs", 4);
 
         GameView maGameView = new GameView(this, nbJoueurs, this); // coucou c'est klara ^^
         maGameView.setOnTouchListener(this);
@@ -157,10 +154,10 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
         return true;
     }
 
-     public void finPartie() {
+    public void finPartie() {
 
+        /*
         new Thread(() -> {
-
 
             // Insérer les joueurs de l'équipe 1 dans la base de données
            /* for (String pseudo : equipe1) {
@@ -176,32 +173,43 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
                 daoQuery.insertJoueur(joueur);
             }
             Log.i("Equipe 1", Arrays.toString(equipe1));
-            Log.i("Equipe 2", Arrays.toString(equipe2)); */
+            Log.i("Equipe 2", Arrays.toString(equipe2));
 
 
-        }).start();
-
+        }).start();*/
 
         Intent envoiePartieFin = new Intent(getApplicationContext(), FinDePartie.class);
-         Joueur joueurAequipe1bis = (Joueur) getIntent().getSerializableExtra("joueurAequipe1");
-         Joueur joueurBequipe1bis = (Joueur) getIntent().getSerializableExtra("joueurBequipe1");
-         Joueur joueurCequipe2bis = (Joueur) getIntent().getSerializableExtra("joueurCequipe2");
-         Joueur joueurDequipe2bis = (Joueur) getIntent().getSerializableExtra("joueurDequipe2");
 
+        switch(nbJoueurs){
+            case 2:
+                Joueur joueurAequipe1 = (Joueur) getIntent().getSerializableExtra("joueurAequipe1");
+                Joueur joueurCequipe2 = (Joueur) getIntent().getSerializableExtra("joueurCequipe2");
 
+                envoiePartieFin.putExtra("joueurAequipe1", joueurAequipe1);
+                envoiePartieFin.putExtra("joueurCequipe2", joueurCequipe2);
 
-         envoiePartieFin.putExtra("joueurAequipe1", joueurAequipe1bis);
-         envoiePartieFin.putExtra("joueurBequipe1", joueurBequipe1bis);
-         envoiePartieFin.putExtra("joueurCequipe2", joueurCequipe2bis);
-         envoiePartieFin.putExtra("joueurDequipe2", joueurDequipe2bis);
+                Log.i("joueurAequipe1bis", joueurAequipe1.getPlayerPseudo());
+                Log.i("joueurCequipe2bis", joueurCequipe2.getPlayerPseudo());
+                break;
+            case 4:
+                Joueur joueurAequipe1bis = (Joueur) getIntent().getSerializableExtra("joueurAequipe1");
+                Joueur joueurBequipe1bis = (Joueur) getIntent().getSerializableExtra("joueurBequipe1");
+                Joueur joueurCequipe2bis = (Joueur) getIntent().getSerializableExtra("joueurCequipe2");
+                Joueur joueurDequipe2bis = (Joueur) getIntent().getSerializableExtra("joueurDequipe2");
 
-         Log.i("joueurAequipe1bis", joueurAequipe1bis.getPlayerPseudo());
-            Log.i("joueurBequipe1bis", joueurBequipe1bis.getPlayerPseudo());
-            Log.i("joueurCequipe2bis", joueurCequipe2bis.getPlayerPseudo());
-            Log.i("joueurDequipe2bis", joueurDequipe2bis.getPlayerPseudo());
+                envoiePartieFin.putExtra("joueurAequipe1", joueurAequipe1bis);
+                envoiePartieFin.putExtra("joueurBequipe1", joueurBequipe1bis);
+                envoiePartieFin.putExtra("joueurCequipe2", joueurCequipe2bis);
+                envoiePartieFin.putExtra("joueurDequipe2", joueurDequipe2bis);
 
-
-
+                Log.i("joueurAequipe1bis", joueurAequipe1bis.getPlayerPseudo());
+                Log.i("joueurBequipe1bis", joueurBequipe1bis.getPlayerPseudo());
+                Log.i("joueurCequipe2bis", joueurCequipe2bis.getPlayerPseudo());
+                Log.i("joueurDequipe2bis", joueurDequipe2bis.getPlayerPseudo());
+                break;
+        }
+        Log.d("before Intent", "before Intent");
+        envoiePartieFin.putExtra("nbJoueurs", nbJoueurs);
         startActivity(envoiePartieFin);
     }
 
