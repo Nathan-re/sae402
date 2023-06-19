@@ -21,4 +21,13 @@ public interface PartieDAO {
     public Cursor getAllParties();
     @Query("SELECT _id FROM Partie")
     public int [] getAllId();
+
+    @Query("SELECT MAX(_id) FROM Partie")
+    int getLastPartieId();
+
+    @Query("SELECT _id FROM Partie")
+    public  int getPartieId();
+
+ /* @Query("SELECT score FROM Partie WHERE _id = :idPartie ")*/
+
 }

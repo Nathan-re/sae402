@@ -41,12 +41,21 @@ public class FinDePartie extends AppCompatActivity {
 
         Log.i("Tableau Equipe 1", equipe1JoueursArray.toString());
         Log.d("Tableau Equipe 2", equipe2JoueursArray.toString());
+/*
+        int idPartie = partieDao.getPartieId();
 
-        Partie partie = new Partie(1, "Classique", 1, 1, equipe1JoueursArray, equipe2JoueursArray);
+        int scorePartie = 1;
 
-        InsertPartieAsyncTask insertPartieAsyncTask = new InsertPartieAsyncTask(partieDao, joueurDao);
-        insertPartieAsyncTask.execute(partie);
-        Log.i("Partie", partie.toString());
+        Partie partie = new Partie(idPartie, "Classique", 1, scorePartie, equipe1JoueursArray, equipe2JoueursArray);
+*/
+       /* InsertPartieAsyncTask insertPartieAsyncTask = new InsertPartieAsyncTask(partieDao, joueurDao);
+        insertPartieAsyncTask.execute(partie); */
+
+        InsertPartieAsyncTask insertPartieAsyncTask = new InsertPartieAsyncTask();
+        insertPartieAsyncTask.execute(equipe1JoueursArray, equipe2JoueursArray);
+
+
+      /*  Log.i("Partie", partie.toString()); */
         ArrayAdapter<String> equipe1Adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, equipe1JoueursArray);
         equipe1JoueurListView.setAdapter(equipe1Adapter);
 
@@ -66,21 +75,34 @@ public class FinDePartie extends AppCompatActivity {
         joueurDao = dbAccess.getJoueurDao();
     }
 
-    private static class InsertPartieAsyncTask extends AsyncTask<Partie, Void, Void> {
-        private PartieDAO partieDao;
-        private JoueurDAO joueurDao;
-
-        public InsertPartieAsyncTask(PartieDAO partieDao, JoueurDAO joueurDao) {
-            this.partieDao = partieDao;
-            this.joueurDao = joueurDao;
-        }
+    private class InsertPartieAsyncTask extends AsyncTask<ArrayList<String>, Void, Void> {
 
         @Override
-        protected Void doInBackground(Partie... parties) {
-            Partie partie = parties[0];
+        protected Void doInBackground(ArrayList<String>... arrayLists) {
+            ArrayList<String> equipe1JoueursArray = arrayLists[0];
+            ArrayList<String> equipe2JoueursArray = arrayLists[1];
+
+            dbAccess = AppDataBase.getAppDataBase(getApplicationContext());
+            partieDao = dbAccess.getPartieDao();
+            joueurDao = dbAccess.getJoueurDao();
+
+            int lastPartieId = partieDao.getLastPartieId();
+            int idPartie = lastPartieId + 1;
+            int scorePartie = 1;
+
+
+         /*   int idPartie = partieDao.getPartieId();
+            int scorePartie = 1; */
+
+            Partie partie = new Partie(idPartie, "Classique", 1, scorePartie, equipe1JoueursArray, equipe2JoueursArray);
+            Log.i("Contenue de la partie", partie.toString());
             if (joueursExist(partie.getEquipe1Joueurs()) && joueursExist(partie.getEquipe2Joueurs())) {
                 partieDao.insertPartie(partie);
+                Log.i("Contenue de la partie", partie.toString());
+            } else {
+                Log.i("Erreur", "Les joueurs n'existent pas");
             }
+
             return null;
         }
 

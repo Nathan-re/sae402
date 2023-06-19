@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 
@@ -48,10 +50,17 @@ public class historique extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.historique_matchs);
+        accessDataBase();
 
+        ListView listeMatchsView = (ListView) findViewById(R.id.Liste_des_matchs);
 
         Button ButtonRetour = (Button) findViewById(R.id.button_retour);
 
+/*
+        ArrayAdapter<String> listeMatchsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, );
+        listeMatchsView.setAdapter(listeMatchsAdapter);
+
+*/
         ButtonRetour.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,19 +76,6 @@ public class historique extends AppCompatActivity
 
             }}
         ));
-
-
-        /*Intent intentHistorique = new Intent(getApplicationContext(), MainActivity.class);
-
-        new Thread(() -> {
-            accessDataBase();
-
-
-
-
-            startActivity(intentHistorique);
-        }).start();
-*/
     }
 
 
