@@ -6,6 +6,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.Query;
 import androidx.room.TypeConverters;
 
 import java.util.List;
@@ -68,6 +69,10 @@ public class Partie {
         this.score = score;
         this.equipe1Joueurs = equipe1Joueurs;
         this.equipe2Joueurs = equipe2Joueurs;
+    }
+    public Partie() {
+
+
     }
 
     public void set_id(int _id) {
@@ -152,6 +157,14 @@ public class Partie {
 
     @Override
     public String toString() {
+        return  "#" + _id +
+                " " + typePartie + '\'' +
+                " " + equipe1Joueurs +
+                ", score :" + score +
+                " " + equipe2Joueurs;
+    }
+/*    @Override
+    public String toString() {
         return "Partie{" +
                 "id=" + _id +
                 ", mode='" + typePartie + '\'' +
@@ -161,5 +174,24 @@ public class Partie {
                 ", equipe2Joueurs=" + equipe2Joueurs +
                 // Ajoutez les autres champs de la classe Partie ici
                 '}';
+    }*/
+    public String getEquipes() {
+        return equipe1Joueurs.toString() + equipe2Joueurs.toString();
+    }
+
+
+    public String getModeJeu() {
+        return typePartie;
+    }
+
+    public String getId() {
+        return String.valueOf(_id);
+    }
+
+
+
+
+    public void setModeJeu(String modeJeu) {
+        this.typePartie = modeJeu;
     }
 }

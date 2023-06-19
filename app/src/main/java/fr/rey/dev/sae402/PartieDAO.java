@@ -8,6 +8,9 @@ import androidx.room.Update;
 import androidx.room.Delete;
 import androidx.room.Query;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Dao // Création de l'interfacte DAO pour partie avec @Dao (liaison)
 public interface PartieDAO {
@@ -17,8 +20,7 @@ public interface PartieDAO {
     public void updatePartie(Partie aPartie);
     @Delete // @Delete pour la requête de suppression
     public void deletePartie(Partie aPartie);
-    @Query("SELECT * FROM Partie") // @Query pour la requête parsonnalisée
-    public Cursor getAllParties();
+
     @Query("SELECT _id FROM Partie")
     public int [] getAllId();
 
@@ -27,7 +29,10 @@ public interface PartieDAO {
 
     @Query("SELECT _id FROM Partie")
     public  int getPartieId();
+    @Query("SELECT * FROM Partie WHERE _id = :partieId")
+    Partie getPartieById(int partieId);
 
- /* @Query("SELECT score FROM Partie WHERE _id = :idPartie ")*/
+
+    /* @Query("SELECT score FROM Partie WHERE _id = :idPartie ")*/
 
 }
