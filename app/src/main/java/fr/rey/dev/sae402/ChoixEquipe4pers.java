@@ -63,8 +63,6 @@ public class ChoixEquipe4pers extends AppCompatActivity {
         }
     }
 
-
-
     public void accessDataBase() {
         dbAccess = AppDataBase.getAppDataBase(this);
         daoQuery = dbAccess.getJoueurDao();
@@ -107,7 +105,6 @@ public class ChoixEquipe4pers extends AppCompatActivity {
                 String[] equipe2String = new String[]{joueurCequipe2.getPlayerPseudo(), joueurDequipe2.getPlayerPseudo()};
 
 
-
                 new InsertJoueursTask().execute(joueurAequipe1, joueurBequipe1, joueurCequipe2, joueurDequipe2);
                 Log.i("Choix des équipes", "Joueur A équipe 1: " + joueurAequipe1.getPlayerPseudo());
                 Log.i("Choix des équipes", "Joueur B équipe 1: " + joueurBequipe1.getPlayerPseudo());
@@ -118,11 +115,11 @@ public class ChoixEquipe4pers extends AppCompatActivity {
                     Intent lancerPartie4Pers = new Intent(getApplicationContext(), PartieClassique.class);
                     lancerPartie4Pers.putExtra("equipe1String", equipe1String);
                     lancerPartie4Pers.putExtra("equipe2String", equipe2String);
-String[] equipe1 = new String[]{joueurAequipe1.getPlayerPseudo(), joueurBequipe1.getPlayerPseudo()};
-String[] equipe2 = new String[]{joueurCequipe2.getPlayerPseudo(), joueurDequipe2.getPlayerPseudo()};
+                    String[] equipe1 = new String[]{joueurAequipe1.getPlayerPseudo(), joueurBequipe1.getPlayerPseudo()};
+                    String[] equipe2 = new String[]{joueurCequipe2.getPlayerPseudo(), joueurDequipe2.getPlayerPseudo()};
 
-int[] equipe1Id = new int[]{joueurAequipe1.getId(), joueurBequipe1.getId()};
-int[] equipe2Id = new int[]{joueurCequipe2.getId(), joueurDequipe2.getId()};
+                    int[] equipe1Id = new int[]{joueurAequipe1.getId(), joueurBequipe1.getId()};
+                    int[] equipe2Id = new int[]{joueurCequipe2.getId(), joueurDequipe2.getId()};
                     Log.i("TABLEAU EQUIPE 1", String.valueOf(equipe1[0]));
                     Log.i("TABLEAU EQUIPE 1", String.valueOf(equipe1[1]));
                     Log.i("TABLEAU EQUIPE 2", String.valueOf(equipe2[0]));
@@ -134,11 +131,14 @@ int[] equipe2Id = new int[]{joueurCequipe2.getId(), joueurDequipe2.getId()};
                     Log.i("TABLEAU EQUIPE 2 ID", String.valueOf(equipe2Id[1]));
 
 
-
                     lancerPartie4Pers.putExtra("joueurAequipe1", joueurAequipe1);
                     lancerPartie4Pers.putExtra("joueurBequipe1", joueurBequipe1);
                     lancerPartie4Pers.putExtra("joueurCequipe2", joueurCequipe2);
                     lancerPartie4Pers.putExtra("joueurDequipe2", joueurDequipe2);
+
+                    lancerPartie4Pers.putExtra("nbJoueurs", (int) (4));
+
+                    Log.d("test", "before intent partie");
 
                     startActivity(lancerPartie4Pers);
 
