@@ -39,6 +39,9 @@
         <activity android:name=".FinDePartie"
             android:label="Fin de partie"
             android:exported="true"/>
+        <activity android:name=".ListeDeJoueurs"
+            android:label="Liste des joueurs"
+            android:exported="true"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
