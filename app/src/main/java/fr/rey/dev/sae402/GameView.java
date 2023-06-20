@@ -589,15 +589,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         if (scoreEquipe1 == 10 || scoreEquipe2 == 10) {
-            Log.d("finPartie", "finPartie");
-           /* partieajoutVictoirePlayer(); */
-            Log.d("finPartie2", "finPartie");
+            //Log.d("finPartie", "finPartie");
+            //Log.d("finPartie2", "finPartie");
             partie.finPartie();
         } else {
             reset();
         }
 
     }
+
+    /*
     public void ajoutVictoirePlayer() {
         // Récupérer les joueurs actuels de chaque équipe
         List<Joueur> equipe1Joueurs = joueurDao.getJoueursByEquipe1("equipe1");
@@ -643,8 +644,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
     }
-
-
+    */
 
 
 
