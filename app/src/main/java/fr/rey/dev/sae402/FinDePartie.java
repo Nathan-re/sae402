@@ -24,7 +24,7 @@ public class FinDePartie extends AppCompatActivity {
     private JoueurDAO joueurDao;
     private int nbJoueurs;
     private Map<String, Integer> joueurVictoires;
-
+    private Map<String, Integer> joueurDefaites;
     private TextView TextViewScoreEquipe1;
     private TextView TextViewScoreEquipe2;
 
@@ -148,17 +148,33 @@ public class FinDePartie extends AppCompatActivity {
 
         private void updateVictoires() {
             joueurVictoires = new HashMap<>();
+            joueurDefaites = new HashMap<>();
+
+            int scoreDefaite = 0;
+            int scoreVictoire = 0;
 
             if (scoreEquipe1 >= 10) {
                 for (String joueur : equipe1JoueursArray) {
                     joueurVictoires.put(joueur, joueurVictoires.getOrDefault(joueur, 0) + 1);
                 }
+                scoreVictoire = scoreEquipe1;
+
+                for (String joueur : equipe2JoueursArray) {
+                    joueurDefaites.put(joueur, joueurDefaites.getOrDefault(joueur, 0) + 1);
+                }
+                scoreDefaite = scoreEquipe2;
             }
 
             if (scoreEquipe2 >= 10) {
                 for (String joueur : equipe2JoueursArray) {
                     joueurVictoires.put(joueur, joueurVictoires.getOrDefault(joueur, 0) + 1);
                 }
+                scoreVictoire = scoreEquipe2;
+
+                for (String joueur : equipe1JoueursArray) {
+                    joueurDefaites.put(joueur, joueurDefaites.getOrDefault(joueur, 0) + 1);
+                }
+                scoreDefaite = scoreEquipe1;
             }
 
             for (Map.Entry<String, Integer> entry : joueurVictoires.entrySet()) {
@@ -166,6 +182,16 @@ public class FinDePartie extends AppCompatActivity {
                 int victoires = entry.getValue();
                 Joueur joueur = joueurDao.getJoueurByPseudo(pseudo);
                 joueur.setNombreVictoires(joueur.getNombreVictoires() + 1);
+                joueur.setPlayerNbPtsTotal(joueur.getPlayerNbPtsTotal() + scoreVictoire);
+                joueurDao.updateJoueur(joueur);
+            }
+
+            for (Map.Entry<String, Integer> entry : joueurDefaites.entrySet()) {
+                String pseudo = entry.getKey();
+                int victoires = entry.getValue();
+                Joueur joueur = joueurDao.getJoueurByPseudo(pseudo);
+                joueur.setPlayerNbPtsTotal(joueur.getPlayerNbPtsTotal() + scoreDefaite);
+
                 joueurDao.updateJoueur(joueur);
             }
         }

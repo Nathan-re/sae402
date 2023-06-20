@@ -56,10 +56,8 @@ public class Joueur implements Serializable {
     }
 
     public String toSimpleString() {
-        return playerPseudo + " - Victoire: " + playerNbVictoire;
+        return playerPseudo + " - Victoire: " + playerNbVictoire + ", Points totaux : " + playerNbPtsTotal;
     }
-
-
 
     // GETTERS
     public Integer get_id() {
