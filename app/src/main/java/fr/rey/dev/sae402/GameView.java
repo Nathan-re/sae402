@@ -33,8 +33,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private final static int REFRESH_RATE = 1;
     private final static int NB_ELEMENTS_ARRAYLIST = 4;
     private final static int DIVISEUR_PUISSANCE = 30;
-    private final static float MIN_PUISS = (float) (0.4);
-    private final static float MAX_PUISS = (float) (3);
+    private final static float MIN_PUISS = (float) (0.3);
+    private final static float MAX_PUISS = (float) (5);
     private final static float VITESSE_REMOVE = (float) (0.2);
 
     private AppDataBase dbAccess;
@@ -607,12 +607,38 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             for (Joueur joueur : equipe1Joueurs) {
                 // Augmenter la valeur de playerNbVictoire pour chaque joueur de l'équipe 1
                 joueur.setPlayerNbVictoire(joueur.getPlayerNbVictoire() + 1);
+                int nbPoints = joueur.getPlayerNbPtsTotal() + scoreEquipe1;
+                joueur.setPlayerNbPtsTotal(nbPoints);
+                Log.d("nbPoints", nbPoints + "");
+
+                joueurDao.updateJoueur(joueur);
+            }
+            Log.d("scoreEquipe2", scoreEquipe2 + "");
+
+            for (Joueur joueur : equipe2Joueurs) {
+                // Augmenter la valeur de playerNbPtsTotal pour chaque joueur de l'équipe 2
+                int nbPoints = joueur.getPlayerNbPtsTotal() + scoreEquipe2;
+                joueur.setPlayerNbPtsTotal(nbPoints);
+                Log.d("nbPoints", nbPoints + "");
+
                 joueurDao.updateJoueur(joueur);
             }
         } else if (scoreEquipe2 >= 10) {
             for (Joueur joueur : equipe2Joueurs) {
                 // Augmenter la valeur de playerNbVictoire pour chaque joueur de l'équipe 2
                 joueur.setPlayerNbVictoire(joueur.getPlayerNbVictoire() + 1);
+                int nbPoints = joueur.getPlayerNbPtsTotal() + scoreEquipe2;
+                joueur.setPlayerNbPtsTotal(nbPoints);
+                Log.d("nbPoints", nbPoints + "");
+
+                joueurDao.updateJoueur(joueur);
+            }
+            Log.d("scoreEquipe2", scoreEquipe2 + "");
+
+            for (Joueur joueur : equipe1Joueurs) {
+                // Augmenter la valeur de playerNbPtsTotal pour chaque joueur de l'équipe 2
+                joueur.setPlayerNbPtsTotal(joueur.getPlayerNbPtsTotal() + scoreEquipe1);
+
                 joueurDao.updateJoueur(joueur);
             }
         }
