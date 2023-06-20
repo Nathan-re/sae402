@@ -50,7 +50,9 @@ public class Joueur implements Serializable {
 
     @Override
     public String toString() {
-        return "Joueur [nom=" + playerPseudo + "]";
+        //return "Joueur [nom=" + playerPseudo + "]";
+        return playerPseudo + "";
+
     }
 
     public String toSimpleString() {

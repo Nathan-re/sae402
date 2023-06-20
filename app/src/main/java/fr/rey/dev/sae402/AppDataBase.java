@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 
 
-@Database(entities = {Joueur.class, Partie.class}, version = 3)
+@Database(entities = {Joueur.class, Partie.class}, version = 4)
 @TypeConverters(ListConverter.class)
 public abstract class AppDataBase extends RoomDatabase {
 
