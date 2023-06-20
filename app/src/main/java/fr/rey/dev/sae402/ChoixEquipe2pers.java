@@ -32,6 +32,7 @@ public class ChoixEquipe2pers extends AppCompatActivity
         @Override
         protected void onPostExecute(List<Joueur> joueurs) {
             super.onPostExecute(joueurs);
+            Log.d("test", joueurs + "");
             ArrayAdapter<Joueur> adapter = new ArrayAdapter<>(ChoixEquipe2pers.this, android.R.layout.simple_spinner_item, joueurs);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerequipe1.setAdapter(adapter);

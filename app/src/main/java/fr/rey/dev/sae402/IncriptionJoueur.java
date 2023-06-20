@@ -52,6 +52,7 @@ public class IncriptionJoueur extends AppCompatActivity {
 
 
                 String playerPseudo = inscriptionPseudo.getText().toString();
+
                 Joueur joueur = new Joueur(playerPseudo, 1);
 
                 Log.i("Nom du joueur", inscriptionPseudo.getText().toString());
