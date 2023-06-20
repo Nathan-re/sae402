@@ -156,31 +156,31 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
 
     public void finPartie() {
 
-        /*
-        new Thread(() -> {
 
-            // Insérer les joueurs de l'équipe 1 dans la base de données
-           /* for (String pseudo : equipe1) {
-                Joueur joueur = new Joueur();
-                joueur.setPlayerPseudo(pseudo);
-                daoQuery.insertJoueur(joueur);
+
+
+        // Vérifier quelle équipe a remporté la partie
+      /*  if (scoreEquipe1 >= 10) {
+            // Équipe 1 a remporté la partie, mettre à jour le nombre de victoires des joueurs de l'équipe 1
+            List<Joueur> equipe1Joueurs = daoQuery.getJoueursByEquipe1("equipe1");
+            for (Joueur joueur : equipe1Joueurs) {
+                joueur.setPlayerNbVictoire(joueur.getPlayerNbVictoire() + 1);
+                daoQuery.updateJoueur(joueur);
             }
-
-            // Insérer les joueurs de l'équipe 2 dans la base de données
-            for (String pseudo : equipe2) {
-                Joueur joueur = new Joueur();
-                joueur.setPlayerPseudo(pseudo);
-                daoQuery.insertJoueur(joueur);
+        } else if (scoreEquipe2 >= 10) {
+            // Équipe 2 a remporté la partie, mettre à jour le nombre de victoires des joueurs de l'équipe 2
+            List<Joueur> equipe2Joueurs = daoQuery.getJoueursByEquipe2("equipe2");
+            for (Joueur joueur : equipe2Joueurs) {
+                joueur.setPlayerNbVictoire(joueur.getPlayerNbVictoire() + 1);
+                daoQuery.updateJoueur(joueur);
             }
-            Log.i("Equipe 1", Arrays.toString(equipe1));
-            Log.i("Equipe 2", Arrays.toString(equipe2));
+        }
 
-
-        }).start();*/
+*/
 
         Intent envoiePartieFin = new Intent(getApplicationContext(), FinDePartie.class);
 
-        switch(nbJoueurs){
+        switch (nbJoueurs) {
             case 2:
                 Joueur joueurAequipe1 = (Joueur) getIntent().getSerializableExtra("joueurAequipe1");
                 Joueur joueurCequipe2 = (Joueur) getIntent().getSerializableExtra("joueurCequipe2");
@@ -208,10 +208,13 @@ public class PartieClassique extends AppCompatActivity implements View.OnTouchLi
                 Log.i("joueurDequipe2bis", joueurDequipe2bis.getPlayerPseudo());
                 break;
         }
+
         Log.d("before Intent", "before Intent");
         envoiePartieFin.putExtra("nbJoueurs", nbJoueurs);
         envoiePartieFin.putExtra("scoreEquipe1", maGameView.getScoreEquipe1());
         envoiePartieFin.putExtra("scoreEquipe2", maGameView.getScoreEquipe2());
+        Log.i("score equipe1", String.valueOf(maGameView.getScoreEquipe1()));
+        Log.i("score equipe2", String.valueOf(maGameView.getScoreEquipe2()));
         startActivity(envoiePartieFin);
     }
 

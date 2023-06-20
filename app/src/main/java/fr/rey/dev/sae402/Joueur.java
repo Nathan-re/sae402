@@ -39,13 +39,13 @@ public class Joueur implements Serializable {
 
     }
 
-    public Joueur(String playerPseudo, int playerColor) {
+    public Joueur(String playerPseudo, int playerColor, int playerNbDefaite, int playerNbVictoire, int playerNbPtsTotal             ) {
         this.playerPseudo = playerPseudo;
         this.playerColor = playerColor;
         // On initialise le nombre de victoires et défaites à 0
-        this.playerNbDefaite = 0;
-        this.playerNbVictoire = 0;
-        this.playerNbPtsTotal = 0;
+        this.playerNbDefaite =playerNbDefaite;
+        this.playerNbVictoire = playerNbVictoire;
+        this.playerNbPtsTotal = playerNbPtsTotal;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class Joueur implements Serializable {
     }
 
     public String toSimpleString() {
-        return playerPseudo + " - Score: " + playerNbPtsTotal;
+        return playerPseudo + " - Victoire: " + playerNbVictoire;
     }
 
 
@@ -122,4 +122,19 @@ public class Joueur implements Serializable {
     }
 
 
+    public Joueur getJoueursByEquipe1() {
+        return this;
+    }
+
+    public Joueur getJoueursByEquipe2() {
+        return this;
+    }
+
+    public int getNombreVictoires() {
+        return playerNbVictoire;
+    }
+
+    public void setNombreVictoires(int i) {
+        this.playerNbVictoire = i;
+    }
 }

@@ -11,6 +11,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private final static float MIN_PUISS = (float) (0.4);
     private final static float MAX_PUISS = (float) (3);
     private final static float VITESSE_REMOVE = (float) (0.2);
+
+    private AppDataBase dbAccess;
+    private PartieDAO partieDao;
+    private JoueurDAO joueurDao;
 
 
     public GameView(Context context, int nbJoueurs, PartieClassique partie) {
@@ -114,7 +119,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 
     }
-
+    public void accessDataBase() {
+        dbAccess = AppDataBase.getAppDataBase(this.getContext());
+        joueurDao = dbAccess.getJoueurDao();
+        partieDao = dbAccess.getPartieDao();
+    }
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -179,18 +188,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 break;
 
             case 4:
-                this.joueur1 = new Joueur("Jules", Color.argb(255, 253, 225, 45));
+                this.joueur1 = new Joueur("Jules", Color.argb(255, 253, 225, 45), 0, 0, 0);
                 this.poussoir1 = new Poussoir(100, 100, joueur1.getPlayerColor(), getWidth() / 24, 0);
 
-                this.joueur2 = new Joueur("Pierre", Color.argb(255, 253, 225, 45));
+                this.joueur2 = new Joueur("Pierre", Color.argb(255, 253, 225, 45), 0, 0, 0);
                 this.poussoir2 = new Poussoir(200, 200, joueur2.getPlayerColor(), getWidth() / 24, 0);
 
 
-                this.joueur3 = new Joueur("Antoine", Color.argb(255, 127, 50, 195));
+                this.joueur3 = new Joueur("Antoine", Color.argb(255, 127, 50, 195), 0, 0, 0);
                 this.poussoir3 = new Poussoir(300, 300, joueur3.getPlayerColor(), getWidth() / 24, 0);
 
 
-                this.joueur4 = new Joueur("Nathan", Color.argb(255, 127, 50, 195));
+                this.joueur4 = new Joueur("Nathan", Color.argb(255, 127, 50, 195), 0, 0, 0);
                 this.poussoir4 = new Poussoir(400, 400, joueur4.getPlayerColor(), getWidth() / 24, 0);
 
                 break;
@@ -573,18 +582,45 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         nbRondellesJouees = nbRondellesJouees + 1;
         if (idEquipe == 1) {
             scoreEquipe1 = scoreEquipe1 + 1;
+            Log.i("score equipe 1", String.valueOf(scoreEquipe1));
         } else if (idEquipe == 2) {
             scoreEquipe2 = scoreEquipe2 + 1;
+            Log.i("score equipe 2", String.valueOf(scoreEquipe2));
         }
 
         if (scoreEquipe1 == 10 || scoreEquipe2 == 10) {
             Log.d("finPartie", "finPartie");
+           /* partieajoutVictoirePlayer(); */
+            Log.d("finPartie2", "finPartie");
             partie.finPartie();
         } else {
             reset();
         }
 
     }
+    public void ajoutVictoirePlayer() {
+        // Récupérer les joueurs actuels de chaque équipe
+        List<Joueur> equipe1Joueurs = joueurDao.getJoueursByEquipe1("equipe1");
+        List<Joueur> equipe2Joueurs = joueurDao.getJoueursByEquipe2("equipe2");
+
+        if (scoreEquipe1 >= 10) {
+            for (Joueur joueur : equipe1Joueurs) {
+                // Augmenter la valeur de playerNbVictoire pour chaque joueur de l'équipe 1
+                joueur.setPlayerNbVictoire(joueur.getPlayerNbVictoire() + 1);
+                joueurDao.updateJoueur(joueur);
+            }
+        } else if (scoreEquipe2 >= 10) {
+            for (Joueur joueur : equipe2Joueurs) {
+                // Augmenter la valeur de playerNbVictoire pour chaque joueur de l'équipe 2
+                joueur.setPlayerNbVictoire(joueur.getPlayerNbVictoire() + 1);
+                joueurDao.updateJoueur(joueur);
+            }
+        }
+    }
+
+
+
+
 
     /**
      * Récupère et place dans un tableau les poussoirs

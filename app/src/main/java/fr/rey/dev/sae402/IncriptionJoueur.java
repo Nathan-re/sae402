@@ -52,7 +52,7 @@ public class IncriptionJoueur extends AppCompatActivity {
 
 
                 String playerPseudo = inscriptionPseudo.getText().toString();
-                Joueur joueur = new Joueur(playerPseudo, 1);
+                Joueur joueur = new Joueur(playerPseudo, 1, 0, 0, 0);
 
                 Log.i("Nom du joueur", inscriptionPseudo.getText().toString());
                 new Thread(() -> {

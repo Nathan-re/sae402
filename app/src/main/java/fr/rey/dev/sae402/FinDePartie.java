@@ -12,8 +12,9 @@ import android.widget.ArrayAdapter;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FinDePartie extends AppCompatActivity {
 
@@ -21,6 +22,7 @@ public class FinDePartie extends AppCompatActivity {
     private PartieDAO partieDao;
     private JoueurDAO joueurDao;
     private int nbJoueurs;
+    private Map<String, Integer> joueurVictoires;
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -33,15 +35,14 @@ public class FinDePartie extends AppCompatActivity {
         ListView equipe2JoueurListView = findViewById(R.id.equipe2_joueur);
 
         nbJoueurs = getIntent().getIntExtra("nbJoueurs", 4);
-        ArrayList<String> equipe1JoueursArray = new ArrayList<String>();
-        ArrayList<String> equipe2JoueursArray = new ArrayList<String>();
+        ArrayList<String> equipe1JoueursArray = new ArrayList<>();
+        ArrayList<String> equipe2JoueursArray = new ArrayList<>();
         switch(nbJoueurs){
             case 2:
                 Joueur joueurAequipe1bis = (Joueur) getIntent().getSerializableExtra("joueurAequipe1");
                 Joueur joueurCequipe2bis = (Joueur) getIntent().getSerializableExtra("joueurCequipe2");
                 equipe1JoueursArray.add(joueurAequipe1bis.getPlayerPseudo());
                 equipe2JoueursArray.add(joueurCequipe2bis.getPlayerPseudo());
-
                 break;
             case 4:
                 Joueur joueurAequipe1 = (Joueur) getIntent().getSerializableExtra("joueurAequipe1");
@@ -56,21 +57,10 @@ public class FinDePartie extends AppCompatActivity {
         }
         Log.i("Tableau Equipe 1", equipe1JoueursArray.toString());
         Log.d("Tableau Equipe 2", equipe2JoueursArray.toString());
-/*
-        int idPartie = partieDao.getPartieId();
 
-        int scorePartie = 1;
+        InsertPartieAsyncTask insertPartieAsyncTask = new InsertPartieAsyncTask(equipe1JoueursArray, equipe2JoueursArray);
+        insertPartieAsyncTask.execute();
 
-        Partie partie = new Partie(idPartie, "Classique", 1, scorePartie, equipe1JoueursArray, equipe2JoueursArray);
-*/
-       /* InsertPartieAsyncTask insertPartieAsyncTask = new InsertPartieAsyncTask(partieDao, joueurDao);
-        insertPartieAsyncTask.execute(partie); */
-
-        InsertPartieAsyncTask insertPartieAsyncTask = new InsertPartieAsyncTask();
-        insertPartieAsyncTask.execute(equipe1JoueursArray, equipe2JoueursArray);
-
-
-      /*  Log.i("Partie", partie.toString()); */
         ArrayAdapter<String> equipe1Adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, equipe1JoueursArray);
         equipe1JoueurListView.setAdapter(equipe1Adapter);
 
@@ -90,13 +80,20 @@ public class FinDePartie extends AppCompatActivity {
         joueurDao = dbAccess.getJoueurDao();
     }
 
-    private class InsertPartieAsyncTask extends AsyncTask<ArrayList<String>, Void, Void> {
+    private class InsertPartieAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private ArrayList<String> equipe1JoueursArray;
+        private ArrayList<String> equipe2JoueursArray;
+        private int scoreEquipe1;
+        private int scoreEquipe2;
+
+        public InsertPartieAsyncTask(ArrayList<String> equipe1JoueursArray, ArrayList<String> equipe2JoueursArray) {
+            this.equipe1JoueursArray = equipe1JoueursArray;
+            this.equipe2JoueursArray = equipe2JoueursArray;
+        }
 
         @Override
-        protected Void doInBackground(ArrayList<String>... arrayLists) {
-            ArrayList<String> equipe1JoueursArray = arrayLists[0];
-            ArrayList<String> equipe2JoueursArray = arrayLists[1];
-
+        protected Void doInBackground(Void... voids) {
             dbAccess = AppDataBase.getAppDataBase(getApplicationContext());
             partieDao = dbAccess.getPartieDao();
             joueurDao = dbAccess.getJoueurDao();
@@ -104,16 +101,15 @@ public class FinDePartie extends AppCompatActivity {
             int lastPartieId = partieDao.getLastPartieId();
             int idPartie = lastPartieId + 1;
             int scorePartie = 1;
+            scoreEquipe1 = getIntent().getIntExtra("scoreEquipe1", 0);
+            scoreEquipe2 = getIntent().getIntExtra("scoreEquipe2", 0);
 
-
-         /*   int idPartie = partieDao.getPartieId();
-            int scorePartie = 1; */
-
-            Partie partie = new Partie(idPartie, "Classique", 1, scorePartie, equipe1JoueursArray, equipe2JoueursArray);
-            Log.i("Contenue de la partie", partie.toString());
+            Partie partie = new Partie(idPartie, "Classique", 1, scoreEquipe1, scoreEquipe2, equipe1JoueursArray, equipe2JoueursArray);
+            Log.i("Contenu de la partie", partie.toString());
             if (joueursExist(partie.getEquipe1Joueurs()) && joueursExist(partie.getEquipe2Joueurs())) {
                 partieDao.insertPartie(partie);
-                Log.i("Contenue de la partie", partie.toString());
+                updateVictoires();
+                Log.i("Contenu de la partie", partie.toString());
             } else {
                 Log.i("Erreur", "Les joueurs n'existent pas");
             }
@@ -129,6 +125,30 @@ public class FinDePartie extends AppCompatActivity {
                 }
             }
             return true;
+        }
+
+        private void updateVictoires() {
+            joueurVictoires = new HashMap<>();
+
+            if (scoreEquipe1 >= 10) {
+                for (String joueur : equipe1JoueursArray) {
+                    joueurVictoires.put(joueur, joueurVictoires.getOrDefault(joueur, 0) + 1);
+                }
+            }
+
+            if (scoreEquipe2 >= 10) {
+                for (String joueur : equipe2JoueursArray) {
+                    joueurVictoires.put(joueur, joueurVictoires.getOrDefault(joueur, 0) + 1);
+                }
+            }
+
+            for (Map.Entry<String, Integer> entry : joueurVictoires.entrySet()) {
+                String pseudo = entry.getKey();
+                int victoires = entry.getValue();
+                Joueur joueur = joueurDao.getJoueurByPseudo(pseudo);
+                joueur.setNombreVictoires(joueur.getNombreVictoires() + 1);
+                joueurDao.updateJoueur(joueur);
+            }
         }
     }
 }
