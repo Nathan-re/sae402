@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -8,14 +9,35 @@
         android:id="@+id/liste_des_jouer_view"
         android:layout_width="410dp"
         android:layout_height="524dp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="206dp" />
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titrelistedesjoueurs"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/titrelistedesjoueurs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Liste Des joueurs"
-        tools:layout_editor_absoluteX="185dp"
-        tools:layout_editor_absoluteY="72dp" />
+        android:text="Historique Joueurs"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="105dp" />
+
+    <Button
+        android:id="@+id/button_retourList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Retour"
+        app:layout_constraintBottom_toTopOf="@+id/titrelistedesjoueurs"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.543" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

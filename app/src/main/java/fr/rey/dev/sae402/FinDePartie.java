@@ -115,27 +115,19 @@ public class FinDePartie extends AppCompatActivity {
             int scorePartie = 1;
             scoreEquipe1 = getIntent().getIntExtra("scoreEquipe1", 0);
             scoreEquipe2 = getIntent().getIntExtra("scoreEquipe2", 0);
-/*
-<<<<<<< HEAD
-            Partie partie = new Partie(idPartie, "Classique", 1, scoreEquipe1, scoreEquipe2, equipe1JoueursArray, equipe2JoueursArray);
-            Log.i("Contenu de la partie", partie.toString());
-            if (joueursExist(partie.getEquipe1Joueurs()) && joueursExist(partie.getEquipe2Joueurs())) {
-                partieDao.insertPartie(partie);
-                updateVictoires();
-=======*/
 
-         /*   int idPartie = partieDao.getPartieId();
-            int scorePartie = 1; */
             int scoreEquipe1 = getIntent().getIntExtra("scoreEquipe1", 0);
             int scoreEquipe2 = getIntent().getIntExtra("scoreEquipe2", 0);
             Log.d("test", scoreEquipe1 + "");
             Log.d("test", scoreEquipe2 + "");
-            Partie partie = new Partie(idPartie, "Classique", Integer.valueOf(1),scoreEquipe1, scoreEquipe2, equipe1JoueursArray, equipe2JoueursArray);
+
+            Partie partie = new Partie(idPartie, "Classique", Integer.valueOf(1), scoreEquipe1, scoreEquipe2, equipe1JoueursArray, equipe2JoueursArray);
             Log.i("Contenu de la partie", partie.toString());
+
+
             if (joueursExist(partie.getEquipe1Joueurs()) && joueursExist(partie.getEquipe2Joueurs())) {
                 partieDao.insertPartie(partie);
-                /*
->>>>>>> 21b5cadb4fc97af15163fdce3f26c397eafe714f*/
+                updateVictoires();
                 Log.i("Contenu de la partie", partie.toString());
             } else {
                 Log.i("Erreur", "Les joueurs n'existent pas");

@@ -27,11 +27,11 @@ public class ListeDeJoueurs extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.historique_matchs);
-        Button retour = findViewById(R.id.button_retour);
+        setContentView(R.layout.liste_des_joueurs);
+        Button retour = findViewById(R.id.button_retourList);
         accessDataBase();
 
-        joueurListView = findViewById(R.id.Liste_des_matchs);
+        joueurListView = findViewById(R.id.liste_des_jouer_view);
 
         new RetrieveJoueursTask().execute();
 
