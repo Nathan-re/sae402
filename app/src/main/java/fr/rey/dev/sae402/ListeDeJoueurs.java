@@ -50,7 +50,7 @@ public class ListeDeJoueurs extends AppCompatActivity {
 
         @Override
         protected List<Joueur> doInBackground(Void... voids) {
-            int[] joueurIds = joueurDao.getAllId();
+            int[] joueurIds = joueurDao.getAllIdClassement();
 
             // Récupérer les objets Joueur correspondants aux identifiants
             List<Joueur> joueurs = new ArrayList<>();

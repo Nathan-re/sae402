@@ -9,14 +9,15 @@
         android:id="@+id/liste_des_jouer_view"
         android:layout_width="415dp"
         android:layout_height="425dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="1dp"
         android:fontFamily="@font/poppins_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titrelistedesjoueurs" />
+        app:layout_constraintTop_toBottomOf="@+id/titrelistedesjoueurs"
+        app:layout_constraintVertical_bias="0.166" />
 
     <TextView
         android:id="@+id/titrelistedesjoueurs"
