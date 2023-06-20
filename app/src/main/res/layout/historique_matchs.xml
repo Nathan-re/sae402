@@ -28,7 +28,7 @@
         android:layout_marginBottom="24dp"
         android:text="Historique"
         android:textSize="20sp"
-
+android:fontFamily="@font/poppins_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +40,7 @@
         android:layout_height="349dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="1dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_retour"
+        app:layout_constraintBottom_toTopOf="@+id/buttonRetourAccueil"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,6 +53,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Fermer"
+
+        android:background="@drawable/border"
+        android:fontFamily="@font/poppins_medium"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"

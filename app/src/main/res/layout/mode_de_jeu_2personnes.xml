@@ -10,9 +10,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:background="@drawable/button_background"
-        android:fontFamily="@font/poppins_regular"
         android:text="Retour"
+
+        android:background="@drawable/border"
+        android:fontFamily="@font/poppins_medium"
+        android:textSize="14sp"
         android:textColorHighlight="#00FFFFFF"
         android:textColorLink="#00FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
@@ -79,6 +81,9 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="15sp"
             android:layout_weight="0.1"
             android:text="Choisir" />
     </LinearLayout>
@@ -115,7 +120,9 @@
             android:id="@+id/choixMode2pers2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
+            android:background="@drawable/border"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="15sp"
             android:layout_weight="0.1"
             android:text="Choisir" />
     </LinearLayout>

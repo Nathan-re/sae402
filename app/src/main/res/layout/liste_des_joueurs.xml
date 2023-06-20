@@ -7,32 +7,39 @@
 
     <ListView
         android:id="@+id/liste_des_jouer_view"
-        android:layout_width="410dp"
-        android:layout_height="524dp"
+        android:layout_width="415dp"
+        android:layout_height="425dp"
+        android:layout_marginTop="200dp"
         android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
+        android:fontFamily="@font/poppins_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titrelistedesjoueurs"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/titrelistedesjoueurs" />
 
     <TextView
         android:id="@+id/titrelistedesjoueurs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="76dp"
         android:text="Historique Joueurs"
         android:textSize="34sp"
+        android:fontFamily="@font/poppins_bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.411"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="105dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button_retourList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Retour"
+
+        android:background="@drawable/border"
+        android:fontFamily="@font/poppins_medium"
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/titrelistedesjoueurs"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.05"
