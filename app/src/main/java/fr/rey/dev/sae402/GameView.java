@@ -160,7 +160,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.rotate(-90, getWidth() / 2, getHeight() / 2);
 
         //Log.d("apres rotate", getWidth() + " & " + getHeight());
-        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth() / 2 -200, 800, paintScore);
+        canvas.drawText(scoreEquipe1 + " - " + scoreEquipe2, getWidth() / 2 -200, 1100, paintScore);
 
         /*
         canvas.drawText(((int)(poussoir1.getPuissPoussoir()) + ""), getWidth()/2 + 400, getHeight()/2, paintScore);
